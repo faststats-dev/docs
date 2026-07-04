@@ -1,0 +1,37 @@
+---
+title: Installation
+description: Add FastStats Web Analytics to your website or web app
+icon: Download
+---
+
+<Callout type="warning">Web Analytics is not yet publicly available</Callout>
+
+Install one of the packages below and pass your site key.
+
+## Choose a Package
+
+| Package            | Use it when                                     | Guide                                   |
+| ------------------ | ----------------------------------------------- | --------------------------------------- |
+| `@faststats/react` | You build with React or Next.js                 | [React](/web-analytics/react)           |
+| `@faststats/nuxt`  | You build with Nuxt                             | [Nuxt](/web-analytics/nuxt)             |
+| `@faststats/web`   | You use plain JavaScript or any other framework | [JavaScript](/web-analytics/javascript) |
+
+## Install
+
+<Tabs items={["React", "Nuxt", "JavaScript"]}>
+	<Tab value="React">`npm npm install @faststats/react`</Tab>
+	<Tab value="Nuxt">`npm npm install @faststats/nuxt`</Tab>
+	<Tab value="JavaScript">`npm npm install @faststats/web`</Tab>
+</Tabs>
+
+## Get Your Site Key
+
+Every request is tied to a site key. You can find it in your FastStats project
+settings. The key is safe to ship in the browser because it only allows writing
+events for that one project.
+
+## Next Steps
+
+- [Configuration](/web-analytics/configuration): all SDK options
+- [Events](/web-analytics/events): automatic and custom tracking
+- [Consent and Cookieless](/web-analytics/consent): cookieless mode and consent states

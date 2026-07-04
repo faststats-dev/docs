@@ -1,0 +1,109 @@
+---
+title: Feature Flags
+description: Evaluate FastStats feature flags from Java projects
+icon: Flag
+---
+
+<Callout type="warning">
+	Feature Flags are still in **Private Preview** please contact staff if you
+	would like to try them out.
+</Callout>
+
+Feature flags are configured on a FastStats context. A context may enable
+metrics, error tracking, feature flags, or any combination of those services.
+
+## Configure a Service
+
+```java
+import dev.faststats.Attributes;
+import dev.faststats.FastStatsContext;
+import dev.faststats.FeatureFlagService;
+import dev.faststats.bukkit.BukkitContext;
+
+import java.time.Duration;
+
+BukkitContext context = new BukkitContext.Factory(plugin, "YOUR_TOKEN")
+    .featureFlagService(factory -> factory
+        .attributes(Attributes.empty()
+            .put("version", "1.2.3")
+            .put("java_version", System.getProperty("java.version")))
+        .ttl(Duration.ofMinutes(10))
+        .create())
+    .create();
+
+FeatureFlagService flags = context.featureFlagService().orElseThrow();
+```
+
+Use `.featureFlagService(FeatureFlagService.Factory::create)` when you want the
+default settings.
+
+## Define Flags
+
+Define flags with a key and a local default value. The default is used before a
+server value is available or when evaluation fails.
+
+```java
+var newCommands = flags.define("new_commands", false);
+var compression = flags.define("compression", "zstd");
+var maxPlayers = flags.define("max_players", 100);
+```
+
+Supported value types are boolean, string, and number.
+
+## Read Values
+
+```java
+newCommands.whenReady().thenAccept(enabled -> {
+    if (enabled) {
+        // Register the new commands.
+    }
+});
+
+compression.getCached().ifPresent(value -> {
+    // Use the cached value without starting a request.
+});
+
+if (compression.isExpired()) {
+    compression.fetch().thenAccept(value -> {
+        // React to the refreshed value.
+    });
+}
+```
+
+`whenReady()` returns the cached value when it is still valid. Otherwise it
+fetches the latest value. `fetch()` always requests a fresh value from the
+server.
+
+## Per-Flag Attributes
+
+Global attributes configured on the service are sent with every evaluation. You
+can add per-flag attributes when a specific flag needs more targeting context.
+
+```java
+var betaUi = flags.define(
+    "beta_ui",
+    false,
+    Attributes.empty().put("world", "lobby")
+);
+```
+
+Per-flag attributes override global attributes with the same key.
+
+## Opt In and Opt Out
+
+Flags that allow specific opt-in can be changed from the SDK:
+
+```java
+newCommands.optIn().thenAccept(enabled -> {
+    if (enabled) {
+        // The server accepted the opt-in and returned the current value.
+    }
+});
+
+newCommands.optOut();
+```
+
+Opt-in and opt-out invalidate the local value and fetch the current server value
+again.
+
+For platform concepts and dashboard setup, see [Feature Flags](/platform/feature-flags).

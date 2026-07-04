@@ -1,0 +1,69 @@
+---
+title: Retention
+description: Measure how many users come back over time with cohort-based retention charts.
+icon: RefreshCcw
+---
+
+export const mockCohortRows = [
+	{ cohort: "2026-W01", users: 1240, weeks: [100, 51, 38, 31, 27] },
+	{ cohort: "2026-W02", users: 1178, weeks: [100, 49, 35, 29, 24] },
+	{ cohort: "2026-W03", users: 1321, weeks: [100, 46, 33, 26, 22] },
+	{ cohort: "2026-W04", users: 1215, weeks: [100, 44, 30, 24, 19] },
+];
+
+Retention shows how many users return after their first seen period. FastStats groups users into cohorts and then tracks what percentage of each cohort is still active in later days or weeks.
+
+## Main Visualization (Cohort Table)
+
+Static preview from the retention page. This example is not interactive.
+
+<div className="not-prose border border-border bg-card p-4">
+	<div className="overflow-x-auto">
+		<table className="w-full border-collapse text-xs font-mono">
+			<thead>
+				<tr className="border-b border-border/60">
+					<th className="px-2 py-2 text-left font-medium">Cohort</th>
+					<th className="px-2 py-2 text-right font-medium">Users</th>
+					<th className="px-2 py-2 text-center font-medium">Week 0</th>
+					<th className="px-2 py-2 text-center font-medium">Week 1</th>
+					<th className="px-2 py-2 text-center font-medium">Week 2</th>
+					<th className="px-2 py-2 text-center font-medium">Week 3</th>
+					<th className="px-2 py-2 text-center font-medium">Week 4</th>
+				</tr>
+			</thead>
+			<tbody>
+				{mockCohortRows.map((row) => (
+					<tr key={row.cohort} className="border-b border-border/40">
+						<td className="px-2 py-2">{row.cohort}</td>
+						<td className="px-2 py-2 text-right text-muted-foreground">
+							{row.users.toLocaleString()}
+						</td>
+						{row.weeks.map((value, index) => (
+							<td
+								key={`${row.cohort}-${index}`}
+								className="px-1 py-1 text-center"
+							>
+								<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+									{value}%
+								</div>
+							</td>
+						))}
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+## How to Read the Chart
+
+- **Cohort table rows** are groups of users by first-visit period (for example, `2026-W01`)
+- **Week columns** (`Week 0`, `Week 1`, ...) show the share of that cohort active in each later week
+- **Faster color fading** across columns usually means users drop off earlier
+- **Use comparisons across rows** to spot whether newer cohorts are retaining better than older ones
+
+Use it to answer:
+
+- Are new users sticking longer than older cohorts?
+- At what week does retention drop the fastest?
+- Are changes in onboarding or product quality improving Week 1 and Week 2 retention?

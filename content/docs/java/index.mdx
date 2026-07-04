@@ -1,0 +1,166 @@
+---
+title: Installation
+description: Add FastStats to your Minecraft server project
+icon: Download
+---
+
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { PromptCopyBlock } from "@/components/docs/prompt-copy-block";
+import { latestVersion } from "@/lib/docs/repository";
+import { setup } from "@/lib/prompts/setup";
+export const version = await latestVersion("core");
+
+Add the FastStats SDK to your project using Maven or Gradle.
+
+<Tabs defaultIndex='1' groupId="language" items={['Maven', 'Gradle Kotlin', 'Gradle Groovy', 'SBT']}>
+  <Tab id="maven" value="Maven">
+    ```xml
+    <repository>
+      <id>faststats-releases</id>
+      <name>FastStats</name>
+      <url>https://repo.faststats.dev/releases</url>
+    </repository>
+    ```
+  </Tab>
+  <Tab id="kotlin" value="Gradle Kotlin">
+    ```kts
+    maven {
+      name = "faststatsReleases"
+      url = uri("https://repo.faststats.dev/releases")
+    }
+    ```
+  </Tab>
+  <Tab id="groovy" value="Gradle Groovy">
+    ```groovy
+    maven {
+      name "faststatsReleases"
+      url "https://repo.faststats.dev/releases"
+    }
+    ```
+  </Tab>
+  <Tab id="sbt" value="SBT">
+    ```scala
+    resolvers += 
+      "faststats-releases" 
+        at "https://repo.faststats.dev/releases"
+    ```
+  </Tab>
+</Tabs>
+
+## Platform-Specific Artifacts
+
+Choose the artifact for your platform:
+
+| Platform                   | Artifact ID                               | Java Versions |
+| -------------------------- | ----------------------------------------- | ------------- |
+| Bukkit/Spigot/Paper/Folia… | [`bukkit`](/java/platform/bukkit)         | 17+           |
+| BungeeCord                 | [`bungeecord`](/java/platform/bungeecord) | 17+           |
+| Fabric                     | [`fabric`](/java/platform/fabric)         | 25+           |
+| Hytale                     | [`hytale`](/java/platform/hytale)         | 25+           |
+| Minestom                   | [`minestom`](/java/platform/minestom)     | 25+           |
+| NeoForge                   | [`neoforge`](/java/platform/neoforge)     | 25+           |
+| Nukkit                     | [`nukkit`](/java/platform/nukkit)         | 17+           |
+| Sponge                     | [`sponge`](/java/platform/sponge)         | 17+           |
+| Velocity                   | [`velocity`](/java/platform/velocity)     | 21+           |
+
+<Tabs
+	defaultIndex="1"
+	groupId="language"
+	items={["Maven", "Gradle Kotlin", "Gradle Groovy", "SBT"]}
+>
+	<Tab id="maven" value="Maven">
+		<DynamicCodeBlock
+			lang="xml"
+			code={`<dependency>
+    <groupId>dev.faststats.metrics</groupId>
+    <artifactId>bukkit</artifactId>
+    <version>${version}</version>
+</dependency>`}
+		/>
+	</Tab>
+	<Tab id="kotlin" value="Gradle Kotlin">
+		<DynamicCodeBlock
+			lang="kts"
+			code={`implementation("dev.faststats.metrics:bukkit:${version}")`}
+		/>
+	</Tab>
+	<Tab id="groovy" value="Gradle Groovy">
+		<DynamicCodeBlock
+			lang="groovy"
+			code={`implementation "dev.faststats.metrics:bukkit:${version}"`}
+		/>
+	</Tab>
+	<Tab id="sbt" value="SBT">
+		<DynamicCodeBlock
+			lang="scala"
+			code={`"dev.faststats.metrics" %% "bukkit" %% "${version}"`}
+		/>
+	</Tab>
+</Tabs>
+
+## Shading
+
+To include FastStats directly in your plugin JAR, you can use the Maven Shade or Gradle Shadow Plugin.
+
+<Tabs
+  defaultIndex="1"
+  groupId="language"
+  items={["Maven", "Gradle Kotlin", "Gradle Groovy"]}
+>
+  <Tab id="maven" value="Maven">
+    <DynamicCodeBlock
+      lang="xml"
+      code={`<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <relocations>
+                            <relocation>
+                                <pattern>dev.faststats</pattern>
+                                <shadedPattern>your.plugin.libs.faststats</shadedPattern>
+                            </relocation>
+                        </relocations>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>`}
+    />
+  </Tab>
+  <Tab id="kotlin" value="Gradle Kotlin">
+    <DynamicCodeBlock
+      lang="kts"
+      code={`plugins {
+    id("com.gradleup.shadow") version "9.4.1"
+  }
+
+tasks.shadowJar {
+relocate("dev.faststats", "your.plugin.libs.faststats") // optionally relocate the package
+}`}
+/>
+
+  </Tab>
+  <Tab id="groovy" value="Gradle Groovy">
+    <DynamicCodeBlock
+      lang="groovy"
+      code={`plugins {
+    id 'com.gradleup.shadow' version '9.4.1'
+  }
+
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+relocate('dev.faststats', 'your.plugin.libs.faststats') // optionally relocate the package
+}`}
+/>
+
+  </Tab>
+</Tabs>

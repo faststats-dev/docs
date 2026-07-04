@@ -1,0 +1,97 @@
+---
+title: Session Replay
+description: Record DOM sessions with rrweb
+icon: Video
+---
+
+Session replay records DOM mutations and user interactions using
+[rrweb](https://www.rrweb.io/). Recordings are serialized events, not video.
+
+## Enable Replay
+
+Turn it on with the object form.
+
+<Tabs items={["React", "Nuxt", "JavaScript"]}>
+	<Tab value="React">
+
+```tsx
+<Analytics siteKey="your_site_key" sessionReplays={{ enabled: true }} />
+```
+
+    </Tab>
+    <Tab value="Nuxt">
+
+```ts title="nuxt.config.ts"
+faststats: {
+	siteKey: "your_site_key",
+	sessionReplays: { enabled: true },
+}
+```
+
+    </Tab>
+    <Tab value="JavaScript">
+
+```ts
+new WebAnalytics({
+	siteKey: "your_site_key",
+	sessionReplays: { enabled: true },
+});
+```
+
+    </Tab>
+
+</Tabs>
+
+## Batching
+
+Replay events are buffered in the browser and uploaded in chunks. The defaults
+prefer fewer, larger chunks so a normal one-minute replay should usually create
+single-digit storage objects instead of dozens.
+
+```ts
+sessionReplays: { enabled: true },
+replayOptions: {
+	flushInterval: 5_000,
+	maxEvents: 1000,
+	maxBatchSizeBytes: 512 * 1024,
+}
+```
+
+The collector coalesces these small reliable browser flushes into fewer storage
+objects. The recorder still flushes early on page hide, session rotation,
+periodic full snapshots, and when a batch reaches the byte limit.
+
+## Privacy and Masking
+
+The recorder masks inputs by default and lets you hide elements with
+`replayOptions`.
+
+```ts
+new WebAnalytics({
+	siteKey: "your_site_key",
+	sessionReplays: { enabled: true },
+	replayOptions: {
+		maskAllInputs: true,
+		maskTextSelector: ".sensitive",
+		blockSelector: ".no-record",
+	},
+});
+```
+
+| Option             | Type      | Description                                       |
+| ------------------ | --------- | ------------------------------------------------- |
+| `maskAllInputs`    | `boolean` | Masks the value of every input field              |
+| `maskTextSelector` | `string`  | Masks text inside elements matching this selector |
+| `maskTextClass`    | `string`  | Masks text inside elements with this class        |
+| `blockSelector`    | `string`  | Skips recording elements matching this selector   |
+| `blockClass`       | `string`  | Skips recording elements with this class          |
+| `recordConsole`    | `boolean` | Records console output during the session         |
+
+Any element you mark with the block selector is replaced with a placeholder, so
+its content never leaves the browser.
+
+## Cookieless Behavior
+
+Replay follows your consent setup. In cookieless or denied mode the recorder
+stops and clears any buffered events, so nothing is recorded until consent is
+granted. See [Consent and Cookieless](/web-analytics/consent).

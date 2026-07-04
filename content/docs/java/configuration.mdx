@@ -1,0 +1,77 @@
+---
+title: Configuration
+description: Advanced configuration options for FastStats Java SDK
+icon: Settings
+---
+
+Configure FastStats by creating a platform context and attaching the services
+your project uses.
+
+## Basic Configuration
+
+The minimal metrics configuration requires only a token:
+
+```java
+import dev.faststats.Metrics;
+import dev.faststats.bukkit.BukkitContext;
+
+private final BukkitContext context = new BukkitContext.Factory(plugin, "YOUR_TOKEN")
+    .metrics(Metrics.Factory::create)
+    .create();
+
+public void onEnable() {
+    context.ready();
+}
+```
+
+## Complete Configuration Example
+
+Here's a configured Bukkit context with error tracking, custom metrics, and a
+flush callback:
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.data.Metric;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public final class MyBukkitPlugin extends JavaPlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+    private final AtomicInteger arenaMatches = new AtomicInteger();
+
+    private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .metrics(factory -> factory
+            .addMetric(Metric.number("arena_matches", arenaMatches::get))
+            .addMetric(Metric.string("active_ruleset", () -> "ranked_duels"))
+            .addMetric(Metric.bool("ranked_mode", () -> true))
+            .addMetric(Metric.stringArray("used_hooks", () -> new String[]{"Vault", "PlaceholderAPI"}))
+            .onFlush(() -> arenaMatches.set(0))
+            .create())
+        .create();
+
+    @Override
+    public void onEnable() {
+        context.ready();
+    }
+
+    @Override
+    public void onDisable() {
+        context.shutdown();
+    }
+}
+```
+
+Metrics submission and error tracking start after `context.ready()` is called.
+Call `context.ready()` from the platform startup hook, and call
+`context.shutdown()` during shutdown.
+
+For error tracking configuration, see [Error Tracking](/java/error-tracking). For platform-specific setup, see the platform pages in the sidebar.
+
+## Best Practices
+
+- Keep metric suppliers lightweight
+- Cache expensive calculations and values that never change
+- Metric suppliers must be thread-safe and pure

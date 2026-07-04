@@ -1,0 +1,237 @@
+---
+title: Migration Guide
+description: Upgrade FastStats Java SDK from 0.23.0 to 0.24.0
+icon: ArrowRightLeft
+---
+
+This guide covers the breaking Java SDK changes between `0.23.0` and `0.24.0`.
+
+Version `0.24.0` moves FastStats from standalone metrics instances to a shared
+platform context. The context owns the token, config, metrics, error tracking,
+feature flags, and lifecycle.
+
+## Imports
+
+All core classes moved out of `dev.faststats.core`.
+
+```java
+// 0.23.0
+import dev.faststats.core.ErrorTracker;
+import dev.faststats.core.Metrics;
+import dev.faststats.core.data.Metric;
+
+// 0.24.0
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.data.Metric;
+```
+
+## Metrics Setup
+
+Platform metrics factories such as `BukkitMetrics.factory()` were replaced by
+platform context factories such as `BukkitContext.Factory`.
+
+**Old Code**
+
+```java
+// 0.23.0
+private final BukkitMetrics metrics = BukkitMetrics.factory()
+    .addMetric(Metric.number("arena_matches", arenaMatches::get))
+    .onFlush(() -> arenaMatches.set(0))
+    .token("YOUR_TOKEN")
+    .create(this);
+
+@Override
+public void onEnable() {
+    metrics.ready();
+}
+
+@Override
+public void onDisable() {
+    metrics.shutdown();
+}
+```
+
+**Updated Code**
+
+```java
+// 0.24.0
+private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    .metrics(factory -> factory
+        .addMetric(Metric.number("arena_matches", arenaMatches::get))
+        .onFlush(() -> arenaMatches.set(0))
+        .create())
+    .create();
+
+@Override
+public void onEnable() {
+    context.ready();
+}
+
+@Override
+public void onDisable() {
+    context.shutdown();
+}
+```
+
+Use `.metrics(Metrics.Factory::create)` if you only need the built-in metrics
+without custom metrics.
+
+## Token, URL, and Debug
+
+The token is now passed to the context factory constructor or builder. Per-metrics
+`.token(...)`, `.url(...)`, and `.debug(...)` calls were removed.
+
+```java
+// 0.23.0
+BukkitMetrics.factory()
+    .url(URI.create("https://metrics.example.com/v1/collect"))
+    .debug(true)
+    .token("YOUR_TOKEN")
+    .create(this);
+```
+
+```java
+// 0.24.0
+new BukkitContext.Factory(this, "YOUR_TOKEN")
+    .metrics(Metrics.Factory::create)
+    .create();
+```
+
+Call `context.ready()` from your platform startup hook before metrics are used.
+For runtime configuration, use the FastStats config and system properties. For
+example, use `-Dfaststats.debug=true` to enable debug logging.
+
+## Error Tracking
+
+Error trackers are now attached to the context with `.errorTrackerService(...)`.
+They are no longer configured on the metrics factory.
+
+```java
+// 0.23.0
+public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+private final BukkitMetrics metrics = BukkitMetrics.factory()
+    .errorTracker(ERROR_TRACKER)
+    .token("YOUR_TOKEN")
+    .create(this);
+```
+
+```java
+// 0.24.0
+public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    .errorTrackerService(ERROR_TRACKER)
+    .metrics(Metrics.Factory::create)
+    .create();
+
+public void onEnable() {
+    context.ready();
+}
+```
+
+Context-unaware trackers still exist, but additional trackers must be registered
+with the context error tracker service.
+
+```java
+public static final ErrorTracker MANUAL_TRACKER = ErrorTracker.contextUnaware();
+
+{
+    context.errorTrackerService().orElseThrow().registerErrorTracker(MANUAL_TRACKER);
+}
+```
+
+`trackError(...)` now returns a `TrackedError`, so callers may attach additional
+data to the tracked error after creating it.
+
+```java
+MANUAL_TRACKER.trackError(error)
+    .handled(false)
+    .attributes(Attributes.empty()
+        .put("version", "1.0.0"));
+```
+
+## Platform Factories
+
+Use the new platform context factory for your platform:
+
+| Platform   | 0.23.0                                     | 0.24.0                                              |
+| ---------- | ------------------------------------------ | --------------------------------------------------- |
+| Bukkit     | `BukkitMetrics.factory().create(plugin)`   | `new BukkitContext.Factory(plugin, token).create()` |
+| BungeeCord | `BungeeMetrics.factory().create(plugin)`   | `new BungeeContext.Factory(plugin, token).create()` |
+| Fabric     | `FabricMetrics.factory().create(modId)`    | `new FabricContext.Factory(modId, token).create()`  |
+| Hytale     | `HytaleMetrics.factory().create(plugin)`   | `new HytaleContext.Factory(plugin, token).create()` |
+| Minestom   | `MinestomMetrics.factory().create(server)` | `new MinestomContext.Factory(token).create()`       |
+| Nukkit     | `NukkitMetrics.factory().create(plugin)`   | `new NukkitContext.Factory(plugin, token).create()` |
+| Sponge     | injected `SpongeMetrics.Factory`           | injected `SpongeContext.Builder`                    |
+| Velocity   | injected `VelocityMetrics.Factory`         | injected `VelocityContext.Builder`                  |
+
+Sponge and Velocity builders receive the platform objects from dependency
+injection, so configure the token on the injected builder:
+
+```java
+// Sponge
+private @Inject SpongeContext.Builder contextBuilder;
+
+@Listener
+public void onServerStart(final StartedEngineEvent<Server> event) {
+    this.context = contextBuilder
+        .token("YOUR_TOKEN")
+        .metrics(Metrics.Factory::create)
+        .create();
+    context.ready();
+}
+```
+
+```java
+// Velocity
+@Inject
+public ExamplePlugin(final VelocityContext.Builder contextBuilder) {
+    this.context = contextBuilder
+        .token("YOUR_TOKEN")
+        .metrics(Metrics.Factory::create)
+        .create();
+}
+
+@Subscribe
+public void onProxyInitialize(final ProxyInitializeEvent event) {
+    context.ready();
+}
+```
+
+## Configuration Access
+
+Metrics no longer expose token and config directly. Read them from the context:
+
+```java
+// 0.23.0
+metrics.getToken();
+metrics.getConfig();
+
+// 0.24.0
+context.getToken();
+context.getConfig();
+```
+
+The config API also separates global enablement from metrics submission:
+
+```java
+context.getConfig().enabled();
+context.getConfig().submitMetrics();
+context.getConfig().errorTracking();
+context.getConfig().additionalMetrics();
+context.getConfig().debug();
+```
+
+## Checklist
+
+- Replace `dev.faststats.core.*` imports with `dev.faststats.*`.
+- Replace `dev.faststats.core.data.*` imports with `dev.faststats.data.*`.
+- Replace platform **metrics** factories with platform **context** factories.
+- Move `.token(...)` to the context factory constructor or injected builder.
+- Move `.errorTracker(...)` to `.errorTrackerService(...)`.
+- Move custom metrics into `.metrics(factory -> factory ... .create())`.
+- Replace `metrics.ready()` and `metrics.shutdown()` with `context.ready()` and `context.shutdown()`.
+- Call `context.ready()` when using metrics or error tracking.
+- Use context accessors for token, config, metrics, error tracker service, and feature flag service.

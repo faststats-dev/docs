@@ -1,0 +1,34 @@
+---
+title: Minestom
+description: Integrate FastStats with Minestom servers
+icon: Server
+---
+
+Use `dev.faststats.minestom.MinestomContext` for Minestom servers. Requires Java 25+.
+
+**Artifact:** `dev.faststats.metrics:minestom`
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.minestom.MinestomContext;
+import net.minestom.server.MinecraftServer;
+
+public final class ExampleServer {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    public static void main(String[] args) {
+        MinecraftServer server = MinecraftServer.init();
+
+        MinestomContext context = new MinestomContext.Factory("YOUR_TOKEN")
+            .errorTrackerService(ERROR_TRACKER)
+            .metrics(Metrics.Factory::create)
+            .create();
+
+        server.start("0.0.0.0", 25565);
+        context.ready();
+    }
+}
+```
+
+Call `context.ready()` after `MinecraftServer.init()` before using metrics or error tracking. This also registers exception handlers. See [Error Tracking](/java/error-tracking) for configuring error reporting.

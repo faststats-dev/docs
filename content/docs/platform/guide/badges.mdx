@@ -1,0 +1,73 @@
+---
+title: Status badges
+description: Shields.io badges for public project stats
+icon: Award
+---
+
+Show live numbers from a **public** FastStats project in READMEs, wikis, or any page that supports images. Badges use [Shields.io](https://shields.io) [endpoint badges](https://shields.io/badges/endpoint-badge), which read a small JSON document from FastStats.
+
+## Requirements
+
+- The project must be **public**. Private projects return `404` from the badge API.
+- You need your project **slug** (Settings → General).
+
+## Endpoint
+
+```
+https://faststats.dev/api/shields/{slug}?metric={metric}
+```
+
+Replace `faststats.dev` with your app origin when self-hosting.
+
+### Query parameters
+
+| Parameter | Required | Description                                                                                    |
+| --------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `metric`  | Yes      | One of: `servers`, `online_servers`, `online_players`, `events_7d`, `events_30d`, `downloads`. |
+| `label`   | No       | Left side of the badge (overrides the default label).                                          |
+| `color`   | No       | Shields color name (e.g. `blue`, `brightgreen`) or hex without `#`.                            |
+
+### Response
+
+The handler returns [Shields endpoint JSON](https://shields.io/documentation/badges#endpoint-badge): `schemaVersion`, `label`, `message`, and `color`. Values are cached for about five minutes (`Cache-Control: public, max-age=300`).
+
+### Metrics
+
+| `metric`         | Meaning                                                                |
+| ---------------- | ---------------------------------------------------------------------- |
+| `servers`        | Approximate distinct servers from dashboard aggregates (last 30 days). |
+| `online_servers` | Servers with activity in the last 30 minutes (mods / server events).   |
+| `online_players` | Sum of player counts for those active servers.                         |
+| `events_7d`      | Total events in the last 7 days (hourly aggregates).                   |
+| `events_30d`     | Total events in the last 30 days (hourly aggregates).                  |
+| `downloads`      | Cumulative downloads across connected providers (latest snapshot).     |
+
+## Shields.io image URL
+
+Encode your JSON endpoint as the `url` query parameter:
+
+```
+https://img.shields.io/endpoint?url={url-encoded-json-endpoint}
+```
+
+### Example (Markdown)
+
+Assume slug `my-mod` and metric `online_players`:
+
+```md
+[![Online players](https://img.shields.io/endpoint?url=https%3A%2F%2Ffaststats.dev%2Fapi%2Fshields%2Fmy-mod%3Fmetric%3Donline_players)](https://faststats.dev/project/my-mod)
+```
+
+Wrap the badge image in a link to `/project/{slug}` so clicks open the FastStats project dashboard.
+
+### Custom label and color
+
+```
+https://faststats.dev/api/shields/my-mod?metric=events_7d&label=Events&color=blueviolet
+```
+
+Then wrap that full URL (encoded) in `https://img.shields.io/endpoint?url=...` as above.
+
+## Project settings
+
+In the app, open **Project Settings → Badges** to copy Markdown or HTML (both link the badge to your project dashboard), or the raw JSON URL for each metric without hand-encoding.

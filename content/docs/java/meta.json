@@ -1,0 +1,19 @@
+{
+	"root": true,
+	"title": "Java",
+	"icon": "Coffee",
+	"pages": [
+		"---Configuration---",
+		"index",
+		"migration",
+		"configuration",
+		"custom-metrics",
+		"error-tracking",
+		"feature-flags",
+		"---Platforms---",
+		"...platform",
+		"---Advanced---",
+		"obfuscation-mappings",
+		"system-properties"
+	]
+}

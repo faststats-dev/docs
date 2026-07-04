@@ -1,0 +1,16 @@
+{
+	"root": true,
+	"title": "Platform",
+	"icon": "LayoutDashboard",
+	"pages": [
+		"index",
+		"hotkeys",
+		"guide/embed",
+		"guide/badges",
+		"chart-editor",
+		"error-tracking",
+		"feature-flags",
+		"retention/index",
+		"web-vitals/index"
+	]
+}

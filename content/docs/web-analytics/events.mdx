@@ -1,0 +1,88 @@
+---
+title: Events
+description: Automatic tracking and custom events
+icon: MousePointerClick
+---
+
+The SDK sends `pageview`, `page_leave`, and `outbound_link` events
+automatically. Use `trackEvent` for custom events.
+
+## Automatic Tracking
+
+Once the SDK starts it records these without any extra code.
+
+| Event           | When it fires                                           |
+| --------------- | ------------------------------------------------------- |
+| `pageview`      | On the first load and on every client side route change |
+| `page_leave`    | When the page is hidden or the user navigates away      |
+| `outbound_link` | When a user clicks a link that points to another host   |
+
+Each page view carries the path, full URL, referrer, page title and any UTM
+parameters from the query string. The `page_leave` event also includes the time
+spent on the page, the deepest scroll depth in percent and the session duration.
+
+Single page navigation is detected through the History API, so `pushState`,
+`replaceState` and the back and forward buttons all create new page views. Hash
+based routers need `trackHash` turned on. See
+[Configuration](/web-analytics/configuration).
+
+## Custom Events
+
+Call `trackEvent` with a name and an optional object of properties. Use clear,
+lower case names so they read well in your dashboard.
+
+<Tabs items={["React", "JavaScript"]}>
+	<Tab value="React">
+
+```tsx
+import { trackEvent } from "@faststats/react";
+
+trackEvent("signup", { plan: "pro", source: "hero" });
+```
+
+    </Tab>
+    <Tab value="JavaScript">
+
+```ts
+import { trackEvent } from "@faststats/web";
+
+trackEvent("signup", { plan: "pro", source: "hero" });
+```
+
+    </Tab>
+
+</Tabs>
+
+The event name is trimmed and empty names are ignored, so a stray space never
+creates a broken event.
+
+## Properties and Dimensions
+
+You can attach any JSON friendly values as properties. A few keys are treated as
+known dimensions and are stored as first class fields instead of free form
+properties. These are `browser`, `browser_version`, `device`, `os`,
+`os_version`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`,
+`utm_term`, `utm_content`, `title`, `page` and `url`.
+
+Everything else you pass lands in the properties bag.
+
+```ts
+trackEvent("video_play", {
+	// stored as a dimension
+	page: "/courses/intro",
+	// stored as custom properties
+	video_id: "abc123",
+	position_seconds: 12,
+});
+```
+
+## Good Practices
+
+Keep a small, stable set of event names and put varying details in properties.
+Use one event name with a `step` property instead of separate names per step.
+
+```ts
+trackEvent("checkout", { step: "cart" });
+trackEvent("checkout", { step: "shipping" });
+trackEvent("checkout", { step: "payment" });
+```

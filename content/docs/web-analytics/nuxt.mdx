@@ -1,0 +1,94 @@
+---
+title: Nuxt
+description: Add FastStats Web Analytics to a Nuxt app
+icon: Mountain
+---
+
+The `@faststats/nuxt` module sets up the browser SDK for you. It reads its
+configuration from your `nuxt.config`, starts tracking on the client and wires
+the SDK into the Vue error handler so unhandled component errors are reported.
+
+## Install
+
+```npm
+ npm install @faststats/nuxt
+```
+
+## Register the Module
+
+Add the module and your settings under the `faststats` key.
+
+```ts title="nuxt.config.ts"
+export default defineNuxtConfig({
+	modules: ["@faststats/nuxt"],
+	faststats: {
+		siteKey: "your_site_key",
+		errorTracking: { enabled: true },
+		webVitals: { enabled: true },
+		sessionReplays: { enabled: true },
+	},
+});
+```
+
+The module accepts every option from the SDK. See
+[Configuration](/web-analytics/configuration) for the full list.
+
+## Use Environment Variables
+
+Anything under `faststats` lives in the public runtime config, so you can set it
+through environment variables. The site key maps to
+`NUXT_PUBLIC_FASTSTATS_SITE_KEY`.
+
+```bash title=".env"
+NUXT_PUBLIC_FASTSTATS_SITE_KEY=your_site_key
+```
+
+If the site key is missing the module logs a warning during build so you notice
+early.
+
+## Track Custom Events
+
+Import the functions from `@faststats/web` anywhere on the client.
+
+```vue title="pages/pricing.vue"
+<script setup lang="ts">
+import { trackEvent } from "@faststats/web";
+
+function buy() {
+	trackEvent("purchase", { plan: "pro", price: 29 });
+}
+</script>
+
+<template>
+	<button type="button" @click="buy">Buy now</button>
+</template>
+```
+
+## Track Server Errors
+
+Nuxt runs on Nitro, so you can report errors thrown in server routes with the
+`@faststats/nitro` plugin. Install it and register the plugin that matches your
+Nitro version.
+
+`npm npm install @faststats/nitro `
+
+```ts title="nuxt.config.ts"
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const errorTrackingPlugin = require.resolve("@faststats/nitro/v2");
+
+export default defineNuxtConfig({
+	modules: ["@faststats/nuxt"],
+	faststats: {
+		siteKey: "your_site_key",
+	},
+	nitro: {
+		plugins: [errorTrackingPlugin],
+	},
+});
+```
+
+The server plugin needs its own project token through `FASTSTATS_TOKEN`. Read
+the server section in [Error Tracking](/web-analytics/error-tracking) for the
+details.

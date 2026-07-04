@@ -1,0 +1,75 @@
+---
+title: Output & Multi-Series
+description: How to create tabs, multi-line charts, and stacked bars using multiple Output nodes
+icon: GitFork
+---
+
+import { ResultNodePreview } from "@/components/docs/node-preview";
+import { Callout } from "fumadocs-ui/components/callout";
+
+The Output node is the last step in every pipeline. One Output gives you a simple chart. Add more Output nodes to build multi-line charts, stacked bars, or tabbed lists.
+
+<div className="flex justify-center py-4 not-prose">
+	<ResultNodePreview />
+</div>
+
+## Output settings
+
+| Setting     | Description                                                                        |
+| ----------- | ---------------------------------------------------------------------------------- |
+| Output name | Label for this series in the legend (or tab name on list charts)                   |
+| Icon set    | Optional icons next to each row (list charts only)                                 |
+| Nest by     | Split rows into nested sections by field or custom delimiter (list and pie charts) |
+| Delimiter   | Character or string used to split values when nesting by a custom pattern          |
+
+The **output name** matters most. It shows up in the chart legend or as a tab title on list charts. Leave it blank on a single-output chart and it defaults to "Output". With multiple outputs, unnamed series are numbered automatically ("Output 1", "Output 2", and so on).
+
+## Multiple outputs
+
+When a flow has more than one Output node, each one runs as its own pipeline. The results are merged so the chart can show several series at once.
+
+### Ordering
+
+Output nodes are ordered by where they sit on the canvas. The leftmost Output becomes the first series, the next one becomes the second, and so on.
+
+<Callout type="info">
+	Place Output nodes left to right on the canvas to control series order.
+</Callout>
+
+## Multi-line charts
+
+To compare two metrics over time (for example, page views and unique visitors):
+
+1. Create two pipelines, each starting with a **Data Source** node
+2. Add a **Time Group** node to each (use the same interval)
+3. Add an **Aggregate** node to each (for example, `count` on one and `distinct` on the other)
+4. End each pipeline with its own **Output** node
+5. Give each one a name (for example, "Page Views" and "Unique Visitors")
+
+Both pipelines run together. Each time bucket gets both values as separate lines on the chart.
+
+## Stacked bar charts
+
+Stacked bars work like multi-line charts: use multiple Output nodes and set the chart type to **Bar**. The chart type decides whether series render as lines or stacked bars.
+
+1. Build two or more pipelines with **Group By** and **Aggregate**
+2. End each with a named **Output** node
+3. Set the chart type to **Bar**
+
+Series stack in the same order as your Output nodes on the canvas.
+
+## Tabbed lists
+
+On list charts, multiple Output nodes become **tabs** instead of overlapping series. Each Output is its own tab.
+
+1. Build a separate pipeline for each tab
+2. Name each Output node with the tab label (for example, "Browsers" or "Countries")
+3. Set the chart type to **List**
+
+Each output name becomes a tab header. Pipelines run independently, and each tab shows its own result set.
+
+## Tips
+
+- **Disconnected outputs are ignored.** If an Output node is not wired to anything, it will not appear in the chart.
+- **Pipelines can be shared.** Multiple Output nodes can connect to the same upstream nodes, so you do not always need to duplicate the whole flow.
+- **Widget charts use one pipeline only.** Extra Output nodes are ignored for widget chart types.

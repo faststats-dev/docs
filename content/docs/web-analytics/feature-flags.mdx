@@ -1,0 +1,95 @@
+---
+title: Feature Flags
+description: Evaluate FastStats feature flags in the browser
+icon: Flag
+---
+
+<Callout type="warning">
+	Feature Flags are still in **Private Preview**. Please contact staff if you
+	would like to try them out.
+</Callout>
+
+Evaluate a flag for the current visitor with `useFlag` in React or
+`checkFeatureFlag` on the SDK instance. The response includes the value and,
+for multivariate flags, the chosen variant.
+
+## React Hook
+
+The `useFlag` hook is the simplest way to read a flag in React. It returns the
+value together with loading and error state, and a `refetch` helper.
+
+```tsx
+"use client";
+
+import { useFlag } from "@faststats/react";
+
+export function NewDashboard() {
+	const { value, isLoading } = useFlag("new_dashboard");
+
+	if (isLoading) return <Spinner />;
+	if (value === "true") return <DashboardV2 />;
+	return <DashboardV1 />;
+}
+```
+
+The hook needs an active `Analytics` component on the page. It uses the current
+visitor identity to evaluate the flag.
+
+### Hook Options
+
+```tsx
+const { value, error, refetch } = useFlag("pricing_test", {
+	attributes: { country: "DE", plan: "pro" },
+	externalId: "user_123",
+	skip: false,
+});
+```
+
+| Option       | Type                      | Description                                         |
+| ------------ | ------------------------- | --------------------------------------------------- |
+| `attributes` | `Record<string, unknown>` | Extra context used by the targeting rules           |
+| `externalId` | `string`                  | Evaluate for a specific user instead of the visitor |
+| `skip`       | `boolean`                 | Skip the request, for example until you are ready   |
+
+### Result Shape
+
+| Field          | Type            | Description                                    |
+| -------------- | --------------- | ---------------------------------------------- |
+| `value`        | `string`        | The flag value, defaults to `"false"`          |
+| `variantKey`   | `string`        | The chosen variant key when the flag is a test |
+| `variantValue` | `string`        | The value attached to that variant             |
+| `isLoading`    | `boolean`       | True while the request is in flight            |
+| `error`        | `Error \| null` | Set when the evaluation failed                 |
+| `refetch`      | `() => void`    | Run the evaluation again                       |
+
+## Outside React
+
+When you do not use React, evaluate a flag through the instance.
+
+```ts
+import { getInstance } from "@faststats/web";
+
+const result = await getInstance()?.checkFeatureFlag("new_dashboard", {
+	country: "DE",
+});
+
+if (result?.value === "true") {
+	// turn the feature on
+}
+```
+
+## Values are Strings
+
+Flag values come back as strings, so a boolean flag returns `"true"` or
+`"false"`. Compare against the string form rather than a real boolean.
+
+```ts
+if (value === "true") {
+	// correct
+}
+```
+
+## Custom Flags Endpoint
+
+Flag checks go to `https://flags.faststats.dev` by default. To send them through
+your own domain, set `featureFlagsBaseUrl`.

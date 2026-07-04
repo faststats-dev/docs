@@ -1,0 +1,86 @@
+---
+title: Chart Embeds
+description: Embed charts in your documentation or website
+icon: Image
+---
+
+Embed your FastStats charts anywhere  
+READMEs, documentation, dashboards, or any platform that supports images.
+
+## Usage
+
+Every chart in a **public dashboard** (inside a public project) can be embedded using a simple URL:
+
+```
+https://faststats.dev/embed/{chartId}
+```
+
+### Finding Your Chart URL
+
+1. Open your chart in edit mode
+2. Click the three-dot menu (⋮) in the top right
+3. Select **Copy Chart URL** for a quick copy of the basic URL
+
+### Embed Chart Dialog
+
+For more control, use **Embed URL** from the same menu. The Embed Chart dialog lets you:
+
+- Customize width and height with quick presets (Small, Default, Blog, Wide)
+- Choose between dark and light theme
+- Copy the embed URL, Markdown, BBCode, or HTML snippet
+- Preview exactly how the chart will render
+
+### Embedding in Markdown
+
+```md
+![My Chart](https://faststats.dev/embed/abc123)
+```
+
+### Embedding in HTML
+
+```html
+<img src="https://faststats.dev/embed/abc123" alt="My Chart" />
+```
+
+## Customizing Size
+
+Control the dimensions using query parameters:
+
+| Parameter | Description      | Default | Range / Options |
+| --------- | ---------------- | ------- | --------------- |
+| `w`       | Width in pixels  | 600     | 200-1200        |
+| `h`       | Height in pixels | 300     | 150-800         |
+| `theme`   | Color theme      | dark    | `dark`, `light` |
+
+### Examples
+
+```
+/embed/{chartId}?w=800&h=400
+/embed/{chartId}?w=400&h=200
+/embed/{chartId}?w=600&h=300&theme=light
+```
+
+## Supported Chart Types
+
+All chart types are supported:
+
+- **Widget** - Single metric with trend indicator
+- **Line** - Time series data with multiple metrics
+- **Area** - Time series with filled area
+- **Bar** - Categorical comparisons
+- **Pie** - Distribution breakdown
+- **List** - Ranked rows with values
+
+## Color Behavior
+
+Embeds use the same chart palette as your project charts:
+
+- If the chart has custom **Chart Colors** configured, those colors are used.
+- Otherwise, embeds fall back to the project's default chart colors from settings.
+- The `theme` query parameter only changes the embed UI theme (dark/light), not your chart palette.
+
+## Notes
+
+- Only charts from **public dashboards** in public projects can be embedded
+- Images are cached for 5 minutes
+- The chart uses the configured time frame from your chart settings

@@ -1,0 +1,50 @@
+---
+title: Velocity
+description: Integrate FastStats with Velocity proxy plugins
+icon: Zap
+---
+
+Use `dev.faststats.velocity.VelocityContext` for Velocity proxy plugins. Requires Java 21+.
+
+**Artifact:** `dev.faststats.metrics:velocity`
+
+```java
+import com.google.inject.Inject;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Plugin;
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.velocity.VelocityContext;
+
+@Plugin(id = "example", name = "Example Plugin", version = "1.0.0")
+public class ExamplePlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final VelocityContext context;
+
+    @Inject
+    public ExamplePlugin(final VelocityContext.Builder contextBuilder) {
+        this.context = contextBuilder
+            .token("YOUR_TOKEN")
+            .errorTrackerService(ERROR_TRACKER)
+            .metrics(Metrics.Factory::create)
+            .create();
+    }
+
+    @Subscribe
+    public void onProxyInitialize(final ProxyInitializeEvent event) {
+        context.ready();
+    }
+
+    @Subscribe
+    public void onProxyStop(final ProxyShutdownEvent event) {
+        context.shutdown();
+    }
+}
+```
+
+See [Error Tracking](/java/error-tracking) for configuring error reporting.
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/velocity/example-plugin/src/main/java/com/example/ExamplePlugin.java)

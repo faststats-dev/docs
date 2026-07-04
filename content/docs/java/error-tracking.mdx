@@ -1,0 +1,177 @@
+---
+title: Error Tracking
+description: Monitor and report errors from your Minecraft server plugin
+icon: Bug
+---
+
+FastStats can automatically track errors in your project.
+
+<Callout type="warning">
+	Error tracking must be enabled in the project settings. Otherwise, all
+	reported errors will be ignored.
+</Callout>
+
+<Callout type="info">
+	The error tracker does not replace proper error handling. It should only be
+	used as a way to report errors for monitoring purposes.
+</Callout>
+
+## Context-Aware Error Tracker
+
+The context-aware error tracker automatically tracks uncaught errors from the
+same class loader:
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.bukkit.BukkitContext;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class MyBukkitPlugin extends JavaPlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .create();
+
+    @Override
+    public void onEnable() {
+        context.ready();
+    }
+
+    @Override
+    public void onDisable() {
+        context.shutdown();
+    }
+
+    public void doSomethingWrong() {
+        try {
+            throw new RuntimeException("Something went wrong!");
+        } catch (Exception e) {
+            // This exception will be reported as handled.
+            ERROR_TRACKER.trackError(e);
+        }
+    }
+}
+```
+
+<Callout type="info">
+	The automatic tracking only covers errors that would otherwise be swallowed by
+	the JVM. Use manual tracking in addition to passive tracking.
+</Callout>
+
+## Context-Unaware Error Tracker
+
+The context-unaware error tracker only tracks errors passed to `trackError()`:
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.bukkit.BukkitContext;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class MyBukkitPlugin extends JavaPlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextUnaware();
+
+    private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .create();
+
+    @Override
+    public void onEnable() {
+        context.ready();
+    }
+
+    public void doSomethingWrong() {
+        try {
+            throw new RuntimeException("Something went wrong!");
+        } catch (Exception e) {
+            ERROR_TRACKER.trackError(e);
+        }
+    }
+}
+```
+
+## Ignoring and Anonymizing Errors
+
+You can ignore specific error types or messages, and anonymize sensitive data in error messages:
+
+```java
+public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware()
+    .ignoreError(InvocationTargetException.class, "Expected .* but got .*")
+    .ignoreError(AccessDeniedException.class);
+
+public static final ErrorTracker MANUAL_ERROR_TRACKER = ErrorTracker.contextUnaware()
+    .anonymize("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$", "[email hidden]")
+    .anonymize("Bearer [A-Za-z0-9._~+/=-]+", "Bearer [token hidden]")
+    .anonymize("AKIA[0-9A-Z]{16}", "[aws-key hidden]")
+    .anonymize("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "[uuid hidden]")
+    .anonymize("([?&](?:api_?key|token|secret)=)[^&\\s]+", "$1[redacted]");
+
+private final BukkitContext context = new BukkitContext.Factory(plugin, "YOUR_TOKEN")
+    .errorTrackerService(ERROR_TRACKER)
+    .create();
+
+{
+    context.errorTrackerService().orElseThrow().registerErrorTracker(MANUAL_ERROR_TRACKER);
+}
+```
+
+## Tracker Attributes
+
+Attributes stored on an error tracker are attached to reports submitted through
+that tracker. Use them for stable context such as environment or component.
+
+All enabled metrics are already added to the error context by default. This
+includes the standard runtime and platform details FastStats collects, such as
+Java version and plugin version. Add tracker attributes only for extra context
+that FastStats cannot infer automatically.
+
+```java
+public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+public static final ErrorTracker MANUAL_ERROR_TRACKER = ErrorTracker.contextUnaware();
+
+{
+    ERROR_TRACKER.getAttributes()
+        .put("environment", "production")
+        .put("component", "global-error-handler");
+
+    MANUAL_ERROR_TRACKER.getAttributes()
+        .put("component", "manual-error-handler");
+}
+```
+
+Attributes on the global/internal tracker are used for every error report,
+including reports submitted through additional registered trackers. Additional
+trackers can override global attributes with the same key.
+
+Attribute precedence is:
+
+1. Global tracker attributes
+2. Per-tracker attributes
+3. Per-error attributes
+
+## Per-Error Attributes and Options
+
+`trackError(...)` returns a tracked error, so you can add context that only
+applies to that specific report. Per-error attributes are useful for operation
+names, severity, retry state, player or request context, and other values that
+change per failure. They override both global and per-tracker attributes with
+the same key.
+
+```java
+import dev.faststats.Attributes;
+
+try {
+    throw new RuntimeException("Something went wrong!");
+} catch (Exception e) {
+    MANUAL_ERROR_TRACKER.trackError(e)
+        .attributes(Attributes.empty()
+            .put("operation", "manualTracking")
+            .put("severity", "warning")
+            .put("retryable", false))
+        .handled(false);
+}
+```
+
+Use `.handled(false)` when the error was not recovered from properly and should
+be treated as unhandled. Errors tracked manually are handled by default unless
+you override that option.

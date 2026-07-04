@@ -1,0 +1,37 @@
+---
+title: NeoForge
+description: Integrate FastStats with NeoForge mods
+icon: Hammer
+---
+
+Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 25+.
+
+<Callout type="info">
+	The NeoForge SDK currently only supports Minecraft version 26.1.2.
+	Multi-version support will be added soon.
+</Callout>
+
+**Artifact:** `dev.faststats.metrics:neoforge`
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.neoforge.NeoForgeContext;
+import net.neoforged.fml.common.Mod;
+
+@Mod("example_mod")
+public class ExampleMod {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final NeoForgeContext context = new NeoForgeContext.Factory("example_mod", "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .metrics(Metrics.Factory::create)
+        .create();
+}
+```
+
+Pass your mod ID, as defined in `neoforge.mods.toml`, to `NeoForgeContext.Factory`.
+
+See [Error Tracking](/java/error-tracking) for configuring error reporting.
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/neoforge/example-mod/src/main/java/com/example/ExampleMod.java)
