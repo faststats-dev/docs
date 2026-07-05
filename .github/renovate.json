@@ -3,7 +3,7 @@
 	"extends": [
 		"config:recommended",
 		"security:minimumReleaseAgeNpm",
-		"disableDependencyDashboard"
+		":disableDependencyDashboard"
 	],
 	"minimumReleaseAge": "1 day",
 	"packageRules": [
