@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
 		<html lang="en" suppressHydrationWarning>
 			<body className="bg-background text-foreground flex min-h-screen flex-col font-sans antialiased">
 				<Analytics
-					siteKey="b68a45b56dfa5b93cba758c07d64a707"
+					siteKey={process.env.NEXT_PUBLIC_FASTSTATS_SITE_KEY!}
 					webVitals={{ enabled: true }}
 					sessionReplays={{ enabled: true }}
 					errorTracking={{ enabled: true }}
