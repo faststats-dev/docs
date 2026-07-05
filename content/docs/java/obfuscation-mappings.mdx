@@ -13,22 +13,18 @@ The recommended workflow is the `dev.faststats.proguard-mappings-upload` Gradle 
 
 <Tabs defaultIndex='0' groupId="gradle" items={['Kotlin DSL', 'Groovy DSL']}>
     <Tab id="kotlin" value="Kotlin DSL">
-
-        ```kotlin
-        plugins {
+      ```kotlin
+      plugins {
         id("dev.faststats.proguard-mappings-upload") version "0.1.0"
-    }
-        ```
-
+      }
+      ```
     </Tab>
     <Tab id="groovy" value="Groovy DSL">
-
-        ```groovy
-        plugins {
+      ```groovy
+      plugins {
         id 'dev.faststats.proguard-mappings-upload' version '0.1.0'
-    }
-        ```
-
+      }
+      ```
     </Tab>
 
 </Tabs>
@@ -42,7 +38,7 @@ No additional configuration is needed beyond the auth token:
 
 ```kotlin
 mappingsUpload {
-    authToken.set("your-auth-token")
+  authToken.set("your-auth-token")
 }
 ```
 
@@ -52,9 +48,9 @@ If you're using a standalone ProGuard task, point the plugin to your mapping fil
 
 ```kotlin
 mappingsUpload {
-    authToken.set("your-auth-token")
-    proguardTask.set(tasks.getByName("proguard"))
-    mappingFiles.from(layout.buildDirectory.file("proguard/mapping.txt"))
+  authToken.set("your-auth-token")
+  proguardTask.set(tasks.getByName("proguard"))
+  mappingFiles.from(layout.buildDirectory.file("proguard/mapping.txt"))
 }
 ```
 

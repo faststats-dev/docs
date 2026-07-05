@@ -53,13 +53,30 @@ Choose the artifact for your platform:
 | -------------------------- | ----------------------------------------- | ------------- |
 | Bukkit/Spigot/Paper/Folia… | [`bukkit`](/java/platform/bukkit)         | 17+           |
 | BungeeCord                 | [`bungeecord`](/java/platform/bungeecord) | 17+           |
-| Fabric                     | [`fabric`](/java/platform/fabric)         | 25+           |
+| Fabric                     | [`fabric`](/java/platform/fabric)         | 21+           |
 | Hytale                     | [`hytale`](/java/platform/hytale)         | 25+           |
 | Minestom                   | [`minestom`](/java/platform/minestom)     | 25+           |
-| NeoForge                   | [`neoforge`](/java/platform/neoforge)     | 25+           |
+| NeoForge                   | [`neoforge`](/java/platform/neoforge)     | 21+           |
 | Nukkit                     | [`nukkit`](/java/platform/nukkit)         | 17+           |
 | Sponge                     | [`sponge`](/java/platform/sponge)         | 17+           |
 | Velocity                   | [`velocity`](/java/platform/velocity)     | 21+           |
+
+Fabric and NeoForge artifacts include the SDK version and the Minecraft version range you want to target:
+
+```kts
+implementation("dev.faststats.metrics:fabric:0.27.2+mc26.1-26.3")
+implementation("dev.faststats.metrics:neoforge:0.27.2+mc26.1-26.2")
+```
+
+The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
+the FastStats SDK version and `{from}-{to}` is the supported Minecraft version
+range for that artifact.
+
+You can find the available versions in the Maven repository:
+[Fabric](https://repo.faststats.dev/#/releases/dev/faststats/metrics/fabric/) and
+[NeoForge](https://repo.faststats.dev/#/releases/dev/faststats/metrics/neoforge/).
+
+All other platforms use the SDK version without a Minecraft version suffix.
 
 <Tabs
 	defaultIndex="1"
