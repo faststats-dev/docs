@@ -1,13 +1,9 @@
 ---
-const {
-	entry: { data },
-} = Astro.locals.starlightRoute;
 
-const isAPIDoc = data.type === "api-doc";
 ---
 
 <div class="content-panel">
-	<div class:list={["sl-container", isAPIDoc && "api-doc"]}><slot /></div>
+	<div class="sl-container"><slot /></div>
 </div>
 
 <style>
@@ -18,11 +14,9 @@ const isAPIDoc = data.type === "api-doc";
 		.content-panel + .content-panel {
 			border-top: 1px solid var(--sl-color-hairline);
 		}
-		.sl-container:not(.api-doc) {
+		.sl-container {
+			--sl-content-width: 100%;
 			max-width: var(--sl-content-width);
-		}
-		.sl-container.api-doc {
-			max-width: none;
 		}
 
 		.sl-container > :global(* + *) {

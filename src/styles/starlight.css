@@ -1,3 +1,6 @@
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
 /* Dark mode colors. */
 :root {
 	--sl-color-accent-low: oklch(0.47 0.157 37.304);
@@ -19,7 +22,8 @@
 
 	--sl-custom-code-color: var(--sl-color-gray-5);
 
-	/* --sl-font: "Onest Variable"; */
+	--sl-font: "Geist Variable";
+	--sl-font-mono: "Geist Mono Variable";
 }
 
 /* Light mode colors. */
@@ -55,6 +59,12 @@
 
 .card {
 	border-radius: 8px;
+}
+
+.sidebar-content,
+.site-title span,
+.sl-container h1 {
+	font-family: var(--sl-font-mono);
 }
 
 div.expressive-code,

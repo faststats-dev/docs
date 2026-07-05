@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightSidebarTopicsPlugin from 'starlight-sidebar-topics';
 import { devServerFileWatcher } from './src/integrations/dev-file-watcher';
+import starlightCopyButton from 'starlight-copy-button';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi'
 
 // https://astro.build/config
 export default defineConfig({
@@ -49,6 +51,7 @@ export default defineConfig({
 
 			components: {
 				Sidebar: './src/components/starlight/Sidebar.astro',
+				ContentPanel: './src/components/starlight/ContentPanel.astro',
 			},
 
 			customCss: [
@@ -60,6 +63,33 @@ export default defineConfig({
 			},
 
 			plugins: [
+				starlightCopyButton({
+					label: "Copy Markdown",
+				}),
+				starlightOpenAPI([
+					{
+						base: "api",
+						sidebar: {
+							label: "API Reference",
+							operations: {
+								badges: true,
+								labels: 'summary',
+							}
+						},
+						snippets: {
+							operation: {
+								clients: {
+									shell: ['curl'],
+									javascript: ['fetch'],
+									go: ['nethttp'],
+									java: ['nethttp'],
+									csharp: ['httpclient']
+								},
+							}
+						},
+						schema: "https://api.faststats.dev/openapi.json",
+					}
+				]),
 				starlightSidebarTopicsPlugin([
 					{
 						label: 'Platform',
@@ -87,7 +117,7 @@ export default defineConfig({
 						id: 'api',
 						link: '/api/',
 						icon: 'open-book',
-						items: [{ autogenerate: { directory: 'api' } }],
+						items: openAPISidebarGroups,
 					},
 					{
 						label: 'Web Analytics',
@@ -100,7 +130,11 @@ export default defineConfig({
 							variant: 'tip'
 						}
 					}
-				])
+				], {
+					topics: {
+						api: ['/api/**/*']
+					}
+				})
 			]
 		}),
 	],
