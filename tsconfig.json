@@ -13,7 +13,6 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"jsx": "react-jsx",
-		"incremental": true,
 		"paths": {
 			"@/*": ["./src/*"],
 			"fumadocs-mdx:collections/*": ["./.source/*"]
