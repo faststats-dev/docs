@@ -1,6 +1,8 @@
 import type { StarlightUserConfig } from '@astrojs/starlight/types';
 
 export const baseStarlightOptions: StarlightUserConfig = {
+    credits: true, // Display the "Powered by Starlight" credits in the footer of the site
+
     title: 'FastStats Docs',
     description: 'Error tracking, session replays, web vitals, funnels, and retention in one platform — stop stitching five tools together. Free during closed beta.',
     tagline: 'Product Analytics That Makes Sense',
