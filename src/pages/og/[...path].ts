@@ -1,5 +1,4 @@
-import { allPages, pages } from "@/content";
-import type { CollectionEntry } from "astro:content";
+import { pages } from "@/content";
 import { OGImageRoute, type OGImageOptions } from 'astro-og-canvas';
 
 export const { getStaticPaths, GET } = await OGImageRoute({
