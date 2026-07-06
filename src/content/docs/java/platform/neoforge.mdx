@@ -3,6 +3,7 @@ title: NeoForge
 description: Integrate FastStats with NeoForge mods
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
 import { Aside } from '@astrojs/starlight/components';
 
 Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 25+.
@@ -14,7 +15,7 @@ Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 25
 
 **Artifact:** `dev.faststats.metrics:neoforge`
 
-```java
+```java title="ExampleMod.java"
 import dev.faststats.ErrorTracker;
 import dev.faststats.Metrics;
 import dev.faststats.neoforge.NeoForgeContext;
@@ -33,6 +34,10 @@ public class ExampleMod {
 
 Pass your mod ID, as defined in `neoforge.mods.toml`, to `NeoForgeContext.Factory`.
 
+<ReadMore>
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>
 
+<ReadMore>
 [View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/neoforge/example-mod/src/main/java/com/example/ExampleMod.java)
+</ReadMore>

@@ -3,6 +3,7 @@ title: Feature Flags
 description: Evaluate FastStats feature flags from Java projects
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution">
@@ -107,4 +108,6 @@ newCommands.optOut();
 Opt-in and opt-out invalidate the local value and fetch the current server value
 again.
 
-For platform concepts and dashboard setup, see [Feature Flags](/platform/feature-flags).
+<ReadMore>
+  For platform concepts and dashboard setup, see [Feature Flags](/platform/feature-flags).
+</ReadMore>

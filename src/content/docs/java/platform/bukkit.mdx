@@ -3,11 +3,13 @@ title: Bukkit
 description: Integrate FastStats with any Bukkit-based plugins
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Use `dev.faststats.bukkit.BukkitContext` for Bukkit-based server plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:bukkit`
 
-```java
+```java title="ExamplePlugin.java"
 import dev.faststats.ErrorTracker;
 import dev.faststats.Metrics;
 import dev.faststats.bukkit.BukkitContext;
@@ -33,6 +35,10 @@ public final class ExamplePlugin extends JavaPlugin {
 }
 ```
 
-Call `context.ready()` in `onEnable()` before using metrics or error tracking. On Paper-based servers, this also registers additional exception handlers. See [Error Tracking](/java/error-tracking) for configuring error reporting.
+<ReadMore>
+  Call `context.ready()` in `onEnable()` before using metrics or error tracking. On Paper-based servers, this also registers additional exception handlers. See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>
 
-[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/bukkit/example-plugin/src/main/java/com/example/ExamplePlugin.java)
+<ReadMore>
+  [View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/bukkit/example-plugin/src/main/java/com/example/ExamplePlugin.java)
+</ReadMore>

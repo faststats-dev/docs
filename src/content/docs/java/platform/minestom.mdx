@@ -3,11 +3,13 @@ title: Minestom
 description: Integrate FastStats with Minestom servers
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Use `dev.faststats.minestom.MinestomContext` for Minestom servers. Requires Java 25+.
 
 **Artifact:** `dev.faststats.metrics:minestom`
 
-```java
+```java title="ExampleServer.java"
 import dev.faststats.ErrorTracker;
 import dev.faststats.Metrics;
 import dev.faststats.minestom.MinestomContext;
@@ -30,4 +32,6 @@ public final class ExampleServer {
 }
 ```
 
+<ReadMore>
 Call `context.ready()` after `MinecraftServer.init()` before using metrics or error tracking. This also registers exception handlers. See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>

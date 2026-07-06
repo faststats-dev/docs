@@ -3,11 +3,13 @@ title: Sponge
 description: Integrate FastStats with Sponge plugins
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Use `dev.faststats.sponge.SpongeContext` for Sponge plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:sponge`
 
-```java
+```java title="ExamplePlugin.java"
 import com.google.inject.Inject;
 import dev.faststats.ErrorTracker;
 import dev.faststats.Metrics;
@@ -43,6 +45,10 @@ public class ExamplePlugin {
 }
 ```
 
+<ReadMore>
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>
 
+<ReadMore>
 [View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/sponge/example-plugin/src/main/java/com/example/ExamplePlugin.java)
+</ReadMore>

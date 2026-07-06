@@ -3,6 +3,8 @@ title: Configuration
 description: Advanced configuration options for FastStats Java SDK
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Configure FastStats by creating a platform context and attaching the services
 your project uses.
 
@@ -67,7 +69,9 @@ Metrics submission and error tracking start after `context.ready()` is called.
 Call `context.ready()` from the platform startup hook, and call
 `context.shutdown()` during shutdown.
 
-For error tracking configuration, see [Error Tracking](/java/error-tracking). For platform-specific setup, see the platform pages in the sidebar.
+<ReadMore>
+  For error tracking configuration, see [Error Tracking](/java/error-tracking). For platform-specific setup, see the platform pages in the sidebar.
+</ReadMore>
 
 ## Best Practices
 

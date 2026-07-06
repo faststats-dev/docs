@@ -3,11 +3,13 @@ title: Velocity
 description: Integrate FastStats with Velocity proxy plugins
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Use `dev.faststats.velocity.VelocityContext` for Velocity proxy plugins. Requires Java 21+.
 
 **Artifact:** `dev.faststats.metrics:velocity`
 
-```java
+```java title="ExamplePlugin.java"
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -44,6 +46,10 @@ public class ExamplePlugin {
 }
 ```
 
+<ReadMore>
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>
 
+<ReadMore>
 [View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/velocity/example-plugin/src/main/java/com/example/ExamplePlugin.java)
+</ReadMore>

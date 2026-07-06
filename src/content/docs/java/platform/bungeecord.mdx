@@ -3,11 +3,13 @@ title: BungeeCord
 description: Integrate FastStats with BungeeCord proxy plugins
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Use `dev.faststats.bungee.BungeeContext` for BungeeCord proxy plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:bungeecord`
 
-```java
+```java title="ExamplePlugin.java"
 import dev.faststats.ErrorTracker;
 import dev.faststats.Metrics;
 import dev.faststats.bungee.BungeeContext;
@@ -33,6 +35,10 @@ public class ExamplePlugin extends Plugin {
 }
 ```
 
-See [Error Tracking](/java/error-tracking) for configuring error reporting.
+<ReadMore>
+  See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>
 
-[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/bungeecord/example-plugin/src/main/java/com/example/ExamplePlugin.java)
+<ReadMore>
+  [View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/bungeecord/example-plugin/src/main/java/com/example/ExamplePlugin.java)
+</ReadMore>

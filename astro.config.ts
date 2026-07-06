@@ -13,6 +13,10 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     site: "https://docs.faststats.dev",
 
+    vite: {
+        plugins: [tailwindcss()],
+    },
+
     integrations: [
         react(),
         devServerFileWatcher([
@@ -193,8 +197,4 @@ export default defineConfig({
             ]
         })
     ],
-
-    vite: {
-        plugins: [tailwindcss()],
-    },
 });

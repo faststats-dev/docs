@@ -3,11 +3,13 @@ title: Nukkit
 description: Integrate FastStats with Nukkit plugins
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 Use `dev.faststats.nukkit.NukkitContext` for Nukkit plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:nukkit`
 
-```java
+```java title="ExamplePlugin.java"
 import cn.nukkit.plugin.PluginBase;
 import dev.faststats.ErrorTracker;
 import dev.faststats.Metrics;
@@ -38,4 +40,6 @@ public final class ExamplePlugin extends PluginBase {
 }
 ```
 
+<ReadMore>
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
+</ReadMore>
