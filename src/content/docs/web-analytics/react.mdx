@@ -3,6 +3,7 @@ title: React and Next.js
 description: Add FastStats Web Analytics to a React or Next.js app
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 The `@faststats/react` package wraps the browser SDK in a single component and a
@@ -75,7 +76,9 @@ turns on a few extra features.
 />
 ```
 
+<ReadMore>
 See [Configuration](/web-analytics/configuration) for the full list.
+</ReadMore>
 
 ## Track Custom Events
 
@@ -140,12 +143,16 @@ return (
 | `useOptOut`      | The `optOut` function                             |
 | `useFlag`        | A feature flag value with loading and error state |
 
+<ReadMore>
 Read more in [Events](/web-analytics/events),
 [Identify](/web-analytics/identify) and
 [Feature Flags](/web-analytics/feature-flags).
+</ReadMore>
 
 ## Server Side Routes
 
+<ReadMore>
 The React package only runs in the browser. If you also want to capture errors
 thrown in Next.js route handlers or server functions, read the server section in
 [Error Tracking](/web-analytics/error-tracking).
+</ReadMore>

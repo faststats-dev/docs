@@ -3,6 +3,8 @@ title: Configuration
 description: Every option you can pass to FastStats Web Analytics
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 All packages share the same set of options. In React you pass them as props on
 the `Analytics` component, in Nuxt you set them under the `faststats` key, and in
 plain JavaScript you pass them to the `WebAnalytics` constructor.
@@ -31,7 +33,9 @@ errorTracking: {
 | --------- | --------- | ------- | -------------------- |
 | `enabled` | `boolean` | `false` | Turns the tracker on |
 
+<ReadMore>
 Read more in [Error Tracking](/web-analytics/error-tracking).
+</ReadMore>
 
 ### Web Vitals
 
@@ -47,7 +51,9 @@ webVitals: {
 | `enabled`     | `boolean` | `false` | Turns the tracker on                       |
 | `attribution` | `boolean` | `false` | Adds debug attribution data to each metric |
 
+<ReadMore>
 Read more in [Web Vitals](/web-analytics/web-vitals).
+</ReadMore>
 
 ### Session Replays
 
@@ -69,8 +75,10 @@ replayOptions: {
 | `replayOptions.maxEvents`         | `number`  | `1000`   | Flush after this many buffered rrweb events              |
 | `replayOptions.maxBatchSizeBytes` | `number`  | `524288` | Flush after the buffered event payload reaches this size |
 
+<ReadMore>
 For masking and recording details see
 [Session Replay](/web-analytics/session-replay).
+</ReadMore>
 
 ### Consent
 
@@ -86,7 +94,9 @@ consent: {
 | `mode`            | `"pending" \| "granted" \| "denied"` | `"granted"`   | The current consent state                                           |
 | `pendingBehavior` | `"anonymous" \| "disabled"`          | `"anonymous"` | Cookieless tracking while consent is pending, or no tracking at all |
 
+<ReadMore>
 Read more in [Consent and Cookieless](/web-analytics/consent).
+</ReadMore>
 
 ## Manual Start
 

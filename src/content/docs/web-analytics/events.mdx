@@ -3,6 +3,7 @@ title: Events
 description: Automatic tracking and custom events
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 The SDK sends `pageview`, `page_leave`, and `outbound_link` events
@@ -24,8 +25,11 @@ spent on the page, the deepest scroll depth in percent and the session duration.
 
 Single page navigation is detected through the History API, so `pushState`,
 `replaceState` and the back and forward buttons all create new page views. Hash
-based routers need `trackHash` turned on. See
-[Configuration](/web-analytics/configuration).
+based routers need `trackHash` turned on. 
+
+<ReadMore>
+See [Configuration](/web-analytics/configuration).
+</ReadMore>
 
 ## Custom Events
 

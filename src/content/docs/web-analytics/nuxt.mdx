@@ -3,6 +3,8 @@ title: Nuxt
 description: Add FastStats Web Analytics to a Nuxt app
 ---
 
+import ReadMore from '@/components/ReadMore.astro';
+
 The `@faststats/nuxt` module sets up the browser SDK for you. It reads its
 configuration from your `nuxt.config`, starts tracking on the client and wires
 the SDK into the Vue error handler so unhandled component errors are reported.
@@ -29,8 +31,10 @@ export default defineNuxtConfig({
 });
 ```
 
+<ReadMore>
 The module accepts every option from the SDK. See
 [Configuration](/web-analytics/configuration) for the full list.
+</ReadMore>
 
 ## Use Environment Variables
 
@@ -90,4 +94,6 @@ export default defineNuxtConfig({
 });
 ```
 
+<ReadMore>
 The server plugin needs its own project token through `FASTSTATS_TOKEN`. Read the server section in [Error Tracking](/web-analytics/error-tracking) for the details.
+</ReadMore>
