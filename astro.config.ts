@@ -105,16 +105,23 @@ export default defineConfig({
                         link: '/platform/',
                         icon: 'puzzle',
                         items: [
-                            'platform',
-                            'platform/hotkeys',
-                            'platform/guide/embed',
-                            'platform/guide/badges',
+                            {
+                                label: 'Overview',
+                                items: [
+                                    'platform',
+                                    'platform/hotkeys',
+                                    'platform/error-tracking',
+                                    'platform/retention'
+                                ]
+                            },
+                            {
+                                label: 'Guides',
+                                items: [{ autogenerate: { directory: 'platform/guide' } }],
+                            },
                             {
                                 label: 'Chart Editor',
                                 items: [{ autogenerate: { directory: 'platform/chart-editor' } }],
-                            },
-                            'platform/error-tracking',
-                            'platform/retention'
+                            }
                         ],
                     },
                     {
@@ -129,7 +136,7 @@ export default defineConfig({
                         id: 'api',
                         link: '/api/',
                         icon: 'open-book',
-                        items: [{ autogenerate: { directory: 'api' } }, ...openAPISidebarGroups],
+                        items: openAPISidebarGroups,
                     },
                     {
                         label: 'Web Analytics',
