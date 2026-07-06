@@ -1,1 +1,5 @@
+## Adam's favorite tool... please don't mind this (Ensure's the current shell is using the right versions of node, and pnpm)
+## More info: https://moonrepo.dev/proto
+
 node = "22.20.0"
+pnpm = "11.10.0"
