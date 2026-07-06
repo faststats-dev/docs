@@ -136,7 +136,7 @@ export default defineConfig({
                             },
                             {
                                 label: 'Platforms',
-                                items: [{ autogenerate: { directory: 'java/platforms' } }],
+                                items: [{ autogenerate: { directory: 'java/platform' } }],
                             },
                             {
                                 label: 'Advanced',
