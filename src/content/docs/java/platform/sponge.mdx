@@ -1,0 +1,48 @@
+---
+title: Sponge
+description: Integrate FastStats with Sponge plugins
+---
+
+Use `dev.faststats.sponge.SpongeContext` for Sponge plugins. Requires Java 17+.
+
+**Artifact:** `dev.faststats.metrics:sponge`
+
+```java
+import com.google.inject.Inject;
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.sponge.SpongeContext;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.api.Server;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
+import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
+
+@Plugin("example")
+public class ExamplePlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+    private @Inject SpongeContext.Builder contextBuilder;
+
+    private @Nullable SpongeContext context = null;
+
+    @Listener
+    public void onServerStart(final StartedEngineEvent<Server> event) {
+        this.context = contextBuilder
+            .token("YOUR_TOKEN")
+            .errorTrackerService(ERROR_TRACKER)
+            .metrics(Metrics.Factory::create)
+            .create();
+        context.ready();
+    }
+
+    @Listener
+    public void onServerStop(final StoppingEngineEvent<Server> event) {
+        if (context != null) context.shutdown();
+    }
+}
+```
+
+See [Error Tracking](/java/error-tracking) for configuring error reporting.
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/sponge/example-plugin/src/main/java/com/example/ExamplePlugin.java)

@@ -1,0 +1,42 @@
+---
+title: Fabric
+description: Integrate FastStats with Fabric mods
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Use `dev.faststats.fabric.FabricContext` for Fabric mods. Requires Java 25+.
+
+<Aside type="note">
+	The Fabric SDK currently only supports Minecraft version 26.1.2. Multi-version
+	support will be added soon.
+</Aside>
+
+**Artifact:** `dev.faststats.metrics:fabric`
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.fabric.FabricContext;
+import net.fabricmc.api.ModInitializer;
+
+public class ExampleMod implements ModInitializer {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final FabricContext context = new FabricContext.Factory("example-mod", "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .metrics(Metrics.Factory::create)
+        .create();
+
+    @Override
+    public void onInitialize() {
+        // your actual logic
+    }
+}
+```
+
+Pass your mod ID, as defined in `fabric.mod.json`, to `FabricContext.Factory`.
+
+See [Error Tracking](/java/error-tracking) for configuring error reporting.
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/fabric/example-mod/src/main/java/com/example/ExampleMod.java)

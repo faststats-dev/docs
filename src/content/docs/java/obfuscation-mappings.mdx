@@ -1,0 +1,150 @@
+---
+title: Obfuscation Mappings
+description: Upload ProGuard/R8 obfuscation mapping files for stack traces deobfuscation.
+---
+
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+FastStats resolves obfuscated Java stack traces using uploaded ProGuard/R8 mapping files.
+The recommended workflow is the `dev.faststats.proguard-mappings-upload` Gradle plugin.
+
+## Installation
+
+<Tabs syncKey="gradle">
+  <TabItem label='Kotlin DSL' key='kotlin'>
+    ```kotlin title='build.gradle.kts'
+    plugins {
+        id("dev.faststats.proguard-mappings-upload") version "0.1.0"
+    }
+    ```
+  </TabItem>
+
+  <TabItem label='Groovy DSL' key='groovy'>
+    ```groovy title='build.gradle'
+    plugins {
+        id 'dev.faststats.proguard-mappings-upload' version '0.1.0'
+    }
+    ```
+  </TabItem>
+
+</Tabs>
+
+## Configuration
+
+### Android Projects
+
+The plugin automatically detects Android R8/ProGuard mapping file outputs when the Android Gradle Plugin is present.
+No additional configuration is needed beyond the auth token:
+
+```kotlin
+mappingsUpload {
+    authToken.set("your-auth-token")
+}
+```
+
+### Custom ProGuard Task
+
+If you're using a standalone ProGuard task, point the plugin to your mapping file and task:
+
+```kotlin
+mappingsUpload {
+    authToken.set("your-auth-token")
+    proguardTask.set(tasks.getByName("proguard"))
+    mappingFiles.from(layout.buildDirectory.file("proguard/mapping.txt"))
+}
+```
+
+Setting `proguardTask` ensures the upload task runs after ProGuard finishes. `mappingFiles` must match the location
+configured in your `printmapping` setting.
+
+<Aside type="note">
+	When `proguardTask` is set, running `./gradlew uploadProguardMappings` is
+	sufficient: the ProGuard task will run automatically as a dependency. Running
+	`./gradlew proguard uploadProguardMappings` would execute ProGuard twice.
+</Aside>
+
+## Upload Authentication
+
+Generate an API key in your FastStats project settings. The plugin accepts it via the `authToken` option
+or the `FASTSTATS_AUTH_TOKEN` environment variable.
+
+<Aside type="caution">
+	The upload auth token is a **secret** and must never be committed to version
+	control or exposed publicly. Always use environment variables or a secrets
+	manager to provide it, especially in CI pipelines.
+</Aside>
+
+## All Options
+
+| Option         | Description                                                                          |
+| -------------- | ------------------------------------------------------------------------------------ |
+| `authToken`    | Bearer token for upload authentication. Falls back to `FASTSTATS_AUTH_TOKEN` env var |
+| `endpoint`     | Upload API URL (default: `https://sourcemaps.faststats.dev/api/sourcemaps`)          |
+| `buildId`      | Explicit build ID (default: `project.version`)                                       |
+| `proguardTask` | Task that produces the mapping file (adds a `dependsOn`)                             |
+| `mappingFiles` | Mapping files to upload                                                              |
+
+## Usage
+
+Run the upload task directly:
+
+```bash
+./gradlew uploadProguardMappings
+```
+
+Or chain it after your obfuscation task:
+
+```bash
+./gradlew proguard uploadProguardMappings
+```
+
+## CI Configuration
+
+### GitHub Actions
+
+```yaml title='github-actions.yml'
+name: Build & Upload Mappings
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build & Upload
+        run: ./gradlew proguard uploadProguardMappings
+        env:
+          FASTSTATS_AUTH_TOKEN: ${{ secrets.FASTSTATS_AUTH_TOKEN }}
+```
+
+### GitLab CI
+
+```yaml title='gitlab-ci.yml'
+build:
+  stage: build
+  script:
+    - ./gradlew proguard uploadProguardMappings
+  variables:
+    FASTSTATS_AUTH_TOKEN: $FASTSTATS_AUTH_TOKEN
+```
+
+## How It Works
+
+1. The plugin collects mapping files added via `mappingFiles.from(...)`, or auto-detected Android build outputs.
+2. If `proguardTask` is set, the upload task automatically depends on it.
+3. `project.version` is used as the `buildId` by default.
+4. Each mapping file is split by class sections and uploaded in batches of up to 50 MB, ensuring no class mapping is split across batches.
+
+## Requirements
+
+- Gradle 7.0+
+- JDK 11+

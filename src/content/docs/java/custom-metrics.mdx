@@ -1,0 +1,146 @@
+---
+title: Custom Metrics
+description: Send custom values from your Java project
+---
+
+Custom metrics let you submit project-specific values alongside the built-in
+platform metrics. Each custom metric must match a data source configured in your
+FastStats project settings.
+
+## Add Metrics
+
+Attach custom metrics when you create the platform context:
+
+```java title='ExamplePlugin.java'
+import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.data.Metric;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+private final AtomicInteger arenaMatches = new AtomicInteger();
+
+private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    .metrics(factory -> factory
+        .addMetric(Metric.number("arena_matches", arenaMatches::get))
+        .addMetric(Metric.stringArray("used_hooks", () -> new String[]{"Vault", "PlaceholderAPI"}))
+        .onFlush(() -> arenaMatches.set(0))
+        .create())
+    .create();
+
+public void onEnable() {
+    context.ready();
+}
+```
+
+Metrics submission starts after `context.ready()` is called. Call
+`context.shutdown()` during your platform's shutdown hook.
+
+## Data Source IDs
+
+The first argument passed to `Metric.*` is the source ID. It must match the data
+source ID in your FastStats project.
+
+```java
+Metric.number("arena_matches", arenaMatches::get);
+```
+
+Source IDs must use lowercase letters and underscores only, for example
+`arena_matches`, `used_hooks`, or `active_ruleset`.
+
+## Supported Types
+
+Use the factory method that matches the data source type:
+
+| Method                              | Value type                      |
+| ----------------------------------- | ------------------------------- |
+| `Metric.number(id, supplier)`       | `Number`                        |
+| `Metric.string(id, supplier)`       | `String`                        |
+| `Metric.bool(id, supplier)`         | `Boolean`                       |
+| `Metric.numberArray(id, supplier)`  | `Number[]`                      |
+| `Metric.stringArray(id, supplier)`  | `String[]`                      |
+| `Metric.booleanArray(id, supplier)` | `Boolean[]`                     |
+| `Metric.numberMap(id, supplier)`    | `Map<String, ? extends Number>` |
+| `Metric.stringMap(id, supplier)`    | `Map<String, String>`           |
+| `Metric.booleanMap(id, supplier)`   | `Map<String, Boolean>`          |
+
+```java
+Metric.number("active_arenas", () -> 4);
+Metric.string("active_ruleset", () -> "ranked_duels");
+Metric.bool("ranked_mode", () -> true);
+
+Metric.stringArray("used_hooks", () -> new String[]{"Vault", "PlaceholderAPI"});
+Metric.numberArray("match_durations", () -> new Number[]{310, 428, 275});
+Metric.booleanArray("enabled_features", () -> new Boolean[]{true, false});
+```
+
+Map metrics are useful when the set of keys is dynamic:
+
+```java
+Metric.numberMap("hook_usage", () -> Map.of(
+    "vault", 12,
+    "placeholderapi", 4,
+    "luckperms", 9
+));
+```
+
+## Supplier Behavior
+
+Metric suppliers are called by the SDK during submission. Keep them:
+
+- lightweight
+- thread-safe
+- side-effect free
+- resilient to missing or temporarily unavailable platform state
+
+Return `null` from a supplier when a value should be skipped for that
+submission.
+
+```java
+Metric.string("active_event", () -> currentEvent != null ? currentEvent.id() : null);
+```
+
+If a value is expensive to compute, update a cached value from your own platform
+events and read the cached value from the metric supplier.
+
+```java
+private volatile int cachedQueueDepth = 0;
+
+public void updateQueueDepth() {
+    cachedQueueDepth = matchmakingQueue.size();
+}
+
+Metric.number("queue_depth", () -> cachedQueueDepth);
+```
+
+## Flush Callback
+
+Use `onFlush` to clear counters after FastStats accepts a metrics submission.
+
+```java
+private final AtomicInteger arenaMatches = new AtomicInteger();
+
+.metrics(factory -> factory
+    .addMetric(Metric.number("arena_matches", arenaMatches::get))
+    .onFlush(() -> arenaMatches.set(0))
+    .create())
+```
+
+Do not reset counters inside the metric supplier itself. Suppliers may be called
+without a successful submission.
+
+## Built-In Metrics Only
+
+If you do not need custom metrics, create the metrics service without adding any
+metrics:
+
+```java title='ExamplePlugin.java'
+import dev.faststats.Metrics;
+
+private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    .metrics(Metrics.Factory::create)
+    .create();
+
+public void onEnable() {
+    context.ready();
+}
+```

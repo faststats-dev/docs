@@ -132,7 +132,14 @@ export default defineConfig({
                         items: [
                             {
                                 label: 'Configuration',
-                                items: []
+                                items: [
+                                    'java',
+                                    'java/migration',
+                                    'java/configuration',
+                                    'java/custom-metrics',
+                                    'java/error-tracking',
+                                    'java/feature-flags',
+                                ]
                             },
                             {
                                 label: 'Platforms',
@@ -140,7 +147,10 @@ export default defineConfig({
                             },
                             {
                                 label: 'Advanced',
-                                items: []
+                                items: [
+                                    'java/obfuscation-mappings',
+                                    'java/system-properties',
+                                ]
                             }
                         ],
                     },

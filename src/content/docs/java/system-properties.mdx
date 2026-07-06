@@ -1,0 +1,53 @@
+---
+title: System Properties
+description: Configure FastStats using system properties
+---
+
+System properties provide runtime control over FastStats behavior.  
+These flags only affect the current running server session/instance and are not persisted.
+
+## `faststats.debug`
+
+Enable debug logging for all FastStats projects.
+
+**Usage:**
+
+```bash
+java -Dfaststats.debug=true -jar server.jar
+```
+
+**Values:**
+
+- `true` - Enable debug logging
+- `false` - Disable debug logging
+
+## `faststats.enabled`
+
+Enable or disable FastStats data transmission globally.
+
+**Usage:**
+
+```bash
+java -Dfaststats.enabled=false -jar server.jar
+```
+
+**Values:**
+
+- `true` - Enable data transmission
+- `false` - Disable data transmission
+
+## `faststats.initial-delay`
+
+Configure the initial delay before FastStats starts collecting metrics.
+
+_This flag is meant to be used during development to delay or speed up the start of metric collection._
+
+**Usage:**
+
+```bash
+java -Dfaststats.initial-delay=5 -jar server.jar
+```
+
+**Values:**
+
+- Time in seconds (default: `30`)

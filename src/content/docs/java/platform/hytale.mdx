@@ -1,0 +1,44 @@
+---
+title: Hytale
+description: Integrate FastStats with Hytale server plugins
+---
+
+Use `dev.faststats.hytale.HytaleContext` for Hytale server plugins. Requires Java 25+.
+
+**Artifact:** `dev.faststats.metrics:hytale`
+
+```java
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.hytale.HytaleContext;
+
+public class ExamplePlugin extends JavaPlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final HytaleContext context = new HytaleContext.Factory(this, "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .metrics(Metrics.Factory::create)
+        .create();
+
+    public ExamplePlugin(final JavaPluginInit init) {
+        super(init);
+        context.ready();
+    }
+
+    @Override
+    protected void setup() {
+        context.ready();
+    }
+
+    @Override
+    protected void shutdown() {
+        context.shutdown();
+    }
+}
+```
+
+See [Error Tracking](/java/error-tracking) for configuring error reporting.
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java/blob/main/hytale/example-plugin/src/main/java/com/example/ExamplePlugin.java)
