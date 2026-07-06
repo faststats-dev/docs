@@ -129,7 +129,20 @@ export default defineConfig({
                         id: 'java',
                         link: '/java/',
                         icon: 'seti:java',
-                        items: [{ autogenerate: { directory: 'java' } }],
+                        items: [
+                            {
+                                label: 'Configuration',
+                                items: []
+                            },
+                            {
+                                label: 'Platforms',
+                                items: [{ autogenerate: { directory: 'java/platforms' } }],
+                            },
+                            {
+                                label: 'Advanced',
+                                items: []
+                            }
+                        ],
                     },
                     {
                         label: 'Rest API',
@@ -143,11 +156,24 @@ export default defineConfig({
                         id: 'web-analytics',
                         link: '/web-analytics/',
                         icon: 'analytics',
-                        items: [{ autogenerate: { directory: 'web-analytics' } }],
                         badge: {
                             text: "Coming Soon",
                             variant: 'tip'
-                        }
+                        },
+                        items: [
+                            {
+                                label: 'Getting Started',
+                                items: []
+                            },
+                            {
+                                label: 'Usage',
+                                items: []
+                            },
+                            {
+                                label: 'Features',
+                                items: []
+                            }
+                        ]
                     }
                 ], {
                     topics: {
