@@ -1,0 +1,269 @@
+---
+title: Flow Nodes
+description: All available nodes for building data pipelines in the flow editor
+icon: Workflow
+---
+
+import {
+	DatasourceNodePreview,
+	FilterNodePreview,
+	AggregateNodePreview,
+	GroupNodePreview,
+	TimeGroupNodePreview,
+	TextTransformNodePreview,
+	FormulaNodePreview,
+	LimitNodePreview,
+	MaxAgeNodePreview,
+	MinAgeNodePreview,
+	ResultNodePreview,
+} from "@/components/docs/node-preview";
+
+import NodeDocCard from "@/components/NodeDocCard.astro";
+
+The Flow Editor lets you build chart queries by connecting nodes in a pipeline. Drag nodes onto the canvas, configure them, and wire them together. Data flows from top to bottom, starting at a **Data Source**, passing through transformations, and ending at an **Output**.
+
+## Getting started
+
+1. Add a **Data Source** node to choose which adapter and field to read from
+2. Connect transformation nodes like **Filter**, **Group By**, or **Aggregate** to shape the data
+3. Finish with an **Output** node to produce the chart result
+
+Each node has handles on its top and/or bottom edge. Connect the bottom handle of one node to the top handle of the next to build the pipeline. The colored badge on each node shows its category. Sources, filters, aggregates, groupings, transforms, time operations, and outputs each have their own color.
+
+## Nodes
+
+### Data Source
+
+<NodeDocCard
+	body="The starting point of every pipeline. Choose which dataset to read from and which field to pull out of it."
+	list={[
+		{ label: "Adapter", description: "the data provider or dataset (for example, Events or Sessions). This determines which fields you can pick below." },
+		{ label: "Field", description: "the metric or property to read from the selected adapter." },
+		{ label: "Dedupe", description: "when checked, counts only the latest row per identity (where the data source supports it). Useful for unique-visitor style queries." }
+	]}
+>
+	<DatasourceNodePreview />
+</NodeDocCard>
+
+---
+
+### Filter
+
+<NodeDocCard
+	body="Keeps rows that match a condition and drops the rest. Pick a field, an operator, and a comparison value. Only matching rows continue down the pipeline."
+	list={[
+		{ label: "Field", description: "which upstream field to compare." },
+		{ label: "Operator", description: "how to compare. Available options: equals, not equals, contains, matches regex, does not match regex, greater than, less than, greater or equal, less or equal." },
+		{ label: "Value", description: "what to compare against. Becomes a true/false dropdown when filtering a boolean field." },
+		{ label: "Map target", description: "only shown for map fields. Choose whether to filter on the map's keys or its values." }
+	]}
+>
+	<FilterNodePreview />
+</NodeDocCard>
+
+---
+
+### Aggregate
+
+<NodeDocCard
+	body="Reduces multiple rows into one computed value per group. Usually placed after a <strong>Group By</strong> or <strong>Time Group</strong> node."
+	list={[
+		{ 
+			label: "Function", 
+			description: "how values inside each group are combined:",
+			children: [
+				{ label: "count", description: "number of rows in the group" },
+				{ label: "sum", description: "adds numeric values" },
+				{ label: "avg", description: "average of numeric values" },
+				{ label: "min", description: "smallest numeric value" },
+				{ label: "max", description: "largest numeric value" },
+				{ label: "distinct", description: "count of unique values" }
+			]
+		}
+	]}
+>
+	<AggregateNodePreview />
+</NodeDocCard>
+
+---
+
+### Group By
+
+<NodeDocCard
+	body="Groups rows by one or more categorical fields. Usually paired with an <strong>Aggregate</strong> node to compute per-group metrics (for example, page views grouped by browser)."
+	list={[
+		{ 
+			label: "Fields", 
+			description: "the grouping dimensions. Rows that share the same values across these fields end up in the same group. Add as many as you need." 
+		},
+		{ 
+			label: "Multi-field mode", 
+			description: "only shown when more than one field is selected.",
+			children: [
+				{ label: "combined", description: "joins field values into a single composite key (for example, Chrome / Germany as one group)." },
+				{ label: "flat", description: "keeps each field as its own dimension so the chart can break down by either axis." }
+			]
+		}
+	]}
+>
+	<GroupNodePreview />
+</NodeDocCard>
+
+---
+
+### Time Group
+
+<NodeDocCard
+	body="Groups rows into time-based buckets. This is the foundation of every time-series chart."
+	list={[
+		{ 
+			label: "Bucket size", 
+			description: "the interval each row rolls into: Auto, Minute, Hour, Day, Week, Month. Auto picks a sensible size based on the chart's time range." 
+		},
+		{ 
+			label: "Missing buckets", 
+			description: "what to do when a time period has no data:",
+			children: [
+				{ label: "Zero", description: "insert a zero value so the line stays continuous." },
+				{ label: "None", description: "leave the gap empty and the series breaks." }
+			]
+		},
+		{ 
+			label: "Cumulative", 
+			description: "carry each bucket's value into every later bucket. Use this for running totals, such as total users or downloads so far." 
+		}
+	]}
+>
+	<TimeGroupNodePreview />
+</NodeDocCard>
+
+---
+
+### Text Transform
+
+<NodeDocCard
+	body="Rewrites string values before they are grouped, filtered, or displayed. Useful for normalizing inconsistent text (for example, casing) or extracting derived labels."
+	list={[
+		{ 
+			label: "Operation", 
+			description: "which transformation to apply:",
+			children: [
+				{ label: "lowercase / uppercase / title case", description: "change casing" },
+				{ label: "trim", description: "strip leading and trailing whitespace" },
+				{ label: "append", description: "add a fixed string to the end of each value" },
+				{ label: "replace text", description: "find an exact string and replace it" },
+				{ label: "replace regex", description: "match a regular expression and substitute (use \\1, \\2, and so on for capture groups)" },
+				{ label: "length", description: "replace each value with its character count" }
+			]
+		},
+		{ 
+			label: "Text to append", 
+			description: "only for append. The string added to every value." 
+		},
+		{ 
+			label: "Find / Pattern and Replace with", 
+			description: "only for replace text and replace regex. Leave the replacement empty to delete matches." 
+		}
+	]}
+>
+	<TextTransformNodePreview />
+</NodeDocCard>
+
+---
+
+### Formula
+
+<NodeDocCard
+	body="Computes a derived numeric value from a custom expression. Each input connection to the Formula node gets a letter (A, B, C, and so on) in the order it was connected. Use those letters as variables in the expression."
+	list={[
+		{ 
+			label: "Expression", 
+			description: "the formula to evaluate, for example A + B, A / B * 100, or (A + B) / C." 
+		},
+		{ 
+			label: "Output name", 
+			description: "name of the resulting field. Downstream nodes and the chart legend use this label." 
+		},
+		{ 
+			label: "Precision", 
+			description: "number of decimal places to round the result to. Leave empty to keep full precision." 
+		}
+	]}>
+	<FormulaNodePreview />
+</NodeDocCard>
+
+---
+
+### Limit
+
+<NodeDocCard
+	body="Caps the number of rows that flow through. Most useful after a <strong>Group By</strong> when you only want the top N groups in a chart."
+	list={[
+		{ 
+			label: "Max rows", 
+			description: "the maximum number of rows to keep." 
+		},
+		{ 
+			label: "Group rows over limit as Other", 
+			description: "instead of dropping rows beyond the limit, fold them into a single <code>Other</code> bucket so totals still match." 
+		}
+	]}>
+	<LimitNodePreview />
+</NodeDocCard>
+
+---
+
+### Max Age
+
+<NodeDocCard
+	body="Limits the pipeline to events within a rolling window relative to now. Combine with <strong>Min Age</strong> to look at a slice between two points in the past."
+	list={[
+		{ 
+			label: "Look back at most", 
+			description: "the size of the window. Pick a number and a unit: <code>ms</code>, <code>seconds</code>, <code>minutes</code>, <code>hours</code>, <code>days</code>." 
+		}
+	]}>
+	<MaxAgeNodePreview />
+</NodeDocCard>
+
+---
+
+### Min Age
+
+<NodeDocCard
+	body="Drops events that are too recent. Useful for excluding the live tail of data that has not fully settled yet, or for comparing past periods."
+	list={[
+		{ 
+			label: "Exclude newer than", 
+			description: "events within this window before the current time are removed. Uses the same units as <strong>Max Age</strong>." 
+		}
+	]}>
+	<MinAgeNodePreview />
+</NodeDocCard>
+
+---
+
+### Output
+
+<NodeDocCard
+	body="The final node in every pipeline. This is what produces the chart result. See <a href='/platform/chart-editor/output-nodes'>Output & Multi-Series</a> for how multiple Output nodes combine into tabs, multi-line charts, or stacked bars."
+	list={[
+		{ 
+			label: "Output name (or Tab name on list charts)", 
+			description: "label shown in the chart legend or as the tab header." 
+		},
+		{ 
+			label: "Icon set", 
+			description: "only on list charts. Optional icons shown next to each row." 
+		},
+		{ 
+			label: "Nest by", 
+			description: "only on list and pie charts. Splits each row into a nested hierarchy, either by another data field or by a custom delimiter." 
+		},
+		{ 
+			label: "Delimiter", 
+			description: "only when nesting by a custom pattern. The character or string used to split values (for example, <code>/</code> to split a URL path)." 
+		}
+	]}>
+	<ResultNodePreview />
+</NodeDocCard>

@@ -1,0 +1,140 @@
+@layer base, starlight, theme, components, utilities;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Dark mode colors. */
+:root {
+    --sl-color-accent-low: oklch(0.47 0.157 37.304);
+    --sl-color-accent: oklch(0.646 0.222 41.116);
+    --sl-color-accent-high: oklch(0.837 0.128 66.29);
+    --sl-color-accent-bleached: rgba(205, 185, 248, 0.1);
+    --sl-color-white: #ffffff;
+    --sl-color-gray-1: #d1d1d1;
+    --sl-color-gray-2: #b4b4b4;
+    --sl-color-gray-3: #969696;
+    --sl-color-gray-4: #4d4d4d;
+    --sl-color-gray-5: #383838;
+    --sl-color-gray-6: #191919;
+    --sl-color-black: #0f0f0f;
+
+    --landing-card-2nd-accent-low: oklch(0.47 0.157 37.304);
+    --landing-card-2nd-accent: oklch(0.646 0.222 41.116);
+    --landing-card-2nd-accent-high: oklch(0.837 0.128 66.29);
+
+    --sl-custom-code-color: var(--sl-color-gray-5);
+
+    --sl-font: "Geist Variable";
+    --sl-font-mono: "Geist Mono Variable";
+}
+
+/* Light mode colors. */
+:root[data-theme="light"] {
+    --sl-color-accent-low: oklch(0.837 0.128 66.29);
+    --sl-color-accent: oklch(0.646 0.222 41.116);
+    --sl-color-accent-high: oklch(0.553 0.195 38.402);
+    --sl-color-accent-bleached: rgba(15, 15, 15, 0.1);
+    --sl-color-white: #1f1f1f;
+    --sl-color-gray-1: #202020;
+    --sl-color-gray-2: #383838;
+    --sl-color-gray-3: #5c5c5c;
+    --sl-color-gray-4: #838383;
+    --sl-color-gray-5: #afafaf;
+    --sl-color-gray-6: #cecece;
+    --sl-color-gray-7: #f8f4fe;
+    --sl-color-black: #ffffff;
+
+    --landing-card-2nd-accent-low: oklch(0.646 0.222 41.116);
+    --landing-card-2nd-accent: oklch(0.837 0.128 66.29);
+    --landing-card-2nd-high: oklch(0.98 0 0);
+
+    --sl-custom-code-color: var(--sl-color-gray-6);
+}
+
+.sl-link-button:first-of-type:not(.discord-button) svg {
+    transition: transform .15s ease !important;
+}
+
+.sl-link-button:first-of-type:hover:not(.discord-button)>svg {
+    transform: translateX(5px);
+}
+
+.card {
+    border-radius: 8px;
+}
+
+.sidebar-content,
+.site-title span,
+.sl-container h1 {
+    font-family: var(--sl-font-mono);
+}
+
+.justify-center {
+    display: flex;
+    justify-content: center;
+}
+
+.py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+div.expressive-code,
+starlight-file-tree {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+starlight-file-tree {
+    border: 1px solid var(--ec-brdCol);
+}
+
+aside.starlight-aside {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+@media (max-width: 50rem) {
+    .hero>img {
+        width: min(50%, 16rem);
+    }
+}
+
+main[data-pagefind-body] {
+    overflow: hidden !important;
+}
+
+#starlight__sidebar [aria-current="page"] span {
+    color: black !important;
+}
+
+[data-theme="light"] #starlight__sidebar [aria-current="page"] span {
+    color: white !important;
+}
+
+button[aria-label="Menu"][aria-controls="starlight__sidebar"] {
+    background-color: var(--sl-color-white);
+    padding: 0.5rem;
+}
+
+[data-theme="light"] button[aria-label="Menu"][aria-controls="starlight__sidebar"] {
+    background-color: var(--sl-color-black);
+    padding: 0.5rem;
+}
+
+.card-grid {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+.expressive-code figcaption,
+.expressive-code figcaption::before,
+.expressive-code pre,
+.expressive-code span.title {
+    border: none !important;
+}

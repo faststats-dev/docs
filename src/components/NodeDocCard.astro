@@ -1,0 +1,73 @@
+---
+interface Props {
+    body: string;
+    list: Array<{
+        label: string;
+        description: string;
+        children?: Array<{
+            label: string;
+            description: string;
+        }>;
+    }>;
+}
+
+const { body, list } = Astro.props;
+---
+
+<div class="node-row not-content">
+    <div class="node-body">
+        <p>
+            {body}
+        </p>
+        <ul class="node-list">
+            {
+                list.map((item) => (
+                    <li>
+                        <strong>{item.label}</strong>: {item.description}
+                        {item.children && (
+                            <ul class="node-list">
+                                {item.children.map((child) => (
+                                    <li>
+                                        <strong>{child.label}</strong>:{" "}
+                                        {child.description}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+    <div><slot /></div>
+</div>
+
+<style>
+    .node-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .node-body {
+        flex: 1 1 0%;
+        min-width: 0;
+    }
+
+    .node-body > * + * {
+        margin-top: 0.75rem;
+    }
+
+    .node-list {
+        list-style-type: disc;
+        padding-left: 1.25rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    .node-list > li + li {
+        margin-top: 0.25rem;
+    }
+</style>
