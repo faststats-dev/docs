@@ -10,6 +10,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { sidebarConfig, sidebarTopicsExtras } from './starlight.sidebar';
 import { baseStarlightOptions } from './starlight.config';
 import { openAPIConfig } from './openapi.config';
+import starlightLlmsTxt from 'starlight-llms-txt'
 
 const site = process.env.NODE_ENV === 'production' ? 'https://docs.faststats.dev' : 'http://localhost:4321';
 
@@ -31,6 +32,7 @@ export default defineConfig({
         starlight({
             ...baseStarlightOptions,
             plugins: [
+                starlightLlmsTxt(),
                 starlightCopyButton({
                     label: "Copy Markdown",
                 }),
