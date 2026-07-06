@@ -32,7 +32,9 @@ export default defineConfig({
         starlight({
             ...baseStarlightOptions,
             plugins: [
-                starlightLlmsTxt(),
+                starlightLlmsTxt({
+                    projectName: "FastStats",
+                }),
                 starlightCopyButton({
                     label: "Copy Markdown",
                 }),
