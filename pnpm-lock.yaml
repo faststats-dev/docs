@@ -17,6 +17,9 @@ importers:
       '@astrojs/starlight-tailwind':
         specifier: ^5.0.0
         version: 5.0.0(@astrojs/starlight@0.41.3(@astrojs/markdown-remark@7.2.1)(astro@7.0.6(@astrojs/markdown-remark@7.2.1)(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.0)(jiti@2.7.0))(typescript@6.0.3))(tailwindcss@4.3.2)
+      '@faststats/react':
+        specifier: ^0.5.0
+        version: 0.5.0(@rrweb/utils@2.1.0)(react@19.2.7)(rrweb@2.1.0)
       '@fontsource-variable/geist':
         specifier: ^5.2.9
         version: 5.2.9
@@ -532,6 +535,14 @@ packages:
   '@expressive-code/plugin-text-markers@0.44.0':
     resolution: {integrity: sha512-0/m3A5b+lz2upyNq+wzZ1S69HRoJmyFs5LsR42lVZ9pmGRlBiSBYQpvqlji4DBj1+Riamxc0AvcCr5kuzOQeWA==}
 
+  '@faststats/react@0.5.0':
+    resolution: {integrity: sha512-utETA4H+RAw2TaB/4chcrj2j2Ptw0pNt2QyxocrfnryNHaJKia+HkRTNnNN7+v5IEnC30PcxL/LBtUILcQwq6A==}
+    peerDependencies:
+      react: '>=18'
+
+  '@faststats/web@0.5.0':
+    resolution: {integrity: sha512-p9+JqCMJAHyElC9mR3VnQwSYwzMYmtZZjg/3r5NdG9CRr2R8Fmvdt7fJR+MdacxYkVPrrRIbeNZlRJxALy+rWg==}
+
   '@fontsource-variable/geist-mono@5.2.8':
     resolution: {integrity: sha512-KI5bj+hkkRiHttYHmccotUZ80ZuZyai+RwI1d7UId0clkx/jXxlo8qYK8j54WzmpBjtMoEMPyllV7faDcj+6RA==}
 
@@ -893,6 +904,26 @@ packages:
       rollup:
         optional: true
 
+  '@rrweb/record@2.1.0':
+    resolution: {integrity: sha512-jnbpYQED6QdKn1MuEoqJyILkYhuWDhb3kzA/l1i+Di5sfP7apf3HvrlVIMoyZgATMlk2if65BUUrc5R+vabCjQ==}
+
+  '@rrweb/rrweb-plugin-console-record@2.1.0':
+    resolution: {integrity: sha512-pwzkwkE++pyg7TqSdkBkV7g+Rhi2IkVflNCzOagCguUyyz0KhRRjJyjJ1gZe313tNh42I8wVEMsOaU9lcQdAvA==}
+    peerDependencies:
+      '@rrweb/utils': ^2.0.1
+      rrweb: ^2.0.1
+
+  '@rrweb/rrweb-plugin-sequential-id-record@2.1.0':
+    resolution: {integrity: sha512-TTsqWzfOxqKFAXEZBGvAhfJ7uBv7OJkjij7BedI9/Xo8spOJJ8Wy22FseuqMXD6PBH87mLwGeTEhnSPetrxsjg==}
+    peerDependencies:
+      rrweb: ^2.0.1
+
+  '@rrweb/types@2.1.0':
+    resolution: {integrity: sha512-svOHkcuukP6rIjz2umwVsS7uYct+2h0N97+bg+8IJYKIUj5+YjwIvqx5y9NILFKPIu3yk+Mb+KDFfJ8RV+4JlA==}
+
+  '@rrweb/utils@2.1.0':
+    resolution: {integrity: sha512-hU7MT3TSdD+Do7FmMoHrBfPevFCheN5vo2mn97Y4vbXuwemopAmo8dqo5KJeMaA6oQQt7FinHJ0Xqb7k68Ci6Q==}
+
   '@shikijs/colorized-brackets@4.3.1':
     resolution: {integrity: sha512-hyp9iRV7iEnU/sT1DL3eLevY0wOwIeFMp6ss8U8FfWdwT5LLhv4sO5Xt6r0dD3eteeswDngBiuEv6nQzQEwv2w==}
     engines: {node: '>=20'}
@@ -1037,6 +1068,9 @@ packages:
   '@types/babel__traverse@7.28.0':
     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
 
+  '@types/css-font-loading-module@0.0.7':
+    resolution: {integrity: sha512-nl09VhutdjINdWyXxHWN/w9zlNCfr60JUqJbd24YXUuCwgeL0TpFSdElCwb6cxfB6ybE19Gjj4g0jsgkXxKv1Q==}
+
   '@types/debug@4.1.13':
     resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
 
@@ -1101,6 +1135,9 @@ packages:
 
   '@webgpu/types@0.1.21':
     resolution: {integrity: sha512-pUrWq3V5PiSGFLeLxoGqReTZmiiXwY3jRkIG5sLLKjyqNxrwm/04b4nw7LSmGWJcKk59XOM/YRTUwOzo4MMlow==}
+
+  '@xstate/fsm@1.6.5':
+    resolution: {integrity: sha512-b5o1I6aLNeYlU/3CPlj/Z91ybk1gUsKT+5NAJI+2W4UjvS5KLG28K9v5UvNoFVjHV8PajVZ00RH3vnjyQO7ZAw==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -1188,6 +1225,10 @@ packages:
 
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
+
+  base64-arraybuffer@1.0.2:
+    resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
+    engines: {node: '>= 0.6.0'}
 
   baseline-browser-mapping@2.10.42:
     resolution: {integrity: sha512-c/jurFrDLyui7o1J86yLkRu4LMsTYcBohveus7/I2Hzdn9KIP2bdJPTue/lR1KH46enoPbD77GKeSYNdyPoD3Q==}
@@ -2056,6 +2097,9 @@ packages:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
 
+  mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
+
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
     engines: {node: '>=10'}
@@ -2294,6 +2338,15 @@ packages:
     resolution: {integrity: sha512-IjZYiLxZwpnhwhdBH2ugdTGVSdhCQUmLxLoqyjiL0JxYjyRst+5a0P3xfrTxJ5F638j4Mvvw5FAX5XE6eHpXbA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
+
+  rrdom@2.1.0:
+    resolution: {integrity: sha512-d7oaIHzwffxI74UJMZDGq/f97/Yfm3QX4CcTIlQelt2HsLavItLjp8x8nQ0g9Pet5+5wG1RGr9yvsxb1gJlo8A==}
+
+  rrweb-snapshot@2.1.0:
+    resolution: {integrity: sha512-CFjUKWlO+Dl72gk8qwcDcNE/Pj9yr6IvGRAiRAx12pmJaSWaOKFoFgpQQ1j/mW0WKwEZXbHnMJL8M92gIsdwUQ==}
+
+  rrweb@2.1.0:
+    resolution: {integrity: sha512-gGGvd1eXWnOuJpQumH7+gPmBwTXzNrjmQyedWVePcEx0S5fe3VkQW4vw5f5ItY+vuigaaktte9cZKOg0OEvv+w==}
 
   satteri@0.9.4:
     resolution: {integrity: sha512-BKob126Tay84diOZsnVNH/Q/c+3njPJTCad3w5zLKa6j8bVjxskPNHDtxrMwYK4bN/RlqUSdMnPwKY4k65EMOQ==}
@@ -2644,6 +2697,9 @@ packages:
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
+
+  web-vitals@5.3.0:
+    resolution: {integrity: sha512-q6LWsLatGYZp5VGBIOvbTj6JBV2nOmC8KvWztXBmwJcfFAzhwKwbOxhUH306XY3CcaZDUlSmSuNPBsCn0bFu+g==}
 
   which-pm-runs@1.1.0:
     resolution: {integrity: sha512-n1brCuqClxfFfq/Rb0ICg9giSZqCS+pLtccdag6C2HyufBrh3fBOiy9nb6ggRMvWOVH5GrdJskj5iGTZNxd7SA==}
@@ -3182,6 +3238,24 @@ snapshots:
     dependencies:
       '@expressive-code/core': 0.44.0
 
+  '@faststats/react@0.5.0(@rrweb/utils@2.1.0)(react@19.2.7)(rrweb@2.1.0)':
+    dependencies:
+      '@faststats/web': 0.5.0(@rrweb/utils@2.1.0)(rrweb@2.1.0)
+      react: 19.2.7
+    transitivePeerDependencies:
+      - '@rrweb/utils'
+      - rrweb
+
+  '@faststats/web@0.5.0(@rrweb/utils@2.1.0)(rrweb@2.1.0)':
+    dependencies:
+      '@rrweb/record': 2.1.0
+      '@rrweb/rrweb-plugin-console-record': 2.1.0(@rrweb/utils@2.1.0)(rrweb@2.1.0)
+      '@rrweb/rrweb-plugin-sequential-id-record': 2.1.0(rrweb@2.1.0)
+      web-vitals: 5.3.0
+    transitivePeerDependencies:
+      - '@rrweb/utils'
+      - rrweb
+
   '@fontsource-variable/geist-mono@5.2.8': {}
 
   '@fontsource-variable/geist@5.2.9': {}
@@ -3457,6 +3531,25 @@ snapshots:
       estree-walker: 2.0.2
       picomatch: 4.0.5
 
+  '@rrweb/record@2.1.0':
+    dependencies:
+      '@rrweb/types': 2.1.0
+      '@rrweb/utils': 2.1.0
+      rrweb: 2.1.0
+
+  '@rrweb/rrweb-plugin-console-record@2.1.0(@rrweb/utils@2.1.0)(rrweb@2.1.0)':
+    dependencies:
+      '@rrweb/utils': 2.1.0
+      rrweb: 2.1.0
+
+  '@rrweb/rrweb-plugin-sequential-id-record@2.1.0(rrweb@2.1.0)':
+    dependencies:
+      rrweb: 2.1.0
+
+  '@rrweb/types@2.1.0': {}
+
+  '@rrweb/utils@2.1.0': {}
+
   '@shikijs/colorized-brackets@4.3.1':
     dependencies:
       shiki: 4.3.1
@@ -3595,6 +3688,8 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.7
 
+  '@types/css-font-loading-module@0.0.7': {}
+
   '@types/debug@4.1.13':
     dependencies:
       '@types/ms': 2.1.0
@@ -3664,6 +3759,8 @@ snapshots:
       - supports-color
 
   '@webgpu/types@0.1.21': {}
+
+  '@xstate/fsm@1.6.5': {}
 
   acorn-jsx@5.3.2(acorn@8.17.0):
     dependencies:
@@ -3820,6 +3917,8 @@ snapshots:
   bail@2.0.2: {}
 
   base-64@1.0.0: {}
+
+  base64-arraybuffer@1.0.2: {}
 
   baseline-browser-mapping@2.10.42: {}
 
@@ -5050,6 +5149,8 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
+  mitt@3.0.1: {}
+
   mrmime@2.0.1: {}
 
   ms@2.1.3: {}
@@ -5377,6 +5478,25 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.1.4
       '@rolldown/binding-win32-x64-msvc': 1.1.4
 
+  rrdom@2.1.0:
+    dependencies:
+      rrweb-snapshot: 2.1.0
+
+  rrweb-snapshot@2.1.0:
+    dependencies:
+      postcss: 8.5.16
+
+  rrweb@2.1.0:
+    dependencies:
+      '@rrweb/types': 2.1.0
+      '@rrweb/utils': 2.1.0
+      '@types/css-font-loading-module': 0.0.7
+      '@xstate/fsm': 1.6.5
+      base64-arraybuffer: 1.0.2
+      mitt: 3.0.1
+      rrdom: 2.1.0
+      rrweb-snapshot: 2.1.0
+
   satteri@0.9.4:
     dependencies:
       '@types/estree-jsx': 1.0.5
@@ -5699,6 +5819,8 @@ snapshots:
       vite: 8.1.3(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)
 
   web-namespaces@2.0.1: {}
+
+  web-vitals@5.3.0: {}
 
   which-pm-runs@1.1.0: {}
 

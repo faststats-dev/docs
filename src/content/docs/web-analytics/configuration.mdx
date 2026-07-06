@@ -1,0 +1,117 @@
+---
+title: Configuration
+description: Every option you can pass to FastStats Web Analytics
+---
+
+All packages share the same set of options. In React you pass them as props on
+the `Analytics` component, in Nuxt you set them under the `faststats` key, and in
+plain JavaScript you pass them to the `WebAnalytics` constructor.
+
+## Core Options
+
+| Option                | Type      | Default                         | Description                                                    |
+| --------------------- | --------- | ------------------------------- | -------------------------------------------------------------- |
+| `siteKey`             | `string`  | required                        | The project key that ties events to your FastStats project     |
+| `baseUrl`             | `string`  | `https://metrics.faststats.dev` | Where events, identify calls, vitals and replays are sent      |
+| `featureFlagsBaseUrl` | `string`  | `https://flags.faststats.dev`   | Where feature flag checks are sent                             |
+| `debug`               | `boolean` | `false`                         | Logs every action to the console                               |
+| `autoTrack`           | `boolean` | `true`                          | Starts tracking automatically. Set to `false` to start by hand |
+| `trackHash`           | `boolean` | `false`                         | Treats hash changes as page views for hash based routers       |
+| `cookieless`          | `boolean` | `false`                         | Forces cookieless mode with no stored identifiers              |
+
+## Error Tracking
+
+```ts
+errorTracking: {
+	enabled: true,
+}
+```
+
+| Field     | Type      | Default | Description          |
+| --------- | --------- | ------- | -------------------- |
+| `enabled` | `boolean` | `false` | Turns the tracker on |
+
+Read more in [Error Tracking](/web-analytics/error-tracking).
+
+### Web Vitals
+
+```ts
+webVitals: {
+	enabled: true,
+	attribution: false,
+}
+```
+
+| Field         | Type      | Default | Description                                |
+| ------------- | --------- | ------- | ------------------------------------------ |
+| `enabled`     | `boolean` | `false` | Turns the tracker on                       |
+| `attribution` | `boolean` | `false` | Adds debug attribution data to each metric |
+
+Read more in [Web Vitals](/web-analytics/web-vitals).
+
+### Session Replays
+
+```ts
+sessionReplays: {
+	enabled: true,
+},
+replayOptions: {
+	flushInterval: 5_000,
+	maxEvents: 1000,
+	maxBatchSizeBytes: 512 * 1024,
+}
+```
+
+| Field                             | Type      | Default  | Description                                              |
+| --------------------------------- | --------- | -------- | -------------------------------------------------------- |
+| `enabled`                         | `boolean` | `false`  | Turns the recorder on                                    |
+| `replayOptions.flushInterval`     | `number`  | `5000`   | Flush interval in milliseconds                           |
+| `replayOptions.maxEvents`         | `number`  | `1000`   | Flush after this many buffered rrweb events              |
+| `replayOptions.maxBatchSizeBytes` | `number`  | `524288` | Flush after the buffered event payload reaches this size |
+
+For masking and recording details see
+[Session Replay](/web-analytics/session-replay).
+
+### Consent
+
+```ts
+consent: {
+	mode: "granted",
+	pendingBehavior: "anonymous",
+}
+```
+
+| Field             | Type                                 | Default       | Description                                                         |
+| ----------------- | ------------------------------------ | ------------- | ------------------------------------------------------------------- |
+| `mode`            | `"pending" \| "granted" \| "denied"` | `"granted"`   | The current consent state                                           |
+| `pendingBehavior` | `"anonymous" \| "disabled"`          | `"anonymous"` | Cookieless tracking while consent is pending, or no tracking at all |
+
+Read more in [Consent and Cookieless](/web-analytics/consent).
+
+## Manual Start
+
+When `autoTrack` is `false` the SDK does not begin until you call `start`. This
+lets you wait for a cookie banner or any other gate.
+
+```ts
+import { WebAnalytics } from "@faststats/web";
+
+const analytics = new WebAnalytics({
+	siteKey: "your_site_key",
+	autoTrack: false,
+});
+
+// once you are ready
+analytics.start();
+```
+
+## Disable Tracking on a Device
+
+The SDK checks `localStorage` for a flag before it sends anything. Set it to opt
+a single browser out, which is useful for your own devices.
+
+```ts
+localStorage.setItem("disable-faststats", "true");
+```
+
+Remove the key to turn tracking back on.

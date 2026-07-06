@@ -42,6 +42,7 @@ export const baseStarlightOptions: StarlightUserConfig = {
     components: {
         Sidebar: './src/components/starlight/Sidebar.astro',
         ContentPanel: './src/components/starlight/ContentPanel.astro',
+        PageFrame: './src/components/starlight/PageFrame.astro',
     },
 
     routeMiddleware: './src/routeData.ts',

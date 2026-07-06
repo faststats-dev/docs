@@ -1,0 +1,151 @@
+---
+title: React and Next.js
+description: Add FastStats Web Analytics to a React or Next.js app
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The `@faststats/react` package wraps the browser SDK in a single component and a
+set of hooks. It works with any React app and with the Next.js App Router.
+
+## Install
+
+```sh
+ npm install @faststats/react
+```
+
+## Add the Analytics Component
+
+Render the `Analytics` component once, near the root of your app. It starts
+tracking when it mounts and cleans up when it unmounts. You never have to create
+an instance by hand.
+
+<Tabs syncKey='package'>
+	<TabItem label="Next.js App Router" key="nextjs">
+
+```tsx title="app/layout.tsx"
+import { Analytics } from "@faststats/react";
+
+export default function RootLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
+	return (
+		<html lang="en">
+			<body>
+				<Analytics siteKey={process.env.NEXT_PUBLIC_FASTSTATS_SITE_KEY!} />
+				{children}
+			</body>
+		</html>
+	);
+}
+```
+
+    </TabItem>
+    <TabItem label="React" key="react">
+
+```tsx title="src/main.tsx"
+import { Analytics } from "@faststats/react";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+
+createRoot(document.getElementById("root")!).render(
+	<StrictMode>
+		<Analytics siteKey={import.meta.env.VITE_FASTSTATS_SITE_KEY} />
+		<App />
+	</StrictMode>,
+);
+```
+
+    </TabItem>
+
+</Tabs>
+
+The component accepts every option from the SDK. Here is a fuller example that
+turns on a few extra features.
+
+```tsx title="app/layout.tsx"
+<Analytics
+	siteKey={process.env.NEXT_PUBLIC_FASTSTATS_SITE_KEY!}
+	errorTracking={{ enabled: true }}
+	webVitals={{ enabled: true }}
+	sessionReplays={{ enabled: true }}
+/>
+```
+
+See [Configuration](/web-analytics/configuration) for the full list.
+
+## Track Custom Events
+
+You can call the plain functions from anywhere, or use the hooks inside
+components. Both reach the same active instance.
+
+```tsx title="components/buy-button.tsx"
+"use client";
+
+import { trackEvent } from "@faststats/react";
+
+export function BuyButton() {
+	return (
+		<button
+			type="button"
+			onClick={() => trackEvent("purchase", { plan: "pro", price: 29 })}
+		>
+			Buy now
+		</button>
+	);
+}
+```
+
+The same call through a hook looks like this.
+
+```tsx
+"use client";
+
+import { useTrack } from "@faststats/react";
+
+export function BuyButton() {
+	const track = useTrack();
+	return (
+		<button type="button" onClick={() => track("purchase", { plan: "pro" })}>
+			Buy now
+		</button>
+	);
+}
+```
+
+`useEvent` builds a stable handler when the name and properties do not change.
+
+```tsx
+const onSignup = useEvent("signup", { source: "hero" });
+return (
+	<button type="button" onClick={onSignup}>
+		Sign up
+	</button>
+);
+```
+
+## Available Hooks
+
+| Hook             | Returns                                           |
+| ---------------- | ------------------------------------------------- |
+| `useTrack`       | The `trackEvent` function                         |
+| `useEvent`       | A memoized handler for one named event            |
+| `useIdentify`    | The `identify` function                           |
+| `useLogout`      | The `logout` function                             |
+| `useConsentMode` | The `setConsentMode` function                     |
+| `useOptIn`       | The `optIn` function                              |
+| `useOptOut`      | The `optOut` function                             |
+| `useFlag`        | A feature flag value with loading and error state |
+
+Read more in [Events](/web-analytics/events),
+[Identify](/web-analytics/identify) and
+[Feature Flags](/web-analytics/feature-flags).
+
+## Server Side Routes
+
+The React package only runs in the browser. If you also want to capture errors
+thrown in Next.js route handlers or server functions, read the server section in
+[Error Tracking](/web-analytics/error-tracking).

@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "packageManager": "pnpm@11.10.0",
   "engines": {
-    "node": ">=22.20.0"
+    "node": "22.20.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -17,6 +17,7 @@
     "@astrojs/react": "^6.0.1",
     "@astrojs/starlight": "^0.41.3",
     "@astrojs/starlight-tailwind": "^5.0.0",
+    "@faststats/react": "^0.5.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/geist-mono": "^5.2.8",
     "@shikijs/colorized-brackets": "^4.3.1",

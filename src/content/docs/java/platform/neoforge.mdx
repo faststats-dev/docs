@@ -6,14 +6,24 @@ description: Integrate FastStats with NeoForge mods
 import ReadMore from '@/components/ReadMore.astro';
 import { Aside } from '@astrojs/starlight/components';
 
-Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 25+.
+Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21+.
 
 <Aside type="note">
-	The NeoForge SDK currently only supports Minecraft version 26.1.2.
-	Multi-version support will be added soon.
+	NeoForge supports Minecraft versions 1.21 to 26.2. Select both the SDK version
+	and the Minecraft version range in your dependency version. You can find the
+	available Minecraft version targets in the [Maven
+	repository](https://repo.faststats.dev/#/releases/dev/faststats/metrics/neoforge/).
 </Aside>
 
 **Artifact:** `dev.faststats.metrics:neoforge`
+
+```kts
+implementation("dev.faststats.metrics:neoforge:0.27.2+mc26.1-26.2")
+```
+
+The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
+the FastStats SDK version and `{from}-{to}` is the supported Minecraft version
+range for that artifact.
 
 ```java title="ExampleMod.java"
 import dev.faststats.ErrorTracker;

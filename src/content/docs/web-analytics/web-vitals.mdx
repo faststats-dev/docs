@@ -1,0 +1,73 @@
+---
+title: Web Vitals
+description: Report Core Web Vitals from the browser SDK
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Set `webVitals.enabled` to report LCP, CLS, INP, FCP, and TTFB from visitor
+sessions.
+
+## Enable Web Vitals
+
+Turn the feature on with the object form so you can also set attribution.
+
+<Tabs syncKey='package'>
+	<TabItem label="React" key="react">
+
+```tsx
+<Analytics siteKey="your_site_key" webVitals={{ enabled: true }} />
+```
+
+    </TabItem>
+    <TabItem label="Nuxt" key="nuxt">
+
+```ts title="nuxt.config.ts"
+faststats: {
+	siteKey: "your_site_key",
+	webVitals: { enabled: true },
+}
+```
+
+    </TabItem>
+    <TabItem label="JavaScript" key="javascript">
+
+```ts
+new WebAnalytics({
+	siteKey: "your_site_key",
+	webVitals: { enabled: true },
+});
+```
+
+    </TabItem>
+
+</Tabs>
+
+## Collected Metrics
+
+The tracker reports the standard set of Core Web Vitals.
+
+| Metric | Name                      |
+| ------ | ------------------------- |
+| `LCP`  | Largest Contentful Paint  |
+| `CLS`  | Cumulative Layout Shift   |
+| `INP`  | Interaction to Next Paint |
+| `FCP`  | First Contentful Paint    |
+| `TTFB` | Time to First Byte        |
+
+Each metric is sent with its value, an id, a rating and the navigation type.
+Metrics are flushed when the page is hidden and when the route changes in a
+single page app.
+
+## Attribution
+
+Turn on `attribution` to include extra debugging data that points to the element
+or event responsible for a metric. This payload is larger, so leave it off
+unless you are chasing a specific issue.
+
+```ts
+webVitals: {
+	enabled: true,
+	attribution: true,
+}
+```

@@ -6,14 +6,24 @@ description: Integrate FastStats with Fabric mods
 import ReadMore from '@/components/ReadMore.astro';
 import { Aside } from '@astrojs/starlight/components';
 
-Use `dev.faststats.fabric.FabricContext` for Fabric mods. Requires Java 25+.
+Use `dev.faststats.fabric.FabricContext` for Fabric mods. Requires Java 21+.
 
 <Aside type="note">
-	The Fabric SDK currently only supports Minecraft version 26.1.2. Multi-version
-	support will be added soon.
+	Fabric supports Minecraft versions 1.16.1 to 26.3. Select both the SDK version
+	and the Minecraft version range in your dependency version. You can find the
+	available Minecraft version targets in the [Maven
+	repository](https://repo.faststats.dev/#/releases/dev/faststats/metrics/fabric/).
 </Aside>
 
 **Artifact:** `dev.faststats.metrics:fabric`
+
+```kts
+implementation("dev.faststats.metrics:fabric:0.27.2+mc26.1-26.3")
+```
+
+The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
+the FastStats SDK version and `{from}-{to}` is the supported Minecraft version
+range for that artifact.
 
 ```java title="ExampleMod.java"
 import dev.faststats.ErrorTracker;

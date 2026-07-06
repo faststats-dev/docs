@@ -83,15 +83,31 @@ export const sidebarConfig: StarlightSidebarTopicsUserConfig = [
         items: [
             {
                 label: 'Getting Started',
-                items: []
+                items: [
+                    'web-analytics',
+                    'web-analytics/react',
+                    'web-analytics/nuxt',
+                    'web-analytics/javascript',
+                ]
             },
             {
                 label: 'Usage',
-                items: []
+                items: [
+                    'web-analytics/configuration',
+                    'web-analytics/events',
+                    'web-analytics/identify',
+                    'web-analytics/consent',
+                ]
             },
             {
                 label: 'Features',
-                items: []
+                items: [
+                    'web-analytics/error-tracking',
+                    'web-analytics/sourcemaps',
+                    'web-analytics/web-vitals',
+                    'web-analytics/session-replay',
+                    'web-analytics/feature-flags',
+                ]
             }
         ]
     }

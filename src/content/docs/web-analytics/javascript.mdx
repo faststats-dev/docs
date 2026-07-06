@@ -1,0 +1,90 @@
+---
+title: JavaScript
+description: Add FastStats Web Analytics with the plain browser SDK
+---
+
+The `@faststats/web` package is the core browser SDK. The React and Nuxt
+packages are built on top of it. Use it directly when you work with plain
+JavaScript, with a framework that has no dedicated package yet, or when you want
+full control over the lifecycle.
+
+## Install
+
+```sh
+ npm install @faststats/web
+```
+
+## Create an Instance
+
+Create one `WebAnalytics` instance as early as possible. It starts tracking
+automatically once the page is ready.
+
+```ts title="analytics.ts"
+import { WebAnalytics } from "@faststats/web";
+
+new WebAnalytics({
+	siteKey: "your_site_key",
+});
+```
+
+That single line already records page views, page leaves, sessions, outbound
+link clicks and scroll depth. To enable more features pass extra options.
+
+```ts
+new WebAnalytics({
+	siteKey: "your_site_key",
+	errorTracking: { enabled: true },
+	webVitals: { enabled: true },
+	sessionReplays: { enabled: true },
+});
+```
+
+## Track Custom Events
+
+The package exports functions that talk to the active instance. You can call
+them from any module without holding a reference yourself.
+
+```ts
+import { trackEvent } from "@faststats/web";
+
+document.querySelector("#buy")?.addEventListener("click", () => {
+	trackEvent("purchase", { plan: "pro", price: 29 });
+});
+```
+
+## Single Page Apps
+
+The SDK patches `pushState` and `replaceState` and listens for `popstate`, so
+client side route changes are tracked as new page views with no extra work. If
+your router uses the hash for routing, turn on `trackHash`.
+
+```ts
+new WebAnalytics({
+	siteKey: "your_site_key",
+	trackHash: true,
+});
+```
+
+## Reach the Instance Later
+
+`getInstance` returns the active instance once it has started. This is handy for
+debugging in the console or for advanced calls such as feature flag checks.
+
+```ts
+import { getInstance } from "@faststats/web";
+
+const analytics = getInstance();
+analytics?.getSessionId();
+```
+
+## Clean Up
+
+If you manage the lifecycle yourself, call `destroy` to remove all listeners and
+stop the child trackers. This is mostly useful in tests or in micro frontends
+that mount and unmount whole apps.
+
+```ts
+const analytics = new WebAnalytics({ siteKey: "your_site_key" });
+// later
+analytics.destroy();
+```
