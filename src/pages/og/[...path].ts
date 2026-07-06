@@ -1,24 +1,13 @@
-import { allPages } from "@/content";
+import { allPages, pages } from "@/content";
 import type { CollectionEntry } from "astro:content";
 import { OGImageRoute, type OGImageOptions } from 'astro-og-canvas';
-
-/** Paths for all of our Markdown content we want to generate OG images for. */
-const paths = process.env.SKIP_OG ? [] : allPages;
-
-/** An object mapping file paths to file metadata. */
-const pages = Object.fromEntries(
-    paths.map(
-        ({ filePath, id, data }) =>
-            [filePath, { data, id }] as [string, Pick<CollectionEntry<'docs'>, 'data' | 'id'>]
-    )
-);
 
 export const { getStaticPaths, GET } = await OGImageRoute({
     pages,
     getSlug(_, page: (typeof pages)[string]) {
         return page.id + '.webp';
     },
-    getImageOptions: async (_, { data, id }: (typeof pages)[string]): Promise<OGImageOptions> => {
+    getImageOptions: async (_, { data }: (typeof pages)[string]): Promise<OGImageOptions> => {
         return {
             format: 'WEBP',
             quality: 90,
@@ -36,27 +25,29 @@ export const { getStaticPaths, GET } = await OGImageRoute({
             },
             font: {
                 title: {
-                    size: 72,
+                    size: 64,
                     lineHeight: 1.2,
                     families: [
-                        'Inter',
+                        'Geist Mono',
                     ],
                     weight: 'Medium',
                     color: [255, 255, 255],
                 },
                 description: {
-                    size: 42,
+                    size: 28,
                     lineHeight: 1.2,
                     families: [
-                        'Inter',
+                        'Geist',
                     ],
                     weight: 'Normal',
                     color: [191, 193, 201],
                 },
             },
             fonts: [
-                './src/pages/og/_fonts/inter/inter-400-normal.ttf',
-                './src/pages/og/_fonts/inter/inter-500-normal.ttf',
+                './src/pages/og/_fonts/geist-latin-400-normal.ttf',
+                './src/pages/og/_fonts/geist-latin-500-normal.ttf',
+                './src/pages/og/_fonts/geist-mono-latin-400-normal.ttf',
+                './src/pages/og/_fonts/geist-mono-latin-500-normal.ttf',
             ].filter((val): val is string => typeof val === 'string'),
         };
     },

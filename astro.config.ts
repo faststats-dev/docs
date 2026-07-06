@@ -58,6 +58,8 @@ export default defineConfig({
                 ContentPanel: './src/components/starlight/ContentPanel.astro',
             },
 
+            routeMiddleware: './src/routeData.ts',
+
             customCss: [
                 './src/styles/global.css',
             ],
