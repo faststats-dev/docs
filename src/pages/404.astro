@@ -1,0 +1,16 @@
+---
+import { DocsNotFound } from "@/components/docs/docs-not-found";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+---
+
+<StarlightPage frontmatter={{ title: "Error 404", template: "splash" }}>
+  <DocsNotFound />
+</StarlightPage>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const htmlElement = document.documentElement;
+    // Set data-is-404 attribute to true to indicate that this is a 404 page
+    htmlElement.setAttribute("data-is-404", "true");
+  });
+</script>

@@ -141,3 +141,7 @@ a {
 .expressive-code span.title {
     border: none !important;
 }
+
+[data-is-404="true"] .sl-copy-button-row {
+    display: none !important;
+}

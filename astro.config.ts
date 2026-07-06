@@ -29,6 +29,8 @@ export default defineConfig({
                 light: './src/assets/icon-light.svg',
             },
 
+            disable404Route: true,
+
             head: [
                 {
                     tag: 'link',
