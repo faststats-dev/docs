@@ -35,119 +35,113 @@ function getTranslation(
 }
 ---
 
-<ul>
+<div class="header-tabs" data-header-tabs>
   {
     topics.map((topic) => {
-      const isCurrent = topic.isCurrent;
-      const link = topic.link;
-
       const label =
         typeof topic.label === "string"
           ? topic.label
           : getTranslation(topic.label, topic.link, "topic label");
 
       return (
-        <li>
-          <a
-            href={link}
-            class:list={{ "starlight-sidebar-topics-current": isCurrent }}
-          >
+        <a
+          href={topic.link}
+          class:list={["header-tab", { "header-tab-current": topic.isCurrent }]}
+        >
+          <span class="header-tab-label">
             {topic.icon && (
-              <div class="starlight-sidebar-topics-icon">
-                <Icon
-                  name={topic.icon as ComponentProps<typeof Icon>["name"]}
-                />
-              </div>
+              <Icon
+                name={topic.icon as ComponentProps<typeof Icon>["name"]}
+                class="header-tab-icon"
+              />
             )}
-            <div>
-              {label}
-              {topic.badge && (
-                <Badge
-                  class="starlight-sidebar-topics-badge"
-                  text={
-                    typeof topic.badge.text === "string"
-                      ? topic.badge.text
-                      : getTranslation(
-                          topic.badge.text,
-                          topic.link,
-                          "topic badge text",
-                        )
-                  }
-                  variant={topic.badge.variant}
-                />
-              )}
-            </div>
-          </a>
-        </li>
+            {label}
+            {topic.badge && (
+              <Badge
+                class="header-tab-badge"
+                text={
+                  typeof topic.badge.text === "string"
+                    ? topic.badge.text
+                    : getTranslation(
+                        topic.badge.text,
+                        topic.link,
+                        "topic badge text",
+                      )
+                }
+                variant={topic.badge.variant}
+              />
+            )}
+          </span>
+        </a>
       );
     })
   }
-</ul>
+</div>
 
 <style>
-  ul {
-    list-style: none;
-    padding: 0.25rem;
-    border: 1px solid var(--sl-color-hairline-light);
-    border-radius: 0.25rem;
-    background-color: var(--sl-color-bg);
-    margin-bottom: 0.5rem;
-  }
-
-  li {
-    overflow-wrap: anywhere;
-  }
-
-  li + li {
-    margin-top: 0.25rem;
-  }
-
-  a {
-    align-items: center;
-    color: var(--sl-color-white);
+  .header-tabs {
+    align-items: flex-end;
     display: flex;
-    font-size: var(--sl-text-base);
-    font-weight: 600;
+    flex-direction: row;
+    gap: 1.5rem;
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    overflow-x: auto;
+    padding: 0;
+    scrollbar-width: none;
+  }
+
+  .header-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .header-tab {
+    align-items: center;
+    border-bottom: 2px solid transparent;
+    color: var(--sl-color-gray-3);
+    display: inline-flex;
+    font-family: var(--sl-font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
     gap: 0.5rem;
-    line-height: 1.5;
-    padding: 0.3em 0.5rem;
+    padding-bottom: 0.375rem;
     text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
   }
 
-  a:not(:hover) {
-    border: 1px solid transparent;
+  .header-tab:hover,
+  .header-tab:focus-visible {
+    color: var(--sl-color-white);
   }
 
-  a:is(.starlight-sidebar-topics-current, :hover, :focus-visible) {
-    color: var(--sl-color-accent-high);
-    border: 1px solid var(--sl-color-bg-accent);
-    overflow-wrap: anywhere;
-    border-radius: 0.25rem;
-    background-color: var(--sl-color-bg-sidebar);
-  }
-
-  :global([data-theme="light"]) a.starlight-sidebar-topics-current {
+  .header-tab-current {
+    border-bottom-color: var(--sl-color-accent);
     color: var(--sl-color-accent);
   }
 
-  .starlight-sidebar-topics-icon {
+  .header-tab-label {
     align-items: center;
-    border-radius: 0.25rem;
-    border: 1px solid var(--sl-color-gray-4);
-    display: flex;
-    justify-content: center;
-    padding: 0.1875rem;
-    padding: 0.25rem;
+    display: inline-flex;
+    gap: 0.5rem;
   }
 
-  a:is(.starlight-sidebar-topics-current, :hover, :focus-visible)
-    .starlight-sidebar-topics-icon {
-    background-color: var(--sl-color-text-accent);
-    border-color: var(--sl-color-text-accent);
-    color: var(--sl-color-text-invert);
+  .header-tab-icon {
+    flex-shrink: 0;
+    height: 1rem;
+    width: 1rem;
   }
 
-  .starlight-sidebar-topics-badge {
-    margin-inline-start: 0.25em;
+  .header-tab-badge {
+    border: 1px solid var(--sl-color-hairline);
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-3);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-inline-start: 0.375rem;
+    padding: 0.125rem 0.375rem;
+    text-transform: uppercase;
   }
 </style>

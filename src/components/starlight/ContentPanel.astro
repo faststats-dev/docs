@@ -6,27 +6,42 @@
 	<div class="sl-container"><slot /></div>
 </div>
 
-<style>
+<style is:global>
 	@layer starlight.core {
 		.content-panel {
-			padding: 1.5rem var(--sl-content-pad-x);
+			padding-inline: var(--sl-content-pad-x);
 		}
-		.content-panel + .content-panel {
-			border-top: 1px solid var(--sl-color-hairline);
-		}
+
 		.sl-container {
-			--sl-content-width: 100%;
 			max-width: var(--sl-content-width);
 		}
 
-		.sl-container > :global(* + *) {
-			margin-top: 1.5rem;
+		.sl-container > * + * {
+			margin-top: 1rem;
 		}
 
-		@media (min-width: 72rem) {
-			.sl-container {
-				margin-inline: var(--sl-content-margin-inline, auto);
+		@media (min-width: 50rem) {
+			[data-has-sidebar] .sl-container {
+				margin-inline: 0;
 			}
+		}
+
+		main > .content-panel:first-child {
+			padding-top: var(--sl-content-pt);
+			padding-bottom: 0;
+		}
+
+        main > .content-panel:nth-child(2) {
+            border-top: none;
+            padding-top: 0;
+        }
+
+		main > .content-panel:last-child {
+			padding-bottom: 1.5rem;
+		}
+
+		main > .content-panel:nth-child(2) .sl-markdown-content > :first-child {
+			margin-top: 0 !important;
 		}
 	}
 </style>

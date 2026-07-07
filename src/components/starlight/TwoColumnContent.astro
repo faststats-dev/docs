@@ -1,0 +1,73 @@
+<div class="docs-content-layout lg:sl-flex">
+	<div class="main-pane"><slot /></div>
+	{
+		Astro.locals.starlightRoute.toc && (
+			<aside class="right-sidebar-container print:hidden">
+				<div class="right-sidebar">
+					<slot name="right-sidebar" />
+				</div>
+			</aside>
+		)
+	}
+</div>
+
+<style>
+	@layer starlight.core {
+		.main-pane {
+			isolation: isolate;
+			min-width: 0;
+		}
+
+		@media (min-width: 72rem) {
+			.docs-content-layout {
+				align-items: flex-start;
+				display: flex;
+				gap: 2.5rem;
+				max-width: 100%;
+				width: fit-content;
+			}
+
+			.main-pane {
+				flex: 0 1 var(--sl-content-width);
+				width: min(var(--sl-content-width), 100%);
+			}
+
+			.right-sidebar-container {
+				flex: 0 0 var(--sl-sidebar-width);
+				width: var(--sl-sidebar-width);
+			}
+
+			.right-sidebar {
+				position: sticky;
+				top: var(--sl-nav-height);
+				padding-top: var(--sl-content-pt);
+				width: var(--sl-sidebar-width);
+				max-height: calc(100vh - var(--sl-nav-height));
+				overflow-y: auto;
+				scrollbar-width: none;
+			}
+
+			.right-sidebar::-webkit-scrollbar {
+				display: none;
+			}
+
+			.right-sidebar-panel .sl-container {
+				max-width: none;
+				width: 100%;
+			}
+
+			.right-sidebar-panel {
+				padding-inline: 0;
+			}
+
+			.right-sidebar-panel :global(h2) {
+				color: var(--sl-color-gray-3);
+				font-family: var(--sl-font-mono);
+				font-size: 0.8125rem;
+				font-weight: 500;
+				letter-spacing: 0.02em;
+				margin-bottom: 0.75rem;
+			}
+		}
+	}
+</style>

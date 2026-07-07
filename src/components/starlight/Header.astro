@@ -1,0 +1,47 @@
+---
+import TopicsSelector from "./topics/TopicsSelector.astro";
+---
+
+<div class="header-grid grid h-full items-center max-[49.99rem]:flex">
+    <div
+        class="h-full border-r border-[var(--sl-color-hairline-shade)] bg-[var(--sl-color-bg-sidebar)] max-[49.99rem]:border-r-0"
+        aria-hidden="true"
+    >
+    </div>
+    <div class="header-topics max-[49.99rem]:hidden">
+        <TopicsSelector />
+    </div>
+</div>
+
+<style>
+    @layer starlight.core {
+        .header-grid {
+            grid-template-columns:
+                calc(var(--sl-layout-offset, 0px) + var(--sl-sidebar-width))
+                minmax(0, 1fr);
+            margin-inline: calc(-1 * var(--sl-nav-pad-x));
+        }
+
+        .header-topics {
+            align-items: flex-end;
+            border-bottom: 1px solid var(--sl-color-hairline-shade);
+            display: flex;
+            height: 2.5rem;
+            max-width: calc(var(--sl-content-width) + var(--sl-sidebar-width));
+            min-width: 0;
+            overflow-x: auto;
+            padding-inline: var(--sl-content-pad-x);
+            scrollbar-width: none;
+        }
+
+        .header-topics::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media (max-width: 49.99rem) {
+            .header-grid {
+                margin-inline: 0;
+            }
+        }
+    }
+</style>

@@ -1,0 +1,89 @@
+---
+import { icons } from "@lucide/astro";
+import type { SidebarEntry } from "@astrojs/starlight/utils/routing/types";
+
+interface Props {
+	entries: SidebarEntry[];
+	iconMap: ReadonlyMap<string, string>;
+}
+
+const { entries, iconMap } = Astro.props;
+---
+
+{
+	entries.map((entry) => {
+		if (entry.type === "link") {
+			const iconName = iconMap.get(entry.href.replace(/^\/+|\/+$/g, ""));
+			const Icon = iconName ? icons[iconName as keyof typeof icons] : undefined;
+
+			return (
+				<a
+					href={entry.href}
+					aria-current={entry.isCurrent ? "page" : undefined}
+					class="sidebar-link"
+					{...entry.attrs}
+				>
+					{Icon && <Icon size={16} aria-hidden="true" />}
+					<span>{entry.label}</span>
+				</a>
+			);
+		}
+
+		return (
+			<>
+				<p class="sidebar-section">{entry.label}</p>
+				<Astro.self entries={entry.entries} iconMap={iconMap} />
+			</>
+		);
+	})
+}
+
+<style>
+	@layer starlight.core {
+		.sidebar-link {
+			align-items: center;
+			color: var(--sl-color-gray-2);
+			display: flex;
+			gap: 0.5rem;
+			padding: 0.5rem;
+			text-decoration: none;
+			transition:
+				background-color 0.15s,
+				color 0.15s;
+
+			&:hover {
+				background: color-mix(in oklch, var(--sl-color-gray-5) 50%, transparent);
+				color: var(--sl-color-white);
+			}
+
+			&[aria-current="page"] {
+				background: color-mix(in oklch, var(--sl-color-accent) 10%, transparent);
+				color: var(--sl-color-accent);
+			}
+
+			span {
+				min-width: 0;
+			}
+
+			:global(svg) {
+				color: currentColor;
+				flex-shrink: 0;
+				height: 1rem;
+				width: 1rem;
+			}
+		}
+
+		.sidebar-section {
+			color: var(--sl-color-white);
+			cursor: default;
+			line-height: 1.35;
+			margin: 1.5rem 0 0.375rem;
+			padding-inline: 0.5rem;
+			user-select: none;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+</style>
