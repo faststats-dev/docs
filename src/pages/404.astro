@@ -1,16 +1,67 @@
 ---
-import { DocsNotFound } from "@/components/docs/docs-not-found";
+import ArrowLeft from "@lucide/astro/icons/arrow-left";
+import House from "@lucide/astro/icons/house";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 ---
 
 <StarlightPage frontmatter={{ title: "Error 404", template: "splash" }}>
-  <DocsNotFound />
+    <div class="flex max-w-lg flex-col items-center gap-8 px-6 text-center">
+        <div class="space-y-4">
+            <p class="text-xs text-[var(--sl-color-gray-2)]">Error 404</p>
+            <h1 class="text-4xl font-medium tracking-tight text-[var(--sl-color-white)] md:text-5xl">
+                Page not found
+            </h1>
+            <p class="text-lg leading-relaxed text-[var(--sl-color-gray-2)]">
+                The page you're looking for doesn't exist or has been moved to a different URL.
+            </p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row">
+            <a
+                href="/platform"
+                class="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 border border-[var(--sl-color-hairline)] bg-[var(--sl-color-gray-6)] px-6 text-sm font-medium text-[var(--sl-color-white)] transition-colors hover:bg-[var(--sl-color-gray-5)]"
+            >
+                <ArrowLeft size={16} aria-hidden="true" />
+                Back to docs
+            </a>
+            <a
+                href="https://faststats.dev"
+                class="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 border border-[var(--sl-color-accent)] bg-[var(--sl-color-accent)] px-6 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            >
+                <House size={16} aria-hidden="true" />
+                Go to FastStats
+            </a>
+        </div>
+    </div>
 </StarlightPage>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const htmlElement = document.documentElement;
-    // Set data-is-404 attribute to true to indicate that this is a 404 page
-    htmlElement.setAttribute("data-is-404", "true");
-  });
+<script is:inline>
+    document.documentElement.setAttribute("data-is-404", "true");
 </script>
+
+<style is:global>
+    [data-is-404="true"] .sl-copy-button-row,
+    [data-is-404="true"] main > .content-panel:first-child,
+    [data-is-404="true"] footer {
+        display: none !important;
+    }
+
+    [data-is-404="true"] main > .content-panel:nth-child(2) {
+        border-top: none !important;
+        padding: 0 !important;
+    }
+
+    [data-is-404="true"] main > .content-panel:nth-child(2) .sl-container {
+        max-width: none;
+        padding: 0;
+    }
+
+    [data-is-404="true"] .sl-markdown-content > div {
+        align-items: center;
+        display: flex;
+        inset: var(--sl-nav-height) 0 0 var(--sl-content-inline-start, 0);
+        justify-content: center;
+        padding: 1.5rem;
+        position: fixed;
+        z-index: 1;
+    }
+</style>
