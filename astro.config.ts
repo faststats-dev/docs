@@ -5,7 +5,6 @@ import starlightSidebarTopicsPlugin from 'starlight-sidebar-topics';
 import { devServerFileWatcher } from './src/integrations/dev-file-watcher';
 import starlightCopyButton from 'starlight-copy-button';
 import starlightOpenAPI from 'starlight-openapi';
-import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { sidebarConfig, sidebarTopicsExtras } from './starlight.sidebar';
 import { baseStarlightOptions } from './starlight.config';
@@ -21,7 +20,6 @@ export default defineConfig({
         plugins: [tailwindcss()],
     },
     integrations: [
-        react(),
         devServerFileWatcher([
             './src/integrations/*.ts',
             './ec.config.mjs',

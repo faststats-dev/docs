@@ -5,12 +5,12 @@ icon: GitFork
 ---
 
 import { Aside } from '@astrojs/starlight/components';
-import { ResultNodePreview } from "@/components/docs/node-preview";
+import NodePreview from "@/components/docs/node-preview.astro";
 
 The Output node is the last step in every pipeline. One Output gives you a simple chart. Add more Output nodes to build multi-line charts, stacked bars, or tabbed lists.
 
 <div className="not-content justify-center py-4">
-	<ResultNodePreview />
+	<NodePreview variant="output" />
 </div>
 
 ## Output settings

@@ -4,19 +4,7 @@ description: All available nodes for building data pipelines in the flow editor
 icon: Workflow
 ---
 
-import {
-	DatasourceNodePreview,
-	FilterNodePreview,
-	AggregateNodePreview,
-	GroupNodePreview,
-	TimeGroupNodePreview,
-	TextTransformNodePreview,
-	FormulaNodePreview,
-	LimitNodePreview,
-	MaxAgeNodePreview,
-	MinAgeNodePreview,
-	ResultNodePreview,
-} from "@/components/docs/node-preview";
+import NodePreview from "@/components/docs/node-preview.astro";
 
 import NodeDocCard from "@/components/NodeDocCard.astro";
 
@@ -42,7 +30,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 		{ label: "Dedupe", description: "when checked, counts only the latest row per identity (where the data source supports it). Useful for unique-visitor style queries." }
 	]}
 >
-	<DatasourceNodePreview />
+	<NodePreview variant="datasource" />
 </NodeDocCard>
 
 ---
@@ -58,7 +46,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 		{ label: "Map target", description: "only shown for map fields. Choose whether to filter on the map's keys or its values." }
 	]}
 >
-	<FilterNodePreview />
+	<NodePreview variant="filter" />
 </NodeDocCard>
 
 ---
@@ -82,7 +70,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 		}
 	]}
 >
-	<AggregateNodePreview />
+	<NodePreview variant="aggregate" />
 </NodeDocCard>
 
 ---
@@ -106,7 +94,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 		}
 	]}
 >
-	<GroupNodePreview />
+	<NodePreview variant="group" />
 </NodeDocCard>
 
 ---
@@ -134,7 +122,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 		}
 	]}
 >
-	<TimeGroupNodePreview />
+	<NodePreview variant="time-group" />
 </NodeDocCard>
 
 ---
@@ -166,7 +154,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 		}
 	]}
 >
-	<TextTransformNodePreview />
+	<NodePreview variant="text-transform" />
 </NodeDocCard>
 
 ---
@@ -189,7 +177,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 			description: "number of decimal places to round the result to. Leave empty to keep full precision." 
 		}
 	]}>
-	<FormulaNodePreview />
+	<NodePreview variant="formula" />
 </NodeDocCard>
 
 ---
@@ -208,7 +196,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 			description: "instead of dropping rows beyond the limit, fold them into a single <code>Other</code> bucket so totals still match." 
 		}
 	]}>
-	<LimitNodePreview />
+	<NodePreview variant="limit" />
 </NodeDocCard>
 
 ---
@@ -223,7 +211,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 			description: "the size of the window. Pick a number and a unit: <code>ms</code>, <code>seconds</code>, <code>minutes</code>, <code>hours</code>, <code>days</code>." 
 		}
 	]}>
-	<MaxAgeNodePreview />
+	<NodePreview variant="max-age" />
 </NodeDocCard>
 
 ---
@@ -238,7 +226,7 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 			description: "events within this window before the current time are removed. Uses the same units as <strong>Max Age</strong>." 
 		}
 	]}>
-	<MinAgeNodePreview />
+	<NodePreview variant="min-age" />
 </NodeDocCard>
 
 ---
@@ -265,5 +253,5 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
 			description: "only when nesting by a custom pattern. The character or string used to split values (for example, <code>/</code> to split a URL path)." 
 		}
 	]}>
-	<ResultNodePreview />
+	<NodePreview variant="output" />
 </NodeDocCard>

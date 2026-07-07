@@ -1,0 +1,646 @@
+---
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import Calculator from "@lucide/astro/icons/calculator";
+import Check from "@lucide/astro/icons/check";
+import ChevronDown from "@lucide/astro/icons/chevron-down";
+import CircleQuestionMark from "@lucide/astro/icons/circle-question-mark";
+import Clock from "@lucide/astro/icons/clock";
+import Clock3 from "@lucide/astro/icons/clock-3";
+import Database from "@lucide/astro/icons/database";
+import Funnel from "@lucide/astro/icons/funnel";
+import Group from "@lucide/astro/icons/group";
+import ListFilter from "@lucide/astro/icons/list-filter";
+import Sigma from "@lucide/astro/icons/sigma";
+import Type from "@lucide/astro/icons/type";
+import Waves from "@lucide/astro/icons/waves-horizontal";
+import X from "@lucide/astro/icons/x";
+
+type NodeBadgeCategory =
+	| "source"
+	| "filter"
+	| "aggregate"
+	| "group"
+	| "transform"
+	| "formula"
+	| "time"
+	| "output";
+
+type Variant =
+	| "datasource"
+	| "filter"
+	| "aggregate"
+	| "group"
+	| "time-group"
+	| "text-transform"
+	| "formula"
+	| "limit"
+	| "max-age"
+	| "min-age"
+	| "output";
+
+interface Props {
+	variant: Variant;
+}
+
+const { variant } = Astro.props;
+
+const CATEGORY_STYLES: Record<
+	NodeBadgeCategory,
+	{ border: string; bg: string; icon: string; text: string }
+> = {
+	source: {
+		border: "border-sky-500/45",
+		bg: "bg-sky-500/20",
+		icon: "text-sky-700 dark:text-sky-400",
+		text: "text-sky-800 dark:text-sky-200/90",
+	},
+	filter: {
+		border: "border-amber-500/45",
+		bg: "bg-amber-500/20",
+		icon: "text-amber-700 dark:text-amber-400",
+		text: "text-amber-800 dark:text-amber-200/90",
+	},
+	aggregate: {
+		border: "border-emerald-500/45",
+		bg: "bg-emerald-500/20",
+		icon: "text-emerald-700 dark:text-emerald-400",
+		text: "text-emerald-800 dark:text-emerald-200/90",
+	},
+	group: {
+		border: "border-teal-500/45",
+		bg: "bg-teal-500/20",
+		icon: "text-teal-700 dark:text-teal-400",
+		text: "text-teal-800 dark:text-teal-200/90",
+	},
+	transform: {
+		border: "border-violet-500/45",
+		bg: "bg-violet-500/20",
+		icon: "text-violet-700 dark:text-violet-400",
+		text: "text-violet-800 dark:text-violet-200/90",
+	},
+	formula: {
+		border: "border-fuchsia-500/45",
+		bg: "bg-fuchsia-500/20",
+		icon: "text-fuchsia-700 dark:text-fuchsia-400",
+		text: "text-fuchsia-800 dark:text-fuchsia-200/90",
+	},
+	time: {
+		border: "border-blue-500/45",
+		bg: "bg-blue-500/20",
+		icon: "text-blue-700 dark:text-blue-400",
+		text: "text-blue-800 dark:text-blue-200/90",
+	},
+	output: {
+		border: "border-rose-500/45",
+		bg: "bg-rose-500/20",
+		icon: "text-rose-700 dark:text-rose-400",
+		text: "text-rose-800 dark:text-rose-200/90",
+	},
+};
+
+const NODE_CONFIG: Record<
+	Variant,
+	{
+		label: string;
+		category: NodeBadgeCategory;
+		handles: "top" | "bottom" | "both";
+		width?: number;
+	}
+> = {
+	datasource: { label: "Data Source", category: "source", handles: "bottom" },
+	filter: { label: "Filter", category: "filter", handles: "both" },
+	aggregate: { label: "Aggregate", category: "aggregate", handles: "both" },
+	group: { label: "Group By", category: "group", handles: "both" },
+	"time-group": { label: "Time Group", category: "time", handles: "both" },
+	"text-transform": {
+		label: "Transform",
+		category: "transform",
+		handles: "both",
+	},
+	formula: { label: "Formula", category: "formula", handles: "both" },
+	limit: { label: "Limit", category: "filter", handles: "both" },
+	"max-age": { label: "Max Age", category: "time", handles: "both" },
+	"min-age": { label: "Min Age", category: "time", handles: "both" },
+	output: { label: "Output", category: "output", handles: "top" },
+};
+
+const config = NODE_CONFIG[variant];
+const styles = CATEGORY_STYLES[config.category];
+const width = config.width ?? 280;
+---
+
+<div
+	class="not-prose relative overflow-visible border bg-[var(--sl-color-gray-6)] border-[var(--sl-color-hairline)]"
+	style={`width: ${width}px`}
+>
+	{
+		(config.handles === "top" || config.handles === "both") && (
+			<div class="absolute left-1/2 size-2 -translate-x-1/2 border border-[var(--sl-color-gray-6)] bg-[color-mix(in_oklch,var(--sl-color-gray-3)_70%,transparent)] -top-1" />
+		)
+	}
+	{
+		(config.handles === "bottom" || config.handles === "both") && (
+			<div class="absolute left-1/2 size-2 -translate-x-1/2 border border-[var(--sl-color-gray-6)] bg-[color-mix(in_oklch,var(--sl-color-gray-3)_70%,transparent)] -bottom-1" />
+		)
+	}
+	<div
+		class="pointer-events-none absolute top-0 left-3 z-10 -translate-y-1/2"
+	>
+		<div
+			class={`flex items-center gap-1.5 border px-2 py-0.5 backdrop-blur-md ${styles.border} ${styles.bg}`}
+		>
+			{
+				variant === "datasource" && (
+					<Database
+						class={`size-3 ${styles.icon}`}
+						stroke-width={2}
+					/>
+				)
+			}
+			{
+				variant === "filter" && (
+					<Funnel class={`size-3 ${styles.icon}`} stroke-width={2} />
+				)
+			}
+			{
+				variant === "aggregate" && (
+					<Sigma class={`size-3 ${styles.icon}`} stroke-width={2} />
+				)
+			}
+			{
+				variant === "group" && (
+					<Group class={`size-3 ${styles.icon}`} stroke-width={2} />
+				)
+			}
+			{
+				variant === "time-group" && (
+					<Clock class={`size-3 ${styles.icon}`} stroke-width={2} />
+				)
+			}
+			{
+				(variant === "max-age" || variant === "min-age") && (
+					<Clock3 class={`size-3 ${styles.icon}`} stroke-width={2} />
+				)
+			}
+			{
+				variant === "text-transform" && (
+					<Type class={`size-3 ${styles.icon}`} stroke-width={2} />
+				)
+			}
+			{
+				variant === "formula" && (
+					<Calculator
+						class={`size-3 ${styles.icon}`}
+						stroke-width={2}
+					/>
+				)
+			}
+			{
+				variant === "limit" && (
+					<ListFilter
+						class={`size-3 ${styles.icon}`}
+						stroke-width={2}
+					/>
+				)
+			}
+			{
+				variant === "output" && (
+					<ArrowRight
+						class={`size-3 ${styles.icon}`}
+						stroke-width={2}
+					/>
+				)
+			}
+			<span
+				class={`font-mono text-[10px] font-medium tracking-[0.14em] uppercase ${styles.text}`}
+			>
+				{config.label}
+			</span>
+		</div>
+	</div>
+	<div class="pt-4">
+		<div class="space-y-2 p-2">
+			{
+				variant === "datasource" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Adapter
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									Events
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Field
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									page_view
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+						<div class="flex items-center gap-2 px-1 py-0.5">
+							<div class="flex size-3.5 shrink-0 items-center justify-center border border-[var(--sl-color-hairline)]" />
+							<span class="flex-1 truncate text-xs text-[var(--sl-color-gray-3)]">
+								Dedupe
+							</span>
+							<CircleQuestionMark
+								class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+								stroke-width={2}
+							/>
+						</div>
+					</>
+				)
+			}
+			{
+				variant === "filter" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Field
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									browser
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Operator
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									equals
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Value
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs text-[var(--sl-color-white)]">
+								Chrome
+							</div>
+						</div>
+					</>
+				)
+			}
+			{
+				variant === "aggregate" && (
+					<div class="space-y-1.5">
+						<div class="flex min-w-0 items-center gap-1.5">
+							<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+								Function
+							</span>
+							<CircleQuestionMark
+								class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+								stroke-width={2}
+							/>
+						</div>
+						<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs">
+							<span class="flex items-center gap-1.5 truncate">
+								count
+							</span>
+							<ChevronDown
+								class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+								stroke-width={2}
+							/>
+						</div>
+					</div>
+				)
+			}
+			{
+				variant === "group" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Fields
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex min-h-7 w-full flex-wrap items-center gap-1 border border-[var(--sl-color-hairline)] bg-transparent px-1.5 py-1 text-xs">
+								<span class="flex items-center gap-1 bg-[var(--sl-color-gray-5)] px-1.5 py-0.5 text-[11px]">
+									browser
+									<X
+										class="size-2.5 text-[var(--sl-color-gray-3)]"
+										stroke-width={2.5}
+									/>
+								</span>
+								<span class="flex items-center gap-1 bg-[var(--sl-color-gray-5)] px-1.5 py-0.5 text-[11px]">
+									country
+									<X
+										class="size-2.5 text-[var(--sl-color-gray-3)]"
+										stroke-width={2.5}
+									/>
+								</span>
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Multi-field mode
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									combined
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+					</>
+				)
+			}
+			{
+				variant === "time-group" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Bucket size
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									Hour
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Missing buckets
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs">
+								<span class="flex items-center gap-1.5 truncate">
+									<Waves class="size-3 text-[var(--sl-color-gray-3)]" />
+									Zero
+								</span>
+								<ChevronDown
+									class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Cumulative
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex items-center gap-2 px-1 py-0.5">
+								<div class="flex size-3.5 shrink-0 items-center justify-center border border-[var(--sl-color-accent)] bg-[var(--sl-color-accent)] text-[var(--sl-color-black)]">
+									<Check class="size-2.5" stroke-width={3} />
+								</div>
+								<span class="flex-1 truncate text-xs text-[var(--sl-color-gray-3)]">
+									Running total
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+						</div>
+					</>
+				)
+			}
+			{
+				variant === "text-transform" && (
+					<div class="space-y-1.5">
+						<div class="flex min-w-0 items-center gap-1.5">
+							<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+								Operation
+							</span>
+							<CircleQuestionMark
+								class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+								stroke-width={2}
+							/>
+						</div>
+						<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs">
+							<span class="flex items-center gap-1.5 truncate">
+								lowercase
+							</span>
+							<ChevronDown
+								class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+								stroke-width={2}
+							/>
+						</div>
+					</div>
+				)
+			}
+			{
+				variant === "formula" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Expression
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs text-[var(--sl-color-white)]">
+								(A + B) / C
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Output name
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs text-[var(--sl-color-white)]">
+								ratio
+							</div>
+						</div>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Precision
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs text-[var(--sl-color-white)]">
+								2
+							</div>
+						</div>
+					</>
+				)
+			}
+			{
+				variant === "limit" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Max rows
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs text-[var(--sl-color-white)]">
+								10
+							</div>
+						</div>
+						<div class="flex items-center gap-2 px-1 py-0.5">
+							<div class="flex size-3.5 shrink-0 items-center justify-center border border-[var(--sl-color-hairline)]" />
+							<span class="flex-1 truncate text-xs text-[var(--sl-color-gray-3)]">
+								Group rows over limit as Other
+							</span>
+							<CircleQuestionMark
+								class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+								stroke-width={2}
+							/>
+						</div>
+					</>
+				)
+			}
+			{
+				(variant === "max-age" || variant === "min-age") && (
+					<div class="space-y-1.5">
+						<div class="flex min-w-0 items-center gap-1.5">
+							<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+								{variant === "max-age"
+									? "Look back at most"
+									: "Exclude newer than"}
+							</span>
+							<CircleQuestionMark
+								class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+								stroke-width={2}
+							/>
+						</div>
+						<div class="flex items-center gap-2">
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 text-xs text-[var(--sl-color-white)]">
+								{variant === "max-age" ? "24" : "1"}
+							</div>
+							<div class="w-14 shrink-0">
+								<div class="flex h-7 w-full items-center justify-between border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs">
+									<span class="flex items-center gap-1.5 truncate">
+										h
+									</span>
+									<ChevronDown
+										class="size-3 shrink-0 text-[var(--sl-color-gray-3)]"
+										stroke-width={2}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				)
+			}
+			{
+				variant === "output" && (
+					<>
+						<div class="space-y-1.5">
+							<div class="flex min-w-0 items-center gap-1.5">
+								<span class="truncate text-xs text-[var(--sl-color-gray-3)]">
+									Output name
+								</span>
+								<CircleQuestionMark
+									class="size-3 shrink-0 text-[color-mix(in_oklch,var(--sl-color-gray-3)_50%,transparent)]"
+									stroke-width={2}
+								/>
+							</div>
+							<div class="flex h-7 w-full items-center border border-[var(--sl-color-hairline)] bg-transparent px-2 font-mono text-xs text-[var(--sl-color-white)]">
+								page_views
+							</div>
+						</div>
+						<p class="truncate px-1 text-[10px] text-[var(--sl-color-gray-3)]">
+							Final query result for this chart
+						</p>
+					</>
+				)
+			}
+		</div>
+	</div>
+</div>
