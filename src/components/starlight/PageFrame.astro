@@ -8,7 +8,7 @@ const siteKey = process.env.PUBLIC_FASTSTATS_SITE_KEY;
 
 {
     process.env.NODE_ENV === "production" && siteKey && (
-        <script is:inline client:only define:vars={{ siteKey }}>
+        <script is:inline define:vars={{ siteKey }}>
             import { WebAnalytics } from "@faststats/web";
 
             new WebAnalytics({
