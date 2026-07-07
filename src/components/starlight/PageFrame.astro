@@ -1,20 +1,23 @@
 ---
 // @ts-expect-error - Virtual Module for MobileMenuToggle component
 import MobileMenuToggle from "virtual:starlight/components/MobileMenuToggle";
-import { Analytics } from "@faststats/react";
 
 const { hasSidebar } = Astro.locals.starlightRoute;
+const siteKey = process.env.PUBLIC_FASTSTATS_SITE_KEY;
 ---
 
 {
-    process.env.NODE_ENV === "production" && (
-        <Analytics
-            siteKey={process.env.NEXT_PUBLIC_FASTSTATS_SITE_KEY!}
-            webVitals={{ enabled: true }}
-            sessionReplays={{ enabled: true }}
-            errorTracking={{ enabled: true }}
-            client:only="react"
-        />
+    process.env.NODE_ENV === "production" && siteKey && (
+        <script is:inline client:only define:vars={{ siteKey }}>
+            import { WebAnalytics } from "@faststats/web";
+
+            new WebAnalytics({
+                siteKey,
+                webVitals: { enabled: true },
+                sessionReplays: { enabled: true },
+                errorTracking: { enabled: true },
+            });
+        </script>
     )
 }
 
