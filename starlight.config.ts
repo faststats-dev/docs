@@ -43,6 +43,7 @@ export const baseStarlightOptions: StarlightUserConfig = {
         Header: './src/components/starlight/Header.astro',
         Sidebar: './src/components/starlight/Sidebar.astro',
         ContentPanel: './src/components/starlight/ContentPanel.astro',
+        MarkdownContent: './src/components/starlight/MarkdownContent.astro',
         PageFrame: './src/components/starlight/PageFrame.astro',
         PageTitle: './src/components/starlight/PageTitle.astro',
         TwoColumnContent: './src/components/starlight/TwoColumnContent.astro',

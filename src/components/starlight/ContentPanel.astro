@@ -9,39 +9,112 @@
 <style is:global>
 	@layer starlight.core {
 		.content-panel {
-			padding-inline: var(--sl-content-pad-x);
+			padding: 1.5rem var(--sl-content-pad-x);
+		}
+
+		.content-panel + .content-panel {
+			border-top: 1px solid var(--sl-color-hairline);
 		}
 
 		.sl-container {
 			max-width: var(--sl-content-width);
 		}
 
-		.sl-container > * + * {
-			margin-top: 1rem;
+		main[data-pagefind-body] {
+			--sl-main-pad: var(--sl-content-pt) var(--sl-content-pad-x) var(--sl-content-pb) var(--sl-content-pad-x);
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			overflow: hidden !important;
 		}
 
-		@media (min-width: 50rem) {
-			[data-has-sidebar] .sl-container {
-				margin-inline: 0;
-			}
+		main[data-pagefind-body]:not(:has(.hero)) > .content-panel {
+			border: none;
+			display: contents;
+			padding: 0;
 		}
 
-		main > .content-panel:first-child {
-			padding-top: var(--sl-content-pt);
-			padding-bottom: 0;
+		main[data-pagefind-body]:not(:has(.hero)) > .content-panel .sl-container {
+			display: contents;
 		}
 
-        main > .content-panel:nth-child(2) {
-            border-top: none;
-            padding-top: 0;
-        }
+		main[data-pagefind-body]:not(:has(.hero)) .sl-copy-button-row {
+			display: contents;
+		}
 
-		main > .content-panel:last-child {
+		main[data-pagefind-body]:not(:has(.hero)) :is(
+			h1#_top,
+			.page-description,
+			.sl-copy-button-controls,
+			.sl-container > p.sl-flex,
+			.sl-markdown-content,
+			footer
+		) {
+			max-width: var(--sl-content-width);
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) h1#_top {
+			order: 1;
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) .page-description {
+			order: 2;
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) .sl-copy-button-controls {
+			align-items: center;
+			border-bottom: 1px solid var(--sl-color-hairline);
+			display: flex;
+			gap: 0.5rem;
+			order: 3;
+			padding-bottom: 1.5rem;
+			width: 100%;
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) .sl-container > p.sl-flex {
+			order: 4;
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) .sl-markdown-content {
+			order: 5;
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) .sl-markdown-content > :first-child {
+			margin-top: 0 !important;
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) footer {
+			order: 6;
 			padding-bottom: 1.5rem;
 		}
 
-		main > .content-panel:nth-child(2) .sl-markdown-content > :first-child {
-			margin-top: 0 !important;
+		main[data-pagefind-body]:not(:has(.hero)) .sl-copy-button-controls--with-label .sl-copy-button {
+			align-items: center;
+			background: color-mix(in oklch, var(--sl-color-gray-5) 50%, transparent) !important;
+			border: 1px solid var(--sl-color-hairline) !important;
+			color: var(--sl-color-gray-2) !important;
+			display: inline-flex !important;
+			font-size: 0.75rem;
+			gap: 0.5rem;
+			height: auto !important;
+			min-height: 0 !important;
+			opacity: 1 !important;
+			padding: 0.375rem 0.5rem !important;
+			width: auto !important;
+
+			&::before {
+				display: none;
+			}
+
+			&:hover {
+				background: color-mix(in oklch, var(--sl-color-gray-5) 80%, transparent) !important;
+				color: var(--sl-color-white) !important;
+			}
+		}
+
+		main[data-pagefind-body]:not(:has(.hero)) .sl-copy-button__icon {
+			height: 0.875rem;
+			width: 0.875rem;
 		}
 	}
 </style>

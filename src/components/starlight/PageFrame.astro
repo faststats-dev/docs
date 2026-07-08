@@ -97,8 +97,6 @@ const siteKey = process.env.PUBLIC_FASTSTATS_SITE_KEY;
                     var(--sl-layout-offset) + var(--sl-sidebar-width)
                 ) !important;
                 --sl-content-margin-inline: 0;
-                --sl-content-pad-x: 1.5rem;
-                --sl-content-pt: 2rem;
             }
 
             .sidebar-pane {
@@ -133,13 +131,6 @@ const siteKey = process.env.PUBLIC_FASTSTATS_SITE_KEY;
                 var(--sl-nav-height) + var(--sl-mobile-toc-height)
             );
             padding-inline-start: var(--sl-content-inline-start);
-        }
-
-        @media (min-width: 80rem) {
-            :global(:root[data-has-sidebar]) {
-                --sl-content-pad-x: 2rem;
-                --sl-content-pt: 3.5rem;
-            }
         }
 
         @media (max-width: 49.99rem) {

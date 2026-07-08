@@ -4,8 +4,8 @@ import House from "@lucide/astro/icons/house";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 ---
 
-<StarlightPage frontmatter={{ title: "Error 404", template: "splash" }}>
-    <div class="flex max-w-lg flex-col items-center gap-8 px-6 text-center">
+<StarlightPage frontmatter={{ title: "Error 404", template: "splash", pagefind: false }}>
+    <div class="page-not-found flex max-w-lg flex-col items-center gap-8 px-6 text-center">
         <div class="space-y-4">
             <p class="text-xs text-[var(--sl-color-gray-2)]">Error 404</p>
             <h1 class="text-4xl font-medium tracking-tight text-[var(--sl-color-white)] md:text-5xl">
@@ -34,34 +34,22 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     </div>
 </StarlightPage>
 
-<script is:inline>
-    document.documentElement.setAttribute("data-is-404", "true");
-</script>
-
 <style is:global>
-    [data-is-404="true"] .sl-copy-button-row,
-    [data-is-404="true"] main > .content-panel:first-child,
-    [data-is-404="true"] footer {
+    main:has(.page-not-found) > .content-panel:first-child,
+    main:has(.page-not-found) footer,
+    main:has(.page-not-found) .sl-copy-button-row {
         display: none !important;
     }
 
-    [data-is-404="true"] main > .content-panel:nth-child(2) {
-        border-top: none !important;
-        padding: 0 !important;
+    main:has(.page-not-found) > .content-panel:nth-child(2) {
+        border-top: none;
     }
 
-    [data-is-404="true"] main > .content-panel:nth-child(2) .sl-container {
-        max-width: none;
-        padding: 0;
-    }
-
-    [data-is-404="true"] .sl-markdown-content > div {
+    main:has(.page-not-found) > .content-panel:nth-child(2) .sl-container {
         align-items: center;
         display: flex;
-        inset: var(--sl-nav-height) 0 0 var(--sl-content-inline-start, 0);
         justify-content: center;
-        padding: 1.5rem;
-        position: fixed;
-        z-index: 1;
+        max-width: none;
+        min-height: calc(100dvh - var(--sl-nav-height) - var(--sl-content-pt));
     }
 </style>
