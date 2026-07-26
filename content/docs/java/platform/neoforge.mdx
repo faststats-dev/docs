@@ -16,8 +16,13 @@ Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21
 **Artifact:** `dev.faststats.metrics:neoforge`
 
 ```kts
-implementation("dev.faststats.metrics:neoforge:0.27.2+mc26.1-26.2")
+implementation("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
+include("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
 ```
+
+Use both `implementation` and `include`. FastStats is provided as a mod through
+jar-in-jar, so `implementation` puts it on your compile classpath and `include`
+bundles it into your mod JAR.
 
 The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
 the FastStats SDK version and `{from}-{to}` is the supported Minecraft version

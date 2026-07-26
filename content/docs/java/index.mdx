@@ -64,9 +64,16 @@ Choose the artifact for your platform:
 Fabric and NeoForge artifacts include the SDK version and the Minecraft version range you want to target:
 
 ```kts
-implementation("dev.faststats.metrics:fabric:0.27.2+mc26.1-26.3")
-implementation("dev.faststats.metrics:neoforge:0.27.2+mc26.1-26.2")
+implementation("dev.faststats.metrics:fabric:0.29.0+mc26.1-26.3")
+include("dev.faststats.metrics:fabric:0.29.0+mc26.1-26.3")
+
+implementation("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
+include("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
 ```
+
+Use both `implementation` and `include` for modded platforms. FastStats is
+provided as a mod through jar-in-jar, so `implementation` puts it on your compile
+classpath and `include` bundles it into your mod JAR.
 
 The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
 the FastStats SDK version and `{from}-{to}` is the supported Minecraft version
