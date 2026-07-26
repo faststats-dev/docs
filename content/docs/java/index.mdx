@@ -113,6 +113,62 @@ All other platforms use the SDK version without a Minecraft version suffix.
 	</Tab>
 </Tabs>
 
+## Java 8 Fallback Artifacts
+
+Use the standard Java 17+ artifacts above whenever possible. Java 8 artifacts
+are provided only as a last resort for projects that absolutely cannot run on
+Java 17.
+
+Java 8 artifacts use the `dev.faststats.metrics.j8` group ID. The artifact IDs
+and versions are the same as the standard Java artifacts:
+
+| Package    | Java 8 Artifact                       |
+| ---------- | ------------------------------------- |
+| Bukkit     | `dev.faststats.metrics.j8:bukkit`     |
+| BungeeCord | `dev.faststats.metrics.j8:bungeecord` |
+| Config     | `dev.faststats.metrics.j8:config`     |
+| Core       | `dev.faststats.metrics.j8:core`       |
+| Nukkit     | `dev.faststats.metrics.j8:nukkit`     |
+| Sponge     | `dev.faststats.metrics.j8:sponge`     |
+
+For example, if your Bukkit plugin must stay on Java 8, change only the group
+ID:
+
+<Tabs
+	defaultIndex="1"
+	groupId="language"
+	items={["Maven", "Gradle Kotlin", "Gradle Groovy", "SBT"]}
+>
+	<Tab id="maven" value="Maven">
+		<DynamicCodeBlock
+			lang="xml"
+			code={`<dependency>
+    <groupId>dev.faststats.metrics.j8</groupId>
+    <artifactId>bukkit</artifactId>
+    <version>${version}</version>
+</dependency>`}
+		/>
+	</Tab>
+	<Tab id="kotlin" value="Gradle Kotlin">
+		<DynamicCodeBlock
+			lang="kts"
+			code={`implementation("dev.faststats.metrics.j8:bukkit:${version}")`}
+		/>
+	</Tab>
+	<Tab id="groovy" value="Gradle Groovy">
+		<DynamicCodeBlock
+			lang="groovy"
+			code={`implementation "dev.faststats.metrics.j8:bukkit:${version}"`}
+		/>
+	</Tab>
+	<Tab id="sbt" value="SBT">
+		<DynamicCodeBlock
+			lang="scala"
+			code={`"dev.faststats.metrics.j8" %% "bukkit" %% "${version}"`}
+		/>
+	</Tab>
+</Tabs>
+
 ## Shading
 
 To include FastStats directly in your plugin JAR, you can use the Maven Shade or Gradle Shadow Plugin.
