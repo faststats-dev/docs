@@ -4,8 +4,6 @@ const exactRedirects: Record<string, string> = {
 	"/retention": "/platform/retention",
 	"/web-vitals": "/platform/web-vitals",
 	"/web": "/web-analytics",
-	"/openapi": "/api",
-	"/api/search": "/docs-search",
 };
 
 const prefixRedirects = [
@@ -20,10 +18,6 @@ const prefixRedirects = [
 	{
 		pattern: /^\/error-tracking\/(.*)$/,
 		target: (match: RegExpMatchArray) => `/platform/error-tracking/${match[1]}`,
-	},
-	{
-		pattern: /^\/openapi\/(.*)$/,
-		target: (match: RegExpMatchArray) => `/api/${match[1]}`,
 	},
 ];
 
