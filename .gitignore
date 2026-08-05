@@ -1,12 +1,10 @@
 # deps
 /node_modules
 
-# generated content
-.source
-
 # test & build
 /coverage
-/.next/
+/dist
+/.astro
 /out/
 /build
 *.tsbuildinfo
@@ -23,4 +21,5 @@ yarn-error.log*
 # others
 .env*.local
 .vercel
-next-env.d.ts
+.next/
+.source/

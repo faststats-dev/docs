@@ -1,14 +1,13 @@
 import { ArrowLeft, Home } from "lucide-react";
-import Link from "next/link";
 import { SiteBrand } from "@/components/site-brand";
 
 export function DocsNotFound() {
 	return (
 		<div className="grid min-h-dvh grid-rows-[auto_1fr]">
 			<header className="border-border border-b px-6 py-4">
-				<Link href="/platform" className="w-fit">
+				<a href="/platform" className="w-fit">
 					<SiteBrand />
-				</Link>
+				</a>
 			</header>
 			<main className="flex flex-col items-center justify-center px-6 py-12 text-center">
 				<div className="flex max-w-lg flex-col items-center gap-8">
@@ -23,20 +22,20 @@ export function DocsNotFound() {
 						</p>
 					</div>
 					<div className="flex flex-col gap-3 sm:flex-row">
-						<Link
+						<a
 							href="/platform"
 							className="border-border bg-secondary text-secondary-foreground hover:bg-accent inline-flex h-11 items-center justify-center gap-2 border px-6 text-sm font-medium transition-colors"
 						>
 							<ArrowLeft className="size-4" />
 							Back to docs
-						</Link>
-						<Link
+						</a>
+						<a
 							href="https://faststats.dev"
 							className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center gap-2 px-6 text-sm font-medium transition-colors"
 						>
 							<Home className="size-4" />
 							Go to FastStats
-						</Link>
+						</a>
 					</div>
 				</div>
 			</main>

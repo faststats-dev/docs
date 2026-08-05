@@ -1,0 +1,58 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import { Docs } from "@/components/docs";
+import Layout from "@/components/layout.astro";
+import { getPageImageUrl, source } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
+import type { TOCItemType } from "fumadocs-core/toc";
+
+interface Props {
+	page: CollectionEntry<"docs">;
+}
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	return source.getPages().map((page) => ({
+		params: {
+			slug: page.slugs.length > 0 ? page.slugs.join("/") : undefined,
+		},
+		props: { page: page.data._raw },
+	}));
+}
+
+const { page } = Astro.props;
+const { Content, headings } = await render(page);
+const slugs =
+	typeof Astro.params.slug === "string" ? Astro.params.slug.split("/") : [];
+const docsPage = source.getPage(slugs)!;
+const image = getPageImageUrl(docsPage);
+const tree = source.getPageTree();
+
+const toc: TOCItemType[] = headings.map((heading) => ({
+	depth: heading.depth,
+	title: heading.text,
+	url: "#" + heading.slug,
+}));
+---
+
+<Layout>
+	<Fragment slot="head">
+		<title>{page.data.title}</title>
+		<meta name="title" content={page.data.title} />
+		<meta name="description" content={page.data.description} />
+		<meta property="og:image" content={image} />
+	</Fragment>
+	<Docs
+		tree={tree}
+		pathname={Astro.url.pathname}
+		params={Astro.params}
+		page={{ toc, full: page.data.full }}
+		title={page.data.title}
+		description={page.data.description}
+		markdownUrl={`${docsPage.url}.md`}
+		client:load
+	>
+		<Content components={getMDXComponents()} />
+	</Docs>
+</Layout>

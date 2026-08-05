@@ -4,7 +4,6 @@
 @import "./tokens.css";
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
-@import "fumadocs-openapi/css/preset.css";
 
 * {
 	border-radius: 0;
@@ -121,6 +120,11 @@
 	font-family: var(--font-mono);
 }
 
+#nd-page .prose :not(pre) > code {
+	border: none;
+	text-decoration: none;
+}
+
 #nd-page .prose ul,
 #nd-page .prose ol {
 	margin: 1.25rem 0;
@@ -179,4 +183,32 @@
 #nd-page .prose :is(strong, b) {
 	font-weight: 500;
 	color: var(--foreground);
+}
+
+.shiki code span {
+	color: var(--shiki-light);
+	font-style: var(--shiki-light-font-style);
+}
+
+.dark .shiki code span {
+	color: var(--shiki-dark);
+	font-style: var(--shiki-dark-font-style);
+}
+
+[data-tab-panel] {
+	background-color: var(--color-fd-card);
+}
+
+[data-tab-panel] > figure:only-child {
+	margin: 0;
+	border: none;
+	box-shadow: none;
+	border-radius: 0;
+	border-bottom-left-radius: calc(var(--radius) + 4px);
+	border-bottom-right-radius: calc(var(--radius) + 4px);
+	background-color: var(--color-fd-card);
+}
+
+[data-tab-panel] > figure:only-child pre {
+	background-color: transparent;
 }
