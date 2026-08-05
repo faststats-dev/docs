@@ -5,7 +5,7 @@ import { type ComponentProps, type ReactNode, useId } from "react";
 import * as Unstyled from "@/components/ui/tabs";
 
 const tabPanelClassName =
-	"bg-fd-card p-0 text-[0.9375rem] outline-none prose-no-margin";
+	"bg-fd-card p-0 text-[0.9375rem] outline-none prose-no-margin [&>figure:only-child]:m-0 [&>figure:only-child]:border-none [&>figure:only-child]:shadow-none [&>figure:only-child]:rounded-none [&>figure:only-child]:rounded-b-xl [&>figure:only-child]:bg-fd-card [&>figure:only-child_pre]:bg-transparent";
 
 export interface TabsProps extends Omit<
 	ComponentProps<typeof Unstyled.Tabs>,
@@ -62,31 +62,35 @@ export function Tabs({
 	groupId,
 	persist,
 	updateAnchor,
+	children,
 	...props
 }: TabsProps) {
-	const tabId = useId();
-	const panelValues = items?.map(escapeValue) ?? [];
-	const defaultValue = items
-		? escapeValue(items[Number(defaultIndex)] ?? items[0])
+	const scopeId = useId().replace(/:/g, "");
+	const panelValues = items?.map(escapeValue);
+	const defaultValue = panelValues
+		? panelValues[Number(defaultIndex)] ?? panelValues[0]
 		: undefined;
 
 	return (
 		<>
-			{panelValues.length > 0 ? (
+			{panelValues && defaultValue ? (
 				<style
 					dangerouslySetInnerHTML={{
-						__html: `[data-tab-id="${tabId}"] > [data-tab-panel]{display:none}${panelValues
-							.map(
-								(value) =>
-									`[data-tab-id="${tabId}"][data-tab-value="${value}"] > [data-tab-panel="${value}"]{display:block}`,
-							)
-							.join("")}`,
+						__html: `
+[data-tab-scope="${scopeId}"] [data-tab-panel] { display: none; }
+${panelValues
+	.map(
+		(v) =>
+			`[data-tab-scope="${scopeId}"][data-tab-value="${v}"] [data-tab-panel="${v}"] { display: block; }`,
+	)
+	.join("\n")}
+`.trim(),
 					}}
 				/>
 			) : null}
 			<Unstyled.Tabs
 				ref={ref}
-				data-tab-id={tabId}
+				data-tab-scope={scopeId}
 				className={(s) =>
 					cn(
 						"my-4 flex flex-col overflow-hidden rounded-xl border bg-fd-secondary",
@@ -113,7 +117,7 @@ export function Tabs({
 						))}
 					</TabsList>
 				) : null}
-				{props.children}
+				{children}
 			</Unstyled.Tabs>
 		</>
 	);

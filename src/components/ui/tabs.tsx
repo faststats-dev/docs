@@ -24,6 +24,7 @@ export interface TabsProps extends ComponentProps<typeof Primitive.Root> {
 }
 
 const TabsContext = createContext<{
+	value?: string;
 	valueToIdMap: Map<string, string>;
 } | null>(null);
 
@@ -144,7 +145,9 @@ export function Tabs({
 			}}
 			{...props}
 		>
-			<TabsContext value={useMemo(() => ({ valueToIdMap }), [valueToIdMap])}>
+			<TabsContext
+				value={useMemo(() => ({ value, valueToIdMap }), [value, valueToIdMap])}
+			>
 				{props.children}
 			</TabsContext>
 		</Primitive.Root>
@@ -155,28 +158,30 @@ export function TabsContent({
 	value,
 	className,
 	children,
+	hidden: hiddenProp,
+	id,
+	keepMounted: _keepMounted,
 	...props
 }: ComponentProps<typeof Primitive.Panel>) {
 	const ctx = useTabContext();
-	if (!ctx) {
-		const resolvedClassName =
-			typeof className === "function" ? undefined : className;
+	const resolvedClassName =
+		typeof className === "function" ? undefined : className;
+	const hidden =
+		hiddenProp ?? (ctx?.value !== undefined && ctx.value !== value);
 
-		return (
-			<div data-tab-panel={value} className={resolvedClassName} {...props}>
-				{children}
-			</div>
-		);
-	}
-
-	const { valueToIdMap } = ctx;
-	if (props.id) {
-		valueToIdMap.set(value, props.id);
+	if (ctx && id) {
+		ctx.valueToIdMap.set(value, id);
 	}
 
 	return (
-		<Primitive.Panel value={value} className={className} {...props}>
+		<div
+			data-tab-panel={value}
+			hidden={hidden}
+			id={id}
+			className={resolvedClassName}
+			{...(props as ComponentProps<"div">)}
+		>
 			{children}
-		</Primitive.Panel>
+		</div>
 	);
 }

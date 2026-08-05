@@ -3,8 +3,6 @@
 import { useLayoutEffect } from "react";
 
 function syncTabPanels(root: HTMLElement, active: string | undefined) {
-	if (!active) return;
-
 	for (const panel of root.querySelectorAll<HTMLElement>("[data-tab-panel]")) {
 		panel.hidden = panel.dataset.tabPanel !== active;
 	}
@@ -28,8 +26,8 @@ function enhanceTabRoot(root: HTMLElement) {
 		if (stored) root.dataset.tabValue = stored;
 	}
 
-	syncTabPanels(root, root.dataset.tabValue);
 	setActiveTrigger(root, root.dataset.tabValue);
+	syncTabPanels(root, root.dataset.tabValue);
 
 	for (const trigger of root.querySelectorAll<HTMLElement>('[role="tab"]')) {
 		trigger.addEventListener("click", () => {
@@ -38,8 +36,8 @@ function enhanceTabRoot(root: HTMLElement) {
 
 			const apply = (target: HTMLElement) => {
 				target.dataset.tabValue = value;
-				syncTabPanels(target, value);
 				setActiveTrigger(target, value);
+				syncTabPanels(target, value);
 			};
 
 			if (groupId) {
@@ -57,13 +55,20 @@ function enhanceTabRoot(root: HTMLElement) {
 	}
 }
 
+function enhanceStaticTabs() {
+	for (const root of document.querySelectorAll<HTMLElement>("[data-tab-root]")) {
+		enhanceTabRoot(root);
+	}
+}
+
 export function StaticTabsEnhancer() {
 	useLayoutEffect(() => {
-		for (const root of document.querySelectorAll<HTMLElement>(
-			"[data-tab-root]",
-		)) {
-			enhanceTabRoot(root);
-		}
+		enhanceStaticTabs();
+
+		document.addEventListener("astro:page-load", enhanceStaticTabs);
+		return () => {
+			document.removeEventListener("astro:page-load", enhanceStaticTabs);
+		};
 	}, []);
 
 	return null;
