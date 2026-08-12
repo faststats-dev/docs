@@ -1,14 +1,13 @@
+import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import {
-	CodeBlock,
 	CodeBlockTab,
 	CodeBlockTabs,
 	CodeBlockTabsList,
 	CodeBlockTabsTrigger,
-	Pre,
-} from "@/components/codeblock";
-import { HighlightedCode } from "@/components/highlighted-code";
+} from "@/components/codeblock-tabs";
 import { Tab, Tabs } from "@/components/tabs";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -19,7 +18,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 		CodeBlockTabs,
 		CodeBlockTabsList,
 		CodeBlockTabsTrigger,
-		DynamicCodeBlock: HighlightedCode,
+		DynamicCodeBlock,
 		pre: (props) => (
 			<CodeBlock {...props}>
 				<Pre>{props.children}</Pre>
