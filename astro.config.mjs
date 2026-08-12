@@ -17,12 +17,13 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const remarkPlugins = [
-	remarkHeading,
-	remarkCodeTab,
-	remarkNpm,
-	[remarkStructure, { exportAs: "structuredData" }],
-];
+const remarkPlugins =
+	/** @type {import('@astrojs/markdown-remark').RemarkPlugins} */ ([
+		remarkHeading,
+		remarkCodeTab,
+		remarkNpm,
+		[remarkStructure, { exportAs: "structuredData" }],
+	]);
 const rehypePlugins = [rehypeCode];
 
 /** @type {import('astro').AstroUserConfig} */
@@ -31,7 +32,6 @@ export default defineConfig({
 	adapter: node({ mode: "standalone" }),
 	markdown: {
 		processor: unified({
-			syntaxHighlight: false,
 			remarkPlugins,
 			rehypePlugins,
 		}),
@@ -53,7 +53,6 @@ export default defineConfig({
 				"react",
 				"react-dom",
 				"@base-ui/react",
-				"@fumadocs/base-ui",
 				"fumadocs-core",
 				"fumadocs-ui",
 			],

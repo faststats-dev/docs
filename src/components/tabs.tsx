@@ -68,7 +68,7 @@ export function Tabs({
 	const scopeId = useId().replace(/:/g, "");
 	const panelValues = items?.map(escapeValue);
 	const defaultValue = panelValues
-		? panelValues[Number(defaultIndex)] ?? panelValues[0]
+		? (panelValues[Number(defaultIndex)] ?? panelValues[0])
 		: undefined;
 
 	return (

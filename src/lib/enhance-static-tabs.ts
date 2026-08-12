@@ -1,7 +1,3 @@
-"use client";
-
-import { useLayoutEffect } from "react";
-
 function syncTabPanels(root: HTMLElement, active: string | undefined) {
 	for (const panel of root.querySelectorAll<HTMLElement>("[data-tab-panel]")) {
 		panel.hidden = panel.dataset.tabPanel !== active;
@@ -55,21 +51,10 @@ function enhanceTabRoot(root: HTMLElement) {
 	}
 }
 
-function enhanceStaticTabs() {
-	for (const root of document.querySelectorAll<HTMLElement>("[data-tab-root]")) {
+export function enhanceStaticTabs() {
+	for (const root of document.querySelectorAll<HTMLElement>(
+		"[data-tab-root]",
+	)) {
 		enhanceTabRoot(root);
 	}
-}
-
-export function StaticTabsEnhancer() {
-	useLayoutEffect(() => {
-		enhanceStaticTabs();
-
-		document.addEventListener("astro:page-load", enhanceStaticTabs);
-		return () => {
-			document.removeEventListener("astro:page-load", enhanceStaticTabs);
-		};
-	}, []);
-
-	return null;
 }

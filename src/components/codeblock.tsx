@@ -46,13 +46,13 @@ function CodeBlock({
 	allowCopy?: boolean | "true" | "false";
 	keepBackground?: boolean;
 	icon?: React.ReactNode;
-	viewportProps?: ComponentProps<"div">;
+	viewportProps?: ComponentProps<"section">;
 	Actions?: (props: ComponentProps<"div">) => React.ReactNode;
 	"data-line-numbers"?: boolean;
 	"data-line-numbers-start"?: number;
 }) {
 	const inTab = use(TabsContext) !== null;
-	const areaRef = useRef<HTMLDivElement>(null);
+	const areaRef = useRef<HTMLElement>(null);
 	if (allowCopy === "true") allowCopy = true;
 	else if (allowCopy === "false") allowCopy = false;
 
@@ -91,25 +91,25 @@ function CodeBlock({
 					{allowCopy ? <CopyButton containerRef={areaRef} /> : null}
 				</Actions>
 			)}
-			<div
+			<section
 				ref={areaRef}
 				{...viewportProps}
-				role="region"
-				tabIndex={0}
 				className={cn(
 					"text-[0.8125rem] py-3.5 overflow-auto max-h-[600px] fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-fd-ring",
 					viewportProps.className,
 				)}
-				style={{
-					"--padding-right": !title ? "calc(var(--spacing) * 8)" : undefined,
-					counterSet: props["data-line-numbers"]
-						? `line ${Number(props["data-line-numbers-start"] ?? 1) - 1}`
-						: undefined,
-					...viewportProps.style,
-				}}
+				style={
+					{
+						"--padding-right": !title ? "calc(var(--spacing) * 8)" : undefined,
+						counterSet: props["data-line-numbers"]
+							? `line ${Number(props["data-line-numbers-start"] ?? 1) - 1}`
+							: undefined,
+						...viewportProps.style,
+					} as React.CSSProperties
+				}
 			>
 				{children}
-			</div>
+			</section>
 		</figure>
 	);
 }
@@ -119,7 +119,7 @@ function CopyButton({
 	containerRef,
 	...props
 }: ComponentProps<"button"> & {
-	containerRef: React.RefObject<HTMLDivElement | null>;
+	containerRef: React.RefObject<HTMLElement | null>;
 }) {
 	const [checked, onClick] = useCopyButton(() => {
 		const pre = containerRef.current?.getElementsByTagName("pre").item(0);

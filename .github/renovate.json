@@ -9,12 +9,7 @@
 	"packageRules": [
 		{
 			"groupName": "fumadocs",
-			"matchPackageNames": [
-				"fumadocs-core",
-				"fumadocs-mdx",
-				"fumadocs-openapi",
-				"fumadocs-ui"
-			]
+			"matchPackageNames": ["fumadocs-core", "fumadocs-mdx", "fumadocs-ui"]
 		},
 		{
 			"groupName": "takumi",

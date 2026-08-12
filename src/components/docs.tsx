@@ -9,6 +9,7 @@ import {
 	type DocsPageProps,
 	DocsTitle,
 } from "fumadocs-ui/layouts/notebook/page";
+import { getLayoutTabs } from "fumadocs-ui/layouts/shared";
 import { RootProvider } from "fumadocs-ui/provider/astro";
 import { type ReactNode, useMemo } from "react";
 import { LLMCopyButton } from "@/components/ai/page-actions";
@@ -17,9 +18,7 @@ import {
 	DocsSidebarFooter,
 } from "@/components/docs/docs-sidebar";
 import SearchDialog from "@/components/search";
-import { StaticTabsEnhancer } from "@/components/static-tabs-enhancer";
-import { getDocsTabs } from "@/lib/docs-tabs";
-import { baseOptions } from "@/lib/layout.shared";
+import { SiteBrand } from "@/components/site-brand";
 import { resolveLucideIcons } from "@/lib/resolve-lucide-icons";
 
 export function Docs({
@@ -50,12 +49,14 @@ export function Docs({
 			navigate={navigate}
 			search={{ SearchDialog }}
 		>
-			<StaticTabsEnhancer />
 			<DocsLayout
-				{...baseOptions()}
+				nav={{
+					title: <SiteBrand />,
+					url: "/platform",
+				}}
 				tree={pageTree}
 				tabMode="navbar"
-				tabs={getDocsTabs(pageTree)}
+				tabs={getLayoutTabs(pageTree)}
 				sidebar={{
 					collapsible: true,
 					banner: DocsSidebarBanner,

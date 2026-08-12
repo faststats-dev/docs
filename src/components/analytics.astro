@@ -1,0 +1,13 @@
+<script>
+	import { WebAnalytics } from "@faststats/web";
+
+	const siteKey = import.meta.env.PUBLIC_FASTSTATS_SITE_KEY;
+	if (siteKey) {
+		new WebAnalytics({
+			siteKey,
+			webVitals: { enabled: true },
+			sessionReplays: { enabled: true },
+			errorTracking: { enabled: true },
+		});
+	}
+</script>
