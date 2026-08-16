@@ -1,0 +1,125 @@
+---
+title: Error Tracking
+description: Report errors from a custom SDK
+icon: Bug
+---
+
+Send errors from a custom SDK with the error ingestion endpoint. Error tracking
+must be enabled for the project under **Settings → Features** before the
+collector accepts reports.
+
+## Endpoint
+
+```http
+POST https://metrics.faststats.dev/v1/error
+Authorization: Bearer <PROJECT_TOKEN>
+Content-Type: application/json
+```
+
+The request body contains one or more errors and metadata shared by the batch:
+
+```json
+{
+	"language": "javascript",
+	"identifier": "worker-01",
+	"sessionId": "session-7d3f",
+	"windowId": "request-42",
+	"buildId": "2026.08.16",
+	"sdkName": "acme-node",
+	"sdkVersion": "1.4.0",
+	"context": {
+		"environment": "production",
+		"region": "eu-central-1"
+	},
+	"errors": [
+		{
+			"error": "TypeError",
+			"message": "Cannot read properties of undefined",
+			"stack": [
+				"TypeError: Cannot read properties of undefined",
+				"    at handleRequest (/app/server.js:42:17)"
+			],
+			"handled": false,
+			"count": 1,
+			"context": {
+				"route": "/checkout"
+			}
+		}
+	]
+}
+```
+
+## Request fields
+
+### Batch fields
+
+| Field        | Type           | Required | Description                                                                                |
+| ------------ | -------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `errors`     | array          | yes      | Error occurrences to ingest.                                                               |
+| `language`   | string         | no       | Stack-trace language. Defaults to `java`; see [Supported languages](#supported-languages). |
+| `identifier` | string         | no       | Identifier for the affected installation, process, or user.                                |
+| `sessionId`  | string         | no       | Session associated with the errors.                                                        |
+| `windowId`   | string         | no       | Window or request associated with the errors.                                              |
+| `buildId`    | string         | no       | Release/build identifier used to find an uploaded mapping file.                            |
+| `context`    | any JSON value | no       | Structured metadata shared by every error in the request.                                  |
+| `sdkName`    | string         | no       | Name of your SDK or integration.                                                           |
+| `sdkVersion` | string         | no       | Version of your SDK or integration.                                                        |
+
+### Error fields
+
+| Field     | Type             | Required | Description                                                                                                   |
+| --------- | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `error`   | string           | yes      | Error type or exception class, such as `TypeError` or `java.lang.RuntimeException`.                           |
+| `message` | string           | no       | Human-readable error message.                                                                                 |
+| `stack`   | array of strings | no       | Stack trace lines in their original order.                                                                    |
+| `handled` | boolean          | no       | Whether application code handled the error. Defaults to `false`.                                              |
+| `count`   | integer          | no       | Number of identical occurrences represented by this item. Defaults to `1`; use a non-negative 32-bit integer. |
+| `buildId` | string           | no       | Build identifier for this error. Overrides the batch-level `buildId`.                                         |
+| `context` | any JSON value   | no       | Metadata specific to this error. Object keys override matching batch context keys.                            |
+
+Keep stack frames as separate array entries. The collector joins them with
+newlines before grouping and applying source mappings.
+
+## Supported languages
+
+The language controls stack-trace normalization, grouping, and mapping. Values
+are case-insensitive and surrounding whitespace is ignored.
+
+If you need support for a language not listed here, please contact us.
+
+| Language   | Accepted values    | Mapping support        |
+| ---------- | ------------------ | ---------------------- |
+| Java       | `java`             | ProGuard/R8 mappings   |
+| JavaScript | `javascript`, `js` | JavaScript source maps |
+| PHP        | `php`              | None                   |
+| Rust       | `rust`, `rs`       | None                   |
+
+If `language` is omitted or empty, the collector uses `java` for backward
+compatibility. Any other value returns `400 Bad Request`:
+
+```json
+{
+	"error": "Unsupported language. Expected java, javascript, php, or rust"
+}
+```
+
+## Responses
+
+A report accepted into the ingestion queue returns `200 OK`:
+
+```json
+{
+	"status": "success"
+}
+```
+
+The collector can also return:
+
+| Status                    | Meaning                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| `400 Bad Request`         | The body is invalid JSON or `language` is unsupported.                          |
+| `401 Unauthorized`        | The authorization header is missing or the project token is invalid.            |
+| `403 Forbidden`           | Error tracking is disabled or the request is blocked by the project's IP rules. |
+| `503 Service Unavailable` | The ingestion queue is full; retry the request with backoff.                    |
+
+Error responses have the shape `{ "error": "message" }`.
