@@ -9,15 +9,17 @@ reported by `@faststats/nitro`.
 
 ## Browser Errors
 
-Turn on `errorTracking.enabled` to capture uncaught errors and unhandled promise
-rejections. The tracker batches them and drops noise from browser extensions
-automatically.
+Add the error-tracking extension to capture uncaught errors and unhandled
+promise rejections. The tracker batches them and drops noise from browser
+extensions automatically.
 
 <Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-<Analytics siteKey="your_site_key" errorTracking={{ enabled: true }} />
+import { errorTracking } from "@faststats/react/error";
+
+<Analytics siteKey="your_site_key" extensions={[errorTracking()]} />;
 ```
 
     </Tab>
@@ -26,7 +28,7 @@ automatically.
 ```ts title="nuxt.config.ts"
 faststats: {
 	siteKey: "your_site_key",
-	errorTracking: { enabled: true },
+	extensions: { errorTracking: true },
 }
 ```
 
@@ -34,9 +36,12 @@ faststats: {
     <Tab value="JavaScript">
 
 ```ts
-new WebAnalytics({
+import { init } from "@faststats/web";
+import { errorTracking } from "@faststats/web/error";
+
+init({
 	siteKey: "your_site_key",
-	errorTracking: { enabled: true },
+	extensions: [errorTracking()],
 });
 ```
 
@@ -50,8 +55,8 @@ counted instead of repeated.
 
 ## Report Errors by Hand
 
-When you catch an error yourself you can still send it with `reportError`. This
-only works when `errorTracking.enabled` is `true`.
+When you catch an error yourself, send it through the running client. An
+error-tracking extension must be active to receive the report.
 
 ```ts
 import { reportError } from "@faststats/web";
@@ -63,6 +68,9 @@ try {
 }
 ```
 
+In React, get the client with `useAnalytics()` and call
+`analytics?.reportError(error)`. In Nuxt, call `$faststats.reportError(error)`.
+
 In Nuxt the module already hooks into the Vue error handler, so component errors
 are reported without extra code.
 
@@ -72,7 +80,7 @@ If you run Nitro, either standalone or through Nuxt, you can report errors throw
 in server routes with `@faststats/nitro`. The package ships a plugin for Nitro
 v2 and one for Nitro v3.
 
-`npm npm install @faststats/nitro `
+`npm install @faststats/nitro`
 
 <Tabs items={["Nuxt", "Nitro standalone"]}>
 	<Tab value="Nuxt">

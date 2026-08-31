@@ -4,85 +4,90 @@ description: Automatic tracking and custom events
 icon: MousePointerClick
 ---
 
-The SDK sends `pageview`, `page_leave`, and `outbound_link` events
-automatically. Use `trackEvent` for custom events.
+The core SDK automatically sends `pageview` and `page_leave` events. Add the
+outbound-links extension to capture `outbound_link`, and use `track` for your
+own events.
 
 ## Automatic Tracking
 
-Once the SDK starts it records these without any extra code.
+| Event           | When it fires                                                    |
+| --------------- | ---------------------------------------------------------------- |
+| `pageview`      | On the first visible load and each client-side route change      |
+| `page_leave`    | When the page unloads or client-side navigation leaves the route |
+| `outbound_link` | When the optional extension sees a click to another host         |
 
-| Event           | When it fires                                           |
-| --------------- | ------------------------------------------------------- |
-| `pageview`      | On the first load and on every client side route change |
-| `page_leave`    | When the page is hidden or the user navigates away      |
-| `outbound_link` | When a user clicks a link that points to another host   |
+Page views include the path, sanitized URL, referrer, page title, and UTM
+parameters. Page-leave events include time on page and session duration.
 
-Each page view carries the path, full URL, referrer, page title and any UTM
-parameters from the query string. The `page_leave` event also includes the time
-spent on the page, the deepest scroll depth in percent and the session duration.
+Single-page navigation is detected through the History API, so `pushState`,
+`replaceState`, and back/forward navigation create page views automatically.
+Set `trackHash: true` for hash-based routers.
 
-Single page navigation is detected through the History API, so `pushState`,
-`replaceState` and the back and forward buttons all create new page views. Hash
-based routers need `trackHash` turned on. See
-[Configuration](/web-analytics/configuration).
+## Outbound Links
+
+Outbound link tracking is opt-in so applications that do not need it do not
+ship its click listener.
+
+```ts
+import { init } from "@faststats/web";
+import { outboundLinks } from "@faststats/web/outbound-links";
+
+init({
+	siteKey: "your_site_key",
+	extensions: [outboundLinks()],
+});
+```
+
+For React, import from `@faststats/react/outbound-links`. In Nuxt, set
+`faststats.extensions.outboundLinks` to `true`.
 
 ## Custom Events
 
-Call `trackEvent` with a name and an optional object of properties. Use clear,
-lower case names so they read well in your dashboard.
+Call `track` with a name and an optional object of JSON-serializable properties.
 
-<Tabs items={["React", "JavaScript"]}>
+<Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-import { trackEvent } from "@faststats/react";
+import { useTrack } from "@faststats/react";
 
-trackEvent("signup", { plan: "pro", source: "hero" });
+const track = useTrack();
+track("signup", { plan: "pro", source: "hero" });
+```
+
+    </Tab>
+    <Tab value="Nuxt">
+
+```vue
+<script setup lang="ts">
+const { $faststats } = useNuxtApp();
+
+$faststats.track("signup", { plan: "pro", source: "hero" });
+</script>
 ```
 
     </Tab>
     <Tab value="JavaScript">
 
 ```ts
-import { trackEvent } from "@faststats/web";
+import { track } from "@faststats/web";
 
-trackEvent("signup", { plan: "pro", source: "hero" });
+track("signup", { plan: "pro", source: "hero" });
 ```
 
     </Tab>
 
 </Tabs>
 
-The event name is trimmed and empty names are ignored, so a stray space never
-creates a broken event.
-
-## Properties and Dimensions
-
-You can attach any JSON friendly values as properties. A few keys are treated as
-known dimensions and are stored as first class fields instead of free form
-properties. These are `browser`, `browser_version`, `device`, `os`,
-`os_version`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`,
-`utm_term`, `utm_content`, `title`, `page` and `url`.
-
-Everything else you pass lands in the properties bag.
-
-```ts
-trackEvent("video_play", {
-	// stored as a dimension
-	page: "/courses/intro",
-	// stored as custom properties
-	video_id: "abc123",
-	position_seconds: 12,
-});
-```
+The SDK trims names and ignores empty names. It reserves `pageview`,
+`page_leave`, `error`, and `outbound_link` for built-in events.
 
 ## Good Practices
 
-Keep a small, stable set of event names and put varying details in properties.
-Use one event name with a `step` property instead of separate names per step.
+Keep a small, stable set of event names and put changing details in properties.
 
 ```ts
-trackEvent("checkout", { step: "cart" });
-trackEvent("checkout", { step: "shipping" });
-trackEvent("checkout", { step: "payment" });
+track("checkout", { step: "cart" });
+track("checkout", { step: "shipping" });
+track("checkout", { step: "payment" });
 ```

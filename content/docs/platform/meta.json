@@ -3,14 +3,16 @@
 	"title": "Platform",
 	"icon": "LayoutDashboard",
 	"pages": [
+		"---Overview---",
 		"index",
 		"hotkeys",
-		"guide/embed",
-		"guide/badges",
-		"chart-editor",
 		"error-tracking",
-		"feature-flags",
-		"retention/index",
-		"web-vitals/index"
+		"retention",
+		"---Guides---",
+		"...guide",
+		"---Chart Editor---",
+		"...chart-editor",
+		"---Custom SDKs---",
+		"...custom-sdks"
 	]
 }

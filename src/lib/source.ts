@@ -1,8 +1,46 @@
+import * as path from "node:path";
+import { type CollectionEntry, getCollection } from "astro:content";
+import { structure, type StructuredData } from "fumadocs-core/mdx-plugins";
+import type { StaticSource } from "fumadocs-core/source";
 import { type InferPageType, loader } from "fumadocs-core/source";
-import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
-import { docs } from "fumadocs-mdx:collections/server";
-import { openapiPlugin, openapiSource } from "fumadocs-openapi/server";
+import { openapiSource } from "fumadocs-openapi/server";
 import { openapi } from "@/lib/openapi";
+
+async function createMySource() {
+	const out: StaticSource<{
+		metaData: CollectionEntry<"meta">["data"];
+		pageData: CollectionEntry<"docs">["data"] & {
+			_raw: CollectionEntry<"docs">;
+		};
+	}> = {
+		files: [],
+	};
+
+	for (const page of await getCollection("docs")) {
+		const virtualPath = path.relative("content/docs", page.filePath!);
+
+		out.files.push({
+			type: "page",
+			path: virtualPath,
+			data: {
+				...page.data,
+				_raw: page,
+			},
+		});
+	}
+
+	for (const meta of await getCollection("meta")) {
+		const virtualPath = path.relative("content/docs", meta.filePath!);
+
+		out.files.push({
+			type: "meta",
+			path: virtualPath,
+			data: meta.data,
+		});
+	}
+
+	return out;
+}
 
 const openapiDocs = await openapiSource(openapi, {
 	baseDir: "api",
@@ -25,22 +63,24 @@ if (openapiRootMeta?.type === "meta") {
 
 export const source = loader(
 	{
-		docs: docs.toFumadocsSource(),
+		docs: await createMySource(),
 		openapi: openapiDocs,
 	},
 	{
 		baseUrl: "/",
-		plugins: [lucideIconsPlugin(), openapiPlugin()],
 	},
 );
 
-export function getPageImage(page: InferPageType<typeof source>) {
+export function getStructuredData(
+	entry: CollectionEntry<"docs">,
+): StructuredData {
+	return structure(entry.body ?? "");
+}
+
+export function getPageImageUrl(page: InferPageType<typeof source>) {
 	const segments = [...page.slugs, "image.webp"];
 
-	return {
-		segments,
-		url: `/og/docs/${segments.join("/")}`,
-	};
+	return `/og/docs/${segments.join("/")}`;
 }
 
 export async function getLLMText(page: InferPageType<typeof source>) {
@@ -48,9 +88,9 @@ export async function getLLMText(page: InferPageType<typeof source>) {
 		return JSON.stringify(page.data.getSchema().bundled, null, 2);
 	}
 
-	const processed = await page.data.getText("processed");
+	const raw = page.data._raw.body ?? "";
 
 	return `# ${page.data.title}
 
-${processed}`;
+${raw}`;
 }

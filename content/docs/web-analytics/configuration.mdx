@@ -1,118 +1,117 @@
 ---
 title: Configuration
-description: Every option you can pass to FastStats Web Analytics
+description: Configure the FastStats Web Analytics core and extensions
 icon: Settings
 ---
 
-All packages share the same set of options. In React you pass them as props on
-the `Analytics` component, in Nuxt you set them under the `faststats` key, and in
-plain JavaScript you pass them to the `WebAnalytics` constructor.
+React and JavaScript use the same core options. Pass them as props to React's
+`Analytics` component or to JavaScript's `init`, `createClient`, or
+`WebAnalytics` constructor. In Nuxt, place them under `faststats`.
 
 ## Core Options
 
-| Option                | Type      | Default                         | Description                                                    |
-| --------------------- | --------- | ------------------------------- | -------------------------------------------------------------- |
-| `siteKey`             | `string`  | required                        | The project key that ties events to your FastStats project     |
-| `baseUrl`             | `string`  | `https://metrics.faststats.dev` | Where events, identify calls, vitals and replays are sent      |
-| `featureFlagsBaseUrl` | `string`  | `https://flags.faststats.dev`   | Where feature flag checks are sent                             |
-| `debug`               | `boolean` | `false`                         | Logs every action to the console                               |
-| `autoTrack`           | `boolean` | `true`                          | Starts tracking automatically. Set to `false` to start by hand |
-| `trackHash`           | `boolean` | `false`                         | Treats hash changes as page views for hash based routers       |
-| `cookieless`          | `boolean` | `false`                         | Forces cookieless mode with no stored identifiers              |
+| Option       | Type                                   | Default                         | Description                                             |
+| ------------ | -------------------------------------- | ------------------------------- | ------------------------------------------------------- |
+| `siteKey`    | `string`                               | required                        | Project key that ties events to your FastStats project  |
+| `baseUrl`    | `string`                               | `https://metrics.faststats.dev` | Endpoint used by analytics and extensions               |
+| `debug`      | `boolean`                              | `false`                         | Logs SDK transport and extension diagnostics            |
+| `trackHash`  | `boolean`                              | `false`                         | Includes URL hashes and tracks hash-based route changes |
+| `cookieless` | `boolean`                              | `false`                         | Never stores an anonymous identifier                    |
+| `consent`    | `"anonymous" \| "granted" \| "denied"` | `"granted"`                     | Initial consent mode                                    |
+| `extensions` | `readonly AnalyticsExtension[]`        | `[]`                            | Optional trackers to start with the client              |
 
-## Error Tracking
+The `siteKey` is public and safe to include in browser code. `baseUrl` applies
+to the core and all built-in extensions.
 
-```ts
-errorTracking: {
-	enabled: true,
-}
+## Extensions
+
+Outbound links, error tracking, Web Vitals, and session replay are separate,
+tree-shakeable imports. With React or JavaScript, create each extension and add
+it to the `extensions` array.
+
+<Tabs items={["React", "JavaScript"]}>
+	<Tab value="React">
+
+```tsx
+import { Analytics } from "@faststats/react";
+import { errorTracking } from "@faststats/react/error";
+import { outboundLinks } from "@faststats/react/outbound-links";
+import { sessionReplay } from "@faststats/react/replay";
+import { webVitals } from "@faststats/react/web-vitals";
+
+<Analytics
+	siteKey="your_site_key"
+	extensions={[
+		outboundLinks(),
+		errorTracking(),
+		webVitals({ attribution: true }),
+		sessionReplay({ recordConsole: true }),
+	]}
+/>;
 ```
 
-| Field     | Type      | Default | Description          |
-| --------- | --------- | ------- | -------------------- |
-| `enabled` | `boolean` | `false` | Turns the tracker on |
-
-Read more in [Error Tracking](/web-analytics/error-tracking).
-
-### Web Vitals
+    </Tab>
+    <Tab value="JavaScript">
 
 ```ts
-webVitals: {
-	enabled: true,
-	attribution: false,
-}
-```
+import { init } from "@faststats/web";
+import { errorTracking } from "@faststats/web/error";
+import { outboundLinks } from "@faststats/web/outbound-links";
+import { sessionReplay } from "@faststats/web/replay";
+import { webVitals } from "@faststats/web/web-vitals";
 
-| Field         | Type      | Default | Description                                |
-| ------------- | --------- | ------- | ------------------------------------------ |
-| `enabled`     | `boolean` | `false` | Turns the tracker on                       |
-| `attribution` | `boolean` | `false` | Adds debug attribution data to each metric |
-
-Read more in [Web Vitals](/web-analytics/web-vitals).
-
-### Session Replays
-
-```ts
-sessionReplays: {
-	enabled: true,
-},
-replayOptions: {
-	flushInterval: 5_000,
-	maxEvents: 1000,
-	maxBatchSizeBytes: 512 * 1024,
-}
-```
-
-| Field                             | Type      | Default  | Description                                              |
-| --------------------------------- | --------- | -------- | -------------------------------------------------------- |
-| `enabled`                         | `boolean` | `false`  | Turns the recorder on                                    |
-| `replayOptions.flushInterval`     | `number`  | `5000`   | Flush interval in milliseconds                           |
-| `replayOptions.maxEvents`         | `number`  | `1000`   | Flush after this many buffered rrweb events              |
-| `replayOptions.maxBatchSizeBytes` | `number`  | `524288` | Flush after the buffered event payload reaches this size |
-
-For masking and recording details see
-[Session Replay](/web-analytics/session-replay).
-
-### Consent
-
-```ts
-consent: {
-	mode: "granted",
-	pendingBehavior: "anonymous",
-}
-```
-
-| Field             | Type                                 | Default       | Description                                                         |
-| ----------------- | ------------------------------------ | ------------- | ------------------------------------------------------------------- |
-| `mode`            | `"pending" \| "granted" \| "denied"` | `"granted"`   | The current consent state                                           |
-| `pendingBehavior` | `"anonymous" \| "disabled"`          | `"anonymous"` | Cookieless tracking while consent is pending, or no tracking at all |
-
-Read more in [Consent and Cookieless](/web-analytics/consent).
-
-## Manual Start
-
-When `autoTrack` is `false` the SDK does not begin until you call `start`. This
-lets you wait for a cookie banner or any other gate.
-
-```ts
-import { WebAnalytics } from "@faststats/web";
-
-const analytics = new WebAnalytics({
+init({
 	siteKey: "your_site_key",
-	autoTrack: false,
+	extensions: [
+		outboundLinks(),
+		errorTracking(),
+		webVitals({ attribution: true }),
+		sessionReplay({ recordConsole: true }),
+	],
 });
-
-// once you are ready
-analytics.start();
 ```
 
-## Disable Tracking on a Device
+    </Tab>
 
-The SDK checks `localStorage` for a flag before it sends anything. Set it to opt
-a single browser out, which is useful for your own devices.
+</Tabs>
+
+Nuxt uses a serializable `extensions` object and loads the selected extensions
+for you.
+
+```ts title="nuxt.config.ts"
+export default defineNuxtConfig({
+	modules: ["@faststats/nuxt"],
+	faststats: {
+		siteKey: "your_site_key",
+		extensions: {
+			outboundLinks: true,
+			errorTracking: true,
+			webVitals: { attribution: true },
+			sessionReplay: { recordConsole: true },
+		},
+	},
+});
+```
+
+Use `true` for default extension settings or an options object to customize an
+extension. See [Error Tracking](/web-analytics/error-tracking),
+[Web Vitals](/web-analytics/web-vitals), and
+[Session Replay](/web-analytics/session-replay) for their options.
+
+## Lifecycle
+
+`init` starts the JavaScript shared client immediately. `createClient` and the
+`WebAnalytics` constructor create independent clients that must be started
+explicitly.
 
 ```ts
-localStorage.setItem("disable-faststats", "true");
+import { createClient } from "@faststats/web";
+
+const analytics = createClient({ siteKey: "your_site_key" });
+analytics.start();
+
+// Later, remove listeners and stop extensions.
+analytics.destroy();
 ```
 
-Remove the key to turn tracking back on.
+React and Nuxt own this lifecycle and start their clients automatically.

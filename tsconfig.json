@@ -1,4 +1,5 @@
 {
+	"extends": "astro/tsconfigs/strict",
 	"compilerOptions": {
 		"target": "ESNext",
 		"lib": ["dom", "dom.iterable", "esnext"],
@@ -13,22 +14,11 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"jsx": "react-jsx",
+		"jsxImportSource": "react",
 		"paths": {
-			"@/*": ["./src/*"],
-			"fumadocs-mdx:collections/*": ["./.source/*"]
-		},
-		"plugins": [
-			{
-				"name": "next"
-			}
-		]
+			"@/*": ["./src/*"]
+		}
 	},
-	"include": [
-		"next-env.d.ts",
-		"**/*.ts",
-		"**/*.tsx",
-		".next/types/**/*.ts",
-		".next/dev/types/**/*.ts"
-	],
-	"exclude": ["node_modules"]
+	"include": [".astro/types.d.ts", "**/*"],
+	"exclude": ["node_modules", "dist"]
 }

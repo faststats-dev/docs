@@ -4,21 +4,31 @@ description: Attach a known identity to a visitor
 icon: UserCheck
 ---
 
-Call `identify` after sign-in to link the anonymous visitor id to an external
-user id and profile fields.
+Call `identify` after sign-in to link the anonymous visitor to a stable external
+user ID and optional profile data.
 
 ## Identify a User
 
-Pass a stable external id and an email. The external id should be the same value
-your own system uses for that user, such as a database id.
-
-<Tabs items={["React", "JavaScript"]}>
+<Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-import { identify } from "@faststats/react";
+import { useIdentify } from "@faststats/react";
 
+const identify = useIdentify();
 await identify("user_123", "ada@example.com", {
+	name: "Ada Lovelace",
+	traits: { plan: "pro" },
+});
+```
+
+    </Tab>
+    <Tab value="Nuxt">
+
+```ts
+const { $faststats } = useNuxtApp();
+
+await $faststats.identify("user_123", "ada@example.com", {
 	name: "Ada Lovelace",
 	traits: { plan: "pro" },
 });
@@ -40,37 +50,45 @@ await identify("user_123", "ada@example.com", {
 
 </Tabs>
 
-The third argument is optional and accepts a few profile fields.
-
-| Field       | Type                      | Description                                  |
-| ----------- | ------------------------- | -------------------------------------------- |
-| `name`      | `string`                  | The display name of the user                 |
-| `phone`     | `string`                  | A phone number                               |
-| `avatarUrl` | `string`                  | A link to an avatar image                    |
-| `traits`    | `Record<string, unknown>` | Any extra attributes you want on the profile |
-
-## What identify Returns
-
-`identify` returns a promise that resolves to a boolean. It is `false` when the
-call was skipped, for example when the external id or email is empty or when the
-visitor is in cookieless mode, and `true` once the call is on its way.
+The external ID is required. Email and all profile fields are optional. You can
+also pass one object instead of positional arguments.
 
 ```ts
-const ok = await identify("user_123", "ada@example.com");
-if (!ok) {
-	// the visitor is cookieless or the input was empty
-}
+await identify({
+	id: "user_123",
+	email: "ada@example.com",
+	name: "Ada Lovelace",
+	traits: { plan: "pro" },
+});
 ```
 
+## Profile Options
+
+| Field         | Type                      | Description                                      |
+| ------------- | ------------------------- | ------------------------------------------------ |
+| `name`        | `string \| null`          | Display name; pass `null` to clear it            |
+| `phone`       | `string \| null`          | Phone number; pass `null` to clear it            |
+| `avatarUrl`   | `string \| null`          | Avatar URL; pass `null` to clear it              |
+| `traits`      | `Record<string, unknown>` | Custom profile attributes                        |
+| `traitMode`   | `"merge" \| "replace"`    | Merge traits by default or replace the trait set |
+| `unsetTraits` | `string[]`                | Trait keys to remove                             |
+| `aliases`     | `string[]`                | Additional external IDs for this user            |
+
+## Return Value
+
+`identify` resolves to `true` when the request was sent. It returns `false` if
+the client is not active, consent is denied, cookieless mode is active, or the
+external ID is empty.
+
 <Callout type="info">
-	Identify is disabled in cookieless mode because there is no stored identifier
-	to link a profile to. See [Consent and Cookieless](/web-analytics/consent).
+	Identification is disabled in cookieless mode because there is no stored
+	visitor identifier to link to the profile.
 </Callout>
 
 ## Log Out
 
-When a user signs out, call `logout` to start a fresh anonymous session so their
-next activity is not tied to the old profile.
+Call `logout` after sign-out to rotate the session and, by default, reset the
+anonymous identifier.
 
 ```ts
 import { logout } from "@faststats/web";
@@ -78,9 +96,5 @@ import { logout } from "@faststats/web";
 logout();
 ```
 
-By default this also resets the anonymous identifier. Pass `false` if you want
-to keep the same anonymous id and only rotate the session.
-
-```ts
-logout(false);
-```
+Pass `false` to keep the anonymous identifier and only reset the session. In
+React use `useLogout`; in Nuxt call `$faststats.logout()`.

@@ -1,8 +1,7 @@
+import type { APIRoute } from "astro";
 import { source } from "@/lib/source";
 
-export const revalidate = false;
-
-export async function GET() {
+export const GET: APIRoute = () => {
 	const lines: string[] = [];
 	lines.push("# Documentation");
 	lines.push("");
@@ -10,4 +9,6 @@ export async function GET() {
 		lines.push(`- [${page.data.title}](${page.url}): ${page.data.description}`);
 	}
 	return new Response(lines.join("\n"));
-}
+};
+
+export const prerender = true;

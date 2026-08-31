@@ -121,6 +121,11 @@
 	font-family: var(--font-mono);
 }
 
+#nd-page .prose :not(pre) > code {
+	border: none;
+	text-decoration: none;
+}
+
 #nd-page .prose ul,
 #nd-page .prose ol {
 	margin: 1.25rem 0;

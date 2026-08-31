@@ -9,13 +9,15 @@ Session replay records DOM mutations and user interactions using
 
 ## Enable Replay
 
-Turn it on with the object form.
+Import and add the session replay extension.
 
 <Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-<Analytics siteKey="your_site_key" sessionReplays={{ enabled: true }} />
+import { sessionReplay } from "@faststats/react/replay";
+
+<Analytics siteKey="your_site_key" extensions={[sessionReplay()]} />;
 ```
 
     </Tab>
@@ -24,7 +26,7 @@ Turn it on with the object form.
 ```ts title="nuxt.config.ts"
 faststats: {
 	siteKey: "your_site_key",
-	sessionReplays: { enabled: true },
+	extensions: { sessionReplay: true },
 }
 ```
 
@@ -32,9 +34,12 @@ faststats: {
     <Tab value="JavaScript">
 
 ```ts
-new WebAnalytics({
+import { init } from "@faststats/web";
+import { sessionReplay } from "@faststats/web/replay";
+
+init({
 	siteKey: "your_site_key",
-	sessionReplays: { enabled: true },
+	extensions: [sessionReplay()],
 });
 ```
 
@@ -49,12 +54,11 @@ prefer fewer, larger chunks so a normal one-minute replay should usually create
 single-digit storage objects instead of dozens.
 
 ```ts
-sessionReplays: { enabled: true },
-replayOptions: {
-	flushInterval: 5_000,
+sessionReplay({
+	flushInterval: 15_000,
 	maxEvents: 1000,
-	maxBatchSizeBytes: 512 * 1024,
-}
+	maxBatchSizeBytes: 900 * 1024,
+});
 ```
 
 The collector coalesces these small reliable browser flushes into fewer storage
@@ -63,18 +67,19 @@ periodic full snapshots, and when a batch reaches the byte limit.
 
 ## Privacy and Masking
 
-The recorder masks inputs by default and lets you hide elements with
-`replayOptions`.
+The recorder masks inputs by default and accepts selectors and classes directly
+in the `sessionReplay` options.
 
 ```ts
-new WebAnalytics({
+init({
 	siteKey: "your_site_key",
-	sessionReplays: { enabled: true },
-	replayOptions: {
-		maskAllInputs: true,
-		maskTextSelector: ".sensitive",
-		blockSelector: ".no-record",
-	},
+	extensions: [
+		sessionReplay({
+			maskAllInputs: true,
+			maskTextSelector: ".sensitive",
+			blockSelector: ".no-record",
+		}),
+	],
 });
 ```
 
@@ -92,6 +97,7 @@ its content never leaves the browser.
 
 ## Cookieless Behavior
 
-Replay follows your consent setup. In cookieless or denied mode the recorder
-stops and clears any buffered events, so nothing is recorded until consent is
-granted. See [Consent and Cookieless](/web-analytics/consent).
+Replay follows your consent setup. In anonymous, forced cookieless, or denied
+mode the recorder stops and clears buffered events, so nothing is recorded
+until consent is granted with stored identifiers enabled. See
+[Consent and Cookieless](/web-analytics/consent).
