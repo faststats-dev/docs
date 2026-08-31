@@ -66,41 +66,25 @@ The component accepts every option from the SDK. Here is a fuller example that
 turns on a few extra features.
 
 ```tsx title="app/layout.tsx"
+import { errorTracking } from "@faststats/react/error";
+import { outboundLinks } from "@faststats/react/outbound-links";
+import { sessionReplay } from "@faststats/react/replay";
+import { webVitals } from "@faststats/react/web-vitals";
+
 <Analytics
 	siteKey={process.env.NEXT_PUBLIC_FASTSTATS_SITE_KEY!}
-	errorTracking={{ enabled: true }}
-	webVitals={{ enabled: true }}
-	sessionReplays={{ enabled: true }}
-/>
+	extensions={[outboundLinks(), errorTracking(), webVitals(), sessionReplay()]}
+/>;
 ```
 
 See [Configuration](/web-analytics/configuration) for the full list.
 
 ## Track Custom Events
 
-You can call the plain functions from anywhere, or use the hooks inside
-components. Both reach the same active instance.
+Use the hooks inside client components. They access the instance owned by the
+nearest mounted `Analytics` component.
 
 ```tsx title="components/buy-button.tsx"
-"use client";
-
-import { trackEvent } from "@faststats/react";
-
-export function BuyButton() {
-	return (
-		<button
-			type="button"
-			onClick={() => trackEvent("purchase", { plan: "pro", price: 29 })}
-		>
-			Buy now
-		</button>
-	);
-}
-```
-
-The same call through a hook looks like this.
-
-```tsx
 "use client";
 
 import { useTrack } from "@faststats/react";
@@ -108,7 +92,10 @@ import { useTrack } from "@faststats/react";
 export function BuyButton() {
 	const track = useTrack();
 	return (
-		<button type="button" onClick={() => track("purchase", { plan: "pro" })}>
+		<button
+			type="button"
+			onClick={() => track("purchase", { plan: "pro", price: 29 })}
+		>
 			Buy now
 		</button>
 	);
@@ -128,20 +115,20 @@ return (
 
 ## Available Hooks
 
-| Hook             | Returns                                           |
-| ---------------- | ------------------------------------------------- |
-| `useTrack`       | The `trackEvent` function                         |
-| `useEvent`       | A memoized handler for one named event            |
-| `useIdentify`    | The `identify` function                           |
-| `useLogout`      | The `logout` function                             |
-| `useConsentMode` | The `setConsentMode` function                     |
-| `useOptIn`       | The `optIn` function                              |
-| `useOptOut`      | The `optOut` function                             |
-| `useFlag`        | A feature flag value with loading and error state |
+| Hook             | Returns                                      |
+| ---------------- | -------------------------------------------- |
+| `useAnalytics`   | The active `WebAnalytics` instance or `null` |
+| `useTrack`       | A function that sends custom events          |
+| `useEvent`       | A memoized handler for one named event       |
+| `useIdentify`    | The `identify` function                      |
+| `useLogout`      | The `logout` function                        |
+| `useConsentMode` | The `setConsentMode` function                |
+| `useOptIn`       | A shortcut that grants consent               |
+| `useOptOut`      | A shortcut that denies consent               |
 
 Read more in [Events](/web-analytics/events),
-[Identify](/web-analytics/identify) and
-[Feature Flags](/web-analytics/feature-flags).
+[Identify](/web-analytics/identify), and
+[Consent and Cookieless](/web-analytics/consent).
 
 ## Server Side Routes
 

@@ -4,18 +4,21 @@ description: Report Core Web Vitals from the browser SDK
 icon: Gauge
 ---
 
-Set `webVitals.enabled` to report LCP, CLS, INP, FCP, and TTFB from visitor
-sessions.
+Add the Web Vitals extension to report LCP, CLS, INP, FCP, and TTFB from
+visitor sessions.
 
 ## Enable Web Vitals
 
-Turn the feature on with the object form so you can also set attribution.
+Import the extension from its package subpath. Pass an options object only when
+you need attribution data.
 
 <Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-<Analytics siteKey="your_site_key" webVitals={{ enabled: true }} />
+import { webVitals } from "@faststats/react/web-vitals";
+
+<Analytics siteKey="your_site_key" extensions={[webVitals()]} />;
 ```
 
     </Tab>
@@ -24,7 +27,7 @@ Turn the feature on with the object form so you can also set attribution.
 ```ts title="nuxt.config.ts"
 faststats: {
 	siteKey: "your_site_key",
-	webVitals: { enabled: true },
+	extensions: { webVitals: true },
 }
 ```
 
@@ -32,9 +35,12 @@ faststats: {
     <Tab value="JavaScript">
 
 ```ts
-new WebAnalytics({
+import { init } from "@faststats/web";
+import { webVitals } from "@faststats/web/web-vitals";
+
+init({
 	siteKey: "your_site_key",
-	webVitals: { enabled: true },
+	extensions: [webVitals()],
 });
 ```
 
@@ -65,8 +71,7 @@ or event responsible for a metric. This payload is larger, so leave it off
 unless you are chasing a specific issue.
 
 ```ts
-webVitals: {
-	enabled: true,
-	attribution: true,
-}
+webVitals({ attribution: true });
 ```
+
+In Nuxt, use `extensions: { webVitals: { attribution: true } }`.

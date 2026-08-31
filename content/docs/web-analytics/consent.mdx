@@ -5,29 +5,36 @@ icon: ShieldCheck
 ---
 
 <Callout type="warning">
-	This is no legal advice. Consult a lawyer for your specific use case.
+	This is not legal advice. Consult a lawyer for your specific use case.
 </Callout>
 
-The SDK supports cookieless mode and three consent states: `pending`, `granted`,
-and `denied`. Switch modes at runtime with `setConsentMode`, `optIn`, or
-`optOut`.
+FastStats supports normal analytics, anonymous cookieless analytics, and fully
+disabled collection. Choose an initial mode with `consent` and change it at
+runtime with `setConsentMode`.
 
 ## How Identifiers Work
 
-In the normal mode the SDK keeps an anonymous id in `localStorage` and a session
-in storage so returning visits and sessions can be measured. In cookieless mode
-no anonymous id is stored and events are sent without a user id, which means
-visitors cannot be recognized across reloads.
+With granted consent, the SDK keeps an anonymous identifier in `localStorage`
+and session state in browser storage. This allows it to recognize returning
+visitors and measure sessions. Anonymous mode stores no anonymous identifier,
+so visitors cannot be recognized across reloads.
 
-## Cookieless Mode
+## Consent Modes
 
-Set `cookieless` to `true` to never store an identifier.
+| Mode          | Behavior                                           |
+| ------------- | -------------------------------------------------- |
+| `"granted"`   | Tracks normally and stores an anonymous identifier |
+| `"anonymous"` | Tracks without a stored anonymous identifier       |
+| `"denied"`    | Sends no analytics and stops optional extensions   |
+
+The default is `"granted"`. If consent has not yet been decided, start with
+`"anonymous"` for cookieless counts or `"denied"` to send nothing.
 
 <Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-<Analytics siteKey="your_site_key" cookieless />
+<Analytics siteKey="your_site_key" consent="denied" />
 ```
 
     </Tab>
@@ -36,7 +43,7 @@ Set `cookieless` to `true` to never store an identifier.
 ```ts title="nuxt.config.ts"
 faststats: {
 	siteKey: "your_site_key",
-	cookieless: true,
+	consent: "denied",
 }
 ```
 
@@ -44,76 +51,65 @@ faststats: {
     <Tab value="JavaScript">
 
 ```ts
-new WebAnalytics({ siteKey: "your_site_key", cookieless: true });
+init({ siteKey: "your_site_key", consent: "denied" });
 ```
 
     </Tab>
 
 </Tabs>
 
-## Consent Modes
-
-When you use a consent banner, start in `pending` and update the mode once the
-user decides. There are three modes.
-
-| Mode      | Meaning                                       |
-| --------- | --------------------------------------------- |
-| `pending` | The user has not chosen yet                   |
-| `granted` | The user accepted, the SDK stores identifiers |
-| `denied`  | The user declined, the SDK runs cookieless    |
-
-While the mode is `pending` the SDK runs cookieless by default, so you can still
-count page views without storing anything. Set `pendingBehavior` to `"disabled"`
-if you prefer to send nothing at all until consent.
-
-```ts
-new WebAnalytics({
-	siteKey: "your_site_key",
-	consent: { mode: "pending", pendingBehavior: "anonymous" },
-});
-```
+Set `cookieless: true` when a site should always avoid stored identifiers. This
+forces cookieless collection even while consent is `"granted"`.
 
 ## Update Consent at Runtime
 
-Call `optIn` or `optOut` from your banner buttons, or call `setConsentMode` for
-full control. The SDK switches storage behavior right away and tells the replay
-and other trackers about the change.
-
-<Tabs items={["React", "JavaScript"]}>
+<Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
 
 ```tsx
-import { optIn, optOut } from "@faststats/react";
+import { useConsentMode } from "@faststats/react";
 
-<button type="button" onClick={() => optIn()}>Accept</button>
-<button type="button" onClick={() => optOut()}>Decline</button>
+const setConsentMode = useConsentMode();
+
+<button onClick={() => setConsentMode("granted")}>Accept</button>
+<button onClick={() => setConsentMode("denied")}>Decline</button>
+```
+
+React also exports `useOptIn` and `useOptOut` as shortcuts for setting
+`"granted"` and `"denied"`.
+
+    </Tab>
+    <Tab value="Nuxt">
+
+```ts
+const { $faststats } = useNuxtApp();
+
+$faststats.setConsentMode("granted");
 ```
 
     </Tab>
     <Tab value="JavaScript">
 
 ```ts
-import { optIn, optOut, setConsentMode } from "@faststats/web";
+import { setConsentMode } from "@faststats/web";
 
-optIn(); // same as setConsentMode("granted")
-optOut(); // same as setConsentMode("denied")
-setConsentMode("pending");
+setConsentMode("granted");
 ```
 
     </Tab>
 
 </Tabs>
 
-<Callout type="info">
-	You can call `setConsentMode`, `optIn` or `optOut` before the instance has
-	started. The chosen mode is remembered and applied as soon as tracking begins.
-</Callout>
+Switching to `"denied"` stops collection and discards data buffered by active
+extensions. Switching back starts tracking again. Moving between `"anonymous"`
+and `"granted"` rotates the page and identity context so the two modes do not
+share an anonymous identifier.
 
-## React Consent Prop
+## Controlled React Consent
 
-In React you can also drive the mode through the `consent.mode` prop. When the
-prop changes the component updates the running instance for you.
+The React component applies changes to its `consent` prop to the active client,
+which works well when your consent manager already exposes React state.
 
 ```tsx
-<Analytics siteKey="your_site_key" consent={{ mode: consentState }} />
+<Analytics siteKey="your_site_key" consent={consentMode} />
 ```

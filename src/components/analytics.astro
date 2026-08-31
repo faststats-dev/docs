@@ -1,13 +1,19 @@
 <script>
-	import { WebAnalytics } from "@faststats/web";
-
+	import { init } from "@faststats/web";
+	import { outboundLinks } from "@faststats/web/outbound-links";
+	import { errorTracking } from "@faststats/web/error";
+	import { webVitals } from "@faststats/web/web-vitals";
+	import { sessionReplay } from "@faststats/web/replay";
 	const siteKey = import.meta.env.PUBLIC_FASTSTATS_SITE_KEY;
 	if (siteKey) {
-		new WebAnalytics({
+		init({
+			extensions: [
+				outboundLinks(),
+				errorTracking(),
+				webVitals(),
+				sessionReplay(),
+			],
 			siteKey,
-			webVitals: { enabled: true },
-			sessionReplays: { enabled: true },
-			errorTracking: { enabled: true },
 		});
 	}
 </script>

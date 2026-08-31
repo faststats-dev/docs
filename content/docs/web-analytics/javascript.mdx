@@ -15,41 +15,46 @@ full control over the lifecycle.
  npm install @faststats/web
 ```
 
-## Create an Instance
+## Start the Shared Client
 
-Create one `WebAnalytics` instance as early as possible. It starts tracking
-automatically once the page is ready.
+Call `init` once from your application bootstrap. It creates and starts a shared
+client used by the package's convenience functions.
 
 ```ts title="analytics.ts"
-import { WebAnalytics } from "@faststats/web";
+import { init } from "@faststats/web";
 
-new WebAnalytics({
+export const analytics = init({
 	siteKey: "your_site_key",
 });
 ```
 
-That single line already records page views, page leaves, sessions, outbound
-link clicks and scroll depth. To enable more features pass extra options.
+The core SDK records page views, page leaves, sessions, client-side navigation,
+and visit duration. Optional features are extensions, so they only add code to
+your bundle when you import them.
 
 ```ts
-new WebAnalytics({
+import { init } from "@faststats/web";
+import { errorTracking } from "@faststats/web/error";
+import { outboundLinks } from "@faststats/web/outbound-links";
+import { sessionReplay } from "@faststats/web/replay";
+import { webVitals } from "@faststats/web/web-vitals";
+
+init({
 	siteKey: "your_site_key",
-	errorTracking: { enabled: true },
-	webVitals: { enabled: true },
-	sessionReplays: { enabled: true },
+	extensions: [outboundLinks(), errorTracking(), webVitals(), sessionReplay()],
 });
 ```
 
 ## Track Custom Events
 
-The package exports functions that talk to the active instance. You can call
-them from any module without holding a reference yourself.
+The package exports functions that use the shared client. Calls made before
+`init` are ignored.
 
 ```ts
-import { trackEvent } from "@faststats/web";
+import { track } from "@faststats/web";
 
 document.querySelector("#buy")?.addEventListener("click", () => {
-	trackEvent("purchase", { plan: "pro", price: 29 });
+	track("purchase", { plan: "pro", price: 29 });
 });
 ```
 
@@ -60,32 +65,40 @@ client side route changes are tracked as new page views with no extra work. If
 your router uses the hash for routing, turn on `trackHash`.
 
 ```ts
-new WebAnalytics({
+init({
 	siteKey: "your_site_key",
 	trackHash: true,
 });
 ```
 
-## Reach the Instance Later
+## Manage an Independent Client
 
-`getInstance` returns the active instance once it has started. This is handy for
-debugging in the console or for advanced calls such as feature flag checks.
+Use `createClient` when you need an isolated client—for example for multiple
+sites, tests, or a framework integration. Independent clients require an
+explicit `start()` call and are not used by the package-level convenience
+functions.
 
 ```ts
-import { getInstance } from "@faststats/web";
+import { createClient } from "@faststats/web";
 
-const analytics = getInstance();
-analytics?.getSessionId();
+const analytics = createClient({ siteKey: "your_site_key" });
+analytics.start();
+analytics.track("purchase", { plan: "pro" });
+
+// Remove listeners, flush active extensions, and stop tracking.
+analytics.destroy();
 ```
 
-## Clean Up
+You can also construct `WebAnalytics` directly. Like `createClient`, it does not
+start until you call `start()`.
 
-If you manage the lifecycle yourself, call `destroy` to remove all listeners and
-stop the child trackers. This is mostly useful in tests or in micro frontends
-that mount and unmount whole apps.
+## Shut Down the Shared Client
+
+Call `shutdown` to destroy and forget the client created by `init`. A later call
+to `init` can then start a new shared client with different options.
 
 ```ts
-const analytics = new WebAnalytics({ siteKey: "your_site_key" });
-// later
-analytics.destroy();
+import { shutdown } from "@faststats/web";
+
+shutdown();
 ```
