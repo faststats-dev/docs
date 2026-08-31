@@ -23,12 +23,10 @@ export function TabsList({
 	return (
 		<Unstyled.TabsList
 			{...props}
-			className={(s) =>
-				cn(
-					"not-prose flex gap-3.5 overflow-x-auto px-4 text-fd-secondary-foreground",
-					typeof className === "function" ? className(s) : className,
-				)
-			}
+			className={cn(
+				"not-prose flex gap-3.5 overflow-x-auto px-4 text-fd-secondary-foreground",
+				typeof className === "string" ? className : undefined,
+			)}
 		/>
 	);
 }
@@ -43,12 +41,10 @@ export function TabsTrigger({
 			value={value}
 			data-value={value}
 			{...props}
-			className={(s) =>
-				cn(
-					"inline-flex items-center gap-2 border-b border-transparent py-2 text-sm font-medium whitespace-nowrap text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[active]:border-fd-primary data-[active]:text-fd-primary [&_svg]:size-4",
-					typeof className === "function" ? className(s) : className,
-				)
-			}
+			className={cn(
+				"inline-flex items-center gap-2 border-b border-transparent py-2 text-sm font-medium whitespace-nowrap text-fd-muted-foreground hover:text-fd-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-active:border-fd-primary data-active:text-fd-primary [&_svg]:size-4",
+				typeof className === "string" ? className : undefined,
+			)}
 		/>
 	);
 }
@@ -91,12 +87,10 @@ ${panelValues
 			<Unstyled.Tabs
 				ref={ref}
 				data-tab-scope={scopeId}
-				className={(s) =>
-					cn(
-						"my-4 flex flex-col overflow-hidden rounded-xl border bg-fd-secondary",
-						typeof className === "function" ? className(s) : className,
-					)
-				}
+				className={cn(
+					"my-4 flex flex-col overflow-hidden rounded-xl border bg-fd-secondary",
+					typeof className === "string" ? className : undefined,
+				)}
 				groupId={groupId}
 				persist={persist}
 				updateAnchor={updateAnchor}
