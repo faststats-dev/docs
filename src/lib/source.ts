@@ -3,6 +3,8 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import { structure, type StructuredData } from "fumadocs-core/mdx-plugins";
 import type { StaticSource } from "fumadocs-core/source";
 import { type InferPageType, loader } from "fumadocs-core/source";
+import { openapiSource } from "fumadocs-openapi/server";
+import { openapi } from "@/lib/openapi";
 
 async function createMySource() {
 	const out: StaticSource<{
@@ -40,10 +42,34 @@ async function createMySource() {
 	return out;
 }
 
-export const source = loader({
-	source: await createMySource(),
-	baseUrl: "/",
+const openapiDocs = await openapiSource(openapi, {
+	baseDir: "api",
+	meta: true,
+	groupBy: "tag",
 });
+
+const openapiRootMeta = openapiDocs.files.find(
+	(file) => file.path === "api/meta.json",
+);
+if (openapiRootMeta?.type === "meta") {
+	openapiRootMeta.data = {
+		...openapiRootMeta.data,
+		root: true,
+		title: "Rest API",
+		icon: "BookOpen",
+		pages: ["index", ...(openapiRootMeta.data.pages ?? [])],
+	};
+}
+
+export const source = loader(
+	{
+		docs: await createMySource(),
+		openapi: openapiDocs,
+	},
+	{
+		baseUrl: "/",
+	},
+);
 
 export function getStructuredData(
 	entry: CollectionEntry<"docs">,
@@ -58,6 +84,10 @@ export function getPageImageUrl(page: InferPageType<typeof source>) {
 }
 
 export async function getLLMText(page: InferPageType<typeof source>) {
+	if (page.type === "openapi") {
+		return JSON.stringify(page.data.getSchema().bundled, null, 2);
+	}
+
 	const raw = page.data._raw.body ?? "";
 
 	return `# ${page.data.title}

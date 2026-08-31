@@ -4,6 +4,7 @@
 @import "./tokens.css";
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
+@import "fumadocs-openapi/css/preset.css";
 
 * {
 	border-radius: 0;
