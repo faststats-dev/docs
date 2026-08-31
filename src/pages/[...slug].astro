@@ -1,5 +1,5 @@
 ---
-import { render, type CollectionEntry } from "astro:content";
+import { render, type RenderResult } from "astro:content";
 import { APIPage } from "@/components/api-page";
 import { Docs } from "@/components/docs";
 import Layout from "@/components/layout.astro";
@@ -22,8 +22,9 @@ const slugs =
 const docsPage = source.getPage(slugs)!;
 const image = getPageImageUrl(docsPage);
 const tree = source.getPageTree();
+const title = docsPage.data.title ?? "API";
 
-let Content: Awaited<ReturnType<typeof render<CollectionEntry<"docs">>>>["Content"] | undefined;
+let Content: RenderResult["Content"] | undefined;
 let toc: TOCItemType[];
 
 if (docsPage.type === "openapi") {
@@ -41,8 +42,8 @@ if (docsPage.type === "openapi") {
 
 <Layout>
 	<Fragment slot="head">
-		<title>{docsPage.data.title}</title>
-		<meta name="title" content={docsPage.data.title} />
+		<title>{title}</title>
+		<meta name="title" content={title} />
 		<meta name="description" content={docsPage.data.description} />
 		<meta property="og:image" content={image} />
 	</Fragment>
@@ -51,7 +52,7 @@ if (docsPage.type === "openapi") {
 		pathname={Astro.url.pathname}
 		params={Astro.params}
 		page={{ toc, full: docsPage.type === "openapi" || docsPage.data.full }}
-		title={docsPage.data.title}
+		title={title}
 		description={docsPage.data.description}
 		markdownUrl={`${docsPage.url}.md`}
 		client:load
