@@ -9,7 +9,7 @@ ENV CI=true
 RUN bun run build
 RUN bun install --production --frozen-lockfile
 
-FROM node:22-slim AS runner
+FROM node:24-slim AS runner
 WORKDIR /app
 
 ENV HOST=0.0.0.0
