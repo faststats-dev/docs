@@ -26,7 +26,7 @@
 		"class-variance-authority": "^0.7.1",
 		"cnfast": "0.1.0",
 		"fumadocs-core": "16.15.4",
-		"fumadocs-openapi": "11.0.6",
+		"fumadocs-openapi": "11.4.0",
 		"fumadocs-ui": "16.15.4",
 		"lucide-react": "1.37.0",
 		"react": "19.2.8",
