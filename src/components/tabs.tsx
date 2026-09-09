@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "cnfast";
+import { cn } from "cn";
 import { type ComponentProps, type ReactNode, useId } from "react";
 import * as Unstyled from "@/components/ui/tabs";
 

@@ -1,9 +1,9 @@
 // @ts-check
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import cloudflare from "@astrojs/cloudflare";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
-import node from "@astrojs/node";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -29,7 +29,10 @@ const rehypePlugins = [rehypeCode];
 /** @type {import('astro').AstroUserConfig} */
 export default defineConfig({
 	output: "server",
-	adapter: node({ mode: "standalone" }),
+	adapter: cloudflare({
+		// Prerender docs and OG images in Node, outside Workers' global-scope restrictions.
+		prerenderEnvironment: "node",
+	}),
 	markdown: {
 		processor: unified({
 			remarkPlugins,
