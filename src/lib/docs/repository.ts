@@ -1,7 +1,11 @@
-export async function latestVersion(project: string): Promise<string> {
+export async function latestVersion(
+	project: string,
+	java8 = false,
+): Promise<string> {
 	try {
+		const groupPath = java8 ? "j8/" : "";
 		const response = await fetch(
-			`https://repo.faststats.dev/api/maven/latest/version/releases/dev/faststats/metrics/${project}`,
+			`https://repo.faststats.dev/api/maven/latest/version/releases/dev/faststats/metrics/${groupPath}${project}`,
 			{
 				cache: "force-cache",
 			},

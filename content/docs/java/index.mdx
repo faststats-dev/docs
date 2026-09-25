@@ -6,6 +6,7 @@ icon: Download
 
 import { latestVersion } from "@/lib/docs/repository";
 export const version = await latestVersion("core");
+export const java8Version = await latestVersion("core", true);
 
 Add the FastStats SDK to your project using Maven or Gradle.
 
@@ -125,8 +126,8 @@ Use the standard Java 17+ artifacts above whenever possible. Java 8 artifacts
 are provided only as a last resort for projects that absolutely cannot run on
 Java 17.
 
-Java 8 artifacts use the `dev.faststats.metrics.j8` group ID. The artifact IDs
-and versions are the same as the standard Java artifacts:
+Java 8 artifacts use the `dev.faststats.metrics.j8` group ID. Their versions
+are published separately from the standard Java artifacts:
 
 | Package    | Java 8 Artifact                       |
 | ---------- | ------------------------------------- |
@@ -137,8 +138,8 @@ and versions are the same as the standard Java artifacts:
 | Nukkit     | `dev.faststats.metrics.j8:nukkit`     |
 | Sponge     | `dev.faststats.metrics.j8:sponge`     |
 
-For example, if your Bukkit plugin must stay on Java 8, change only the group
-ID:
+For example, if your Bukkit plugin must stay on Java 8, use the Java 8 group
+ID and its latest published version:
 
 <Tabs
 	defaultIndex="1"
@@ -151,26 +152,26 @@ ID:
 			code={`<dependency>
     <groupId>dev.faststats.metrics.j8</groupId>
     <artifactId>bukkit</artifactId>
-    <version>${version}</version>
+    <version>${java8Version}</version>
 </dependency>`}
 		/>
 	</Tab>
 	<Tab id="kotlin" value="Gradle Kotlin">
 		<DynamicCodeBlock
 			lang="kts"
-			code={`implementation("dev.faststats.metrics.j8:bukkit:${version}")`}
+			code={`implementation("dev.faststats.metrics.j8:bukkit:${java8Version}")`}
 		/>
 	</Tab>
 	<Tab id="groovy" value="Gradle Groovy">
 		<DynamicCodeBlock
 			lang="groovy"
-			code={`implementation "dev.faststats.metrics.j8:bukkit:${version}"`}
+			code={`implementation "dev.faststats.metrics.j8:bukkit:${java8Version}"`}
 		/>
 	</Tab>
 	<Tab id="sbt" value="SBT">
 		<DynamicCodeBlock
 			lang="scala"
-			code={`"dev.faststats.metrics.j8" %% "bukkit" %% "${version}"`}
+			code={`"dev.faststats.metrics.j8" %% "bukkit" %% "${java8Version}"`}
 		/>
 	</Tab>
 </Tabs>
