@@ -9,8 +9,7 @@ visitor sessions.
 
 ## Enable Web Vitals
 
-Import the extension from its package subpath. Pass an options object only when
-you need attribution data.
+Import the extension from its package subpath. It takes no options.
 
 <Tabs items={["React", "Nuxt", "JavaScript"]}>
 	<Tab value="React">
@@ -50,7 +49,7 @@ init({
 
 ## Collected Metrics
 
-The tracker reports the standard set of Core Web Vitals.
+The tracker reports the following metrics.
 
 | Metric | Name                      |
 | ------ | ------------------------- |
@@ -60,18 +59,14 @@ The tracker reports the standard set of Core Web Vitals.
 | `FCP`  | First Contentful Paint    |
 | `TTFB` | Time to First Byte        |
 
-Each metric is sent with its value, an id, a rating and the navigation type.
-Metrics are flushed when the page is hidden and when the route changes in a
-single page app.
+Each metric is sent with its value, an id, a rating, the navigation type, and
+the delta since the last successfully sent value. Metrics are flushed when the
+page is hidden and when the client stops, and are attributed to the URL the
+document was loaded on.
 
 ## Attribution
 
-Turn on `attribution` to include extra debugging data that points to the element
-or event responsible for a metric. This payload is larger, so leave it off
-unless you are chasing a specific issue.
-
-```ts
-webVitals({ attribution: true });
-```
-
-In Nuxt, use `extensions: { webVitals: { attribution: true } }`.
+Attribution data is always included. Every metric carries the
+[web-vitals](https://github.com/GoogleChrome/web-vitals) attribution fields that
+point to the element, resource, or interaction responsible for it, such as the
+LCP element or the INP interaction target. There is nothing to turn on.

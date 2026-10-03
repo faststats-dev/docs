@@ -4,42 +4,51 @@ description: Automatic tracking and custom events
 icon: MousePointerClick
 ---
 
-The core SDK automatically sends `pageview` and `page_leave` events. Add the
-outbound-links extension to capture `outbound_link`, and use `track` for your
-own events.
+The core SDK automatically sends `pageview`, `page_leave`, and `outbound_link`
+events. Use `track` for your own events.
 
 ## Automatic Tracking
 
-| Event           | When it fires                                                    |
-| --------------- | ---------------------------------------------------------------- |
-| `pageview`      | On the first visible load and each client-side route change      |
-| `page_leave`    | When the page unloads or client-side navigation leaves the route |
-| `outbound_link` | When the optional extension sees a click to another host         |
+| Event           | When it fires                                                                |
+| --------------- | ---------------------------------------------------------------------------- |
+| `pageview`      | When a page first becomes visible and on each client-side navigation         |
+| `page_leave`    | Every 15 seconds while the page is active, and when the visit pauses or ends |
+| `outbound_link` | When a visitor clicks a link to another host                                 |
 
 Page views include the path, sanitized URL, referrer, page title, and UTM
-parameters. Page-leave events include time on page and session duration.
+parameters. A page that is closed or replaced before it becomes visible sends
+nothing.
 
 Single-page navigation is detected through the History API, so `pushState`,
 `replaceState`, and back/forward navigation create page views automatically.
 Set `trackHash: true` for hash-based routers.
 
+## Visit Duration
+
+Each page view starts a visit. `page_leave` events are cumulative checkpoints
+for that visit and share its `visit_id` with the page view.
+
+| Property           | Description                                                       |
+| ------------------ | ----------------------------------------------------------------- |
+| `visit_id`         | Links the checkpoint to its page view                             |
+| `time_on_page`     | Milliseconds the page was visible and focused during this visit   |
+| `session_duration` | Milliseconds since the session started, including time spent away |
+
+`time_on_page` pauses while the tab is hidden, the window is unfocused, or the
+page sits in the back-forward cache. Because checkpoints are cumulative, use the
+highest `time_on_page` per visit instead of summing them.
+
+A session ends after 30 minutes of inactivity or 24 hours. A new session, a
+`logout`, or a switch between anonymous and granted consent starts a new visit,
+even on the same route.
+
 ## Outbound Links
 
-Outbound link tracking is opt-in so applications that do not need it do not
-ship its click listener.
-
-```ts
-import { init } from "@faststats/web";
-import { outboundLinks } from "@faststats/web/outbound-links";
-
-init({
-	siteKey: "your_site_key",
-	extensions: [outboundLinks()],
-});
-```
-
-For React, import from `@faststats/react/outbound-links`. In Nuxt, set
-`faststats.extensions.outboundLinks` to `true`.
+Outbound link tracking is built in and always on. Left and middle clicks on
+`http` and `https` links to a different host send an `outbound_link` event with
+the destination in the `outbound_link` property. The query string and hash are
+stripped from the URL, clicks whose default action was prevented are skipped,
+and a double click is only counted once.
 
 ## Custom Events
 
@@ -80,7 +89,8 @@ track("signup", { plan: "pro", source: "hero" });
 </Tabs>
 
 The SDK trims names and ignores empty names. It reserves `pageview`,
-`page_leave`, `error`, and `outbound_link` for built-in events.
+`page_leave`, `error`, and `outbound_link` for built-in events, so `track`
+ignores those names.
 
 ## Good Practices
 

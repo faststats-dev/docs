@@ -53,6 +53,23 @@ Errors are grouped by their type and message so the same error from many
 visitors does not flood your dashboard. Identical errors within a batch are
 counted instead of repeated.
 
+### Options
+
+| Option          | Type     | Default | Description                                              |
+| --------------- | -------- | ------- | -------------------------------------------------------- |
+| `flushInterval` | `number` | `5000`  | Milliseconds between batch uploads                       |
+| `maxQueueSize`  | `number` | `50`    | Errors held before an early flush and kept while offline |
+
+```ts
+errorTracking({ flushInterval: 10_000, maxQueueSize: 100 });
+```
+
+In Nuxt, pass the same object as `extensions.errorTracking`.
+
+Batches are also flushed when the page is hidden. If the collector is
+unreachable the queue is capped at `maxQueueSize` and the oldest errors are
+dropped. A batch the collector rejects is not retried.
+
 ## Report Errors by Hand
 
 When you catch an error yourself, send it through the running client. An
@@ -71,8 +88,8 @@ try {
 In React, get the client with `useAnalytics()` and call
 `analytics?.reportError(error)`. In Nuxt, call `$faststats.reportError(error)`.
 
-In Nuxt the module already hooks into the Vue error handler, so component errors
-are reported without extra code.
+In Nuxt, enabling `extensions.errorTracking` also hooks the module into the Vue
+error handler, so component errors are reported without extra code.
 
 ## Server Errors with Nitro
 
@@ -123,6 +140,7 @@ project token, not the browser site key, so keep it on the server only.
 | `FASTSTATS_TOKEN`          | required                                 | Project token used to authorize reports  |
 | `FASTSTATS_ERROR_ENDPOINT` | `https://metrics.faststats.dev/v1/error` | Where server errors are sent             |
 | `FASTSTATS_BUILD_ID`       | none                                     | Tags errors with a build for source maps |
+| `FASTSTATS_SESSION_ID`     | none                                     | Session ID attached to every report      |
 | `FASTSTATS_DEBUG`          | `0`                                      | Set to `1` to log reporter activity      |
 
 ```bash title=".env"
@@ -145,6 +163,22 @@ export default createFaststatsNitroPluginV2({
 	getContext: ({ path }) => ({ route: path }),
 });
 ```
+
+`getContext` receives the `error`, the request `path`, and Nitro's error `tags`.
+Use `createFaststatsNitroPluginV3` from `@faststats/nitro/v3` on Nitro v3.
+
+| Option                   | Default | Description                                      |
+| ------------------------ | ------- | ------------------------------------------------ |
+| `token`                  | env     | Project token                                    |
+| `errorEndpoint`          | env     | Where server errors are sent                     |
+| `buildId`                | env     | Build ID for source maps                         |
+| `sessionId`              | env     | Session ID attached to every report              |
+| `debug`                  | `false` | Logs reporter activity                           |
+| `flushIntervalMs`        | `5000`  | Milliseconds between batch uploads               |
+| `maxBatchHashes`         | `50`    | Distinct errors held before an early flush       |
+| `circuitBreakerFailures` | `5`     | Consecutive failed sends before reporting pauses |
+| `circuitBreakerPauseMs`  | `60000` | How long reporting pauses once the breaker opens |
+| `getContext`             | none    | Returns extra context attached to each error     |
 
 The reporter batches errors, retries failed sends and opens a short circuit
 breaker after repeated failures so a broken endpoint never slows your server

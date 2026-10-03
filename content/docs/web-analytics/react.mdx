@@ -66,18 +66,20 @@ The component accepts every option from the SDK. Here is a fuller example that
 turns on a few extra features.
 
 ```tsx title="app/layout.tsx"
+import { Analytics } from "@faststats/react";
 import { errorTracking } from "@faststats/react/error";
-import { outboundLinks } from "@faststats/react/outbound-links";
 import { sessionReplay } from "@faststats/react/replay";
 import { webVitals } from "@faststats/react/web-vitals";
 
 <Analytics
 	siteKey={process.env.NEXT_PUBLIC_FASTSTATS_SITE_KEY!}
-	extensions={[outboundLinks(), errorTracking(), webVitals(), sessionReplay()]}
+	extensions={[errorTracking(), webVitals(), sessionReplay()]}
 />;
 ```
 
-See [Configuration](/web-analytics/configuration) for the full list.
+Options are read when the component mounts. Only changes to the `consent` prop
+are applied to the running client afterwards. See
+[Configuration](/web-analytics/configuration) for the full list.
 
 ## Track Custom Events
 

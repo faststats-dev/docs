@@ -5,8 +5,8 @@ icon: Mountain
 ---
 
 The `@faststats/nuxt` module sets up the browser SDK for you. It reads its
-configuration from your `nuxt.config`, starts tracking on the client and wires
-the SDK into the Vue error handler so unhandled component errors are reported.
+configuration from your `nuxt.config` and starts tracking on the client. It
+supports Nuxt 3.12 and later, including Nuxt 4.
 
 ## Install
 
@@ -24,7 +24,6 @@ export default defineNuxtConfig({
 	faststats: {
 		siteKey: "your_site_key",
 		extensions: {
-			outboundLinks: true,
 			errorTracking: true,
 			webVitals: true,
 			sessionReplay: true,
@@ -33,7 +32,10 @@ export default defineNuxtConfig({
 });
 ```
 
-The module accepts every option from the SDK. See
+The module accepts every core option from the SDK. Extensions are enabled
+through the `extensions` object and are only loaded when you turn them on. With
+`errorTracking` enabled, the module also hooks into the Vue error handler so
+component errors are reported. See
 [Configuration](/web-analytics/configuration) for the full list.
 
 ## Use Environment Variables
@@ -46,8 +48,8 @@ through environment variables. The site key maps to
 NUXT_PUBLIC_FASTSTATS_SITE_KEY=your_site_key
 ```
 
-If the site key is missing the module logs a warning during build so you notice
-early.
+If the site key is missing the module logs a warning during build and the
+client plugin does not start.
 
 ## Track Custom Events
 

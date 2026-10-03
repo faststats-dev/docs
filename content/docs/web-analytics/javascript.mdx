@@ -28,20 +28,23 @@ export const analytics = init({
 });
 ```
 
+`init` is idempotent: a second call returns the existing client and ignores the
+new options.
+
 The core SDK records page views, page leaves, sessions, client-side navigation,
-and visit duration. Optional features are extensions, so they only add code to
-your bundle when you import them.
+visit duration, and outbound link clicks. Error tracking, Web Vitals, and
+session replay are extensions, so they only add code to your bundle when you
+import them.
 
 ```ts
 import { init } from "@faststats/web";
 import { errorTracking } from "@faststats/web/error";
-import { outboundLinks } from "@faststats/web/outbound-links";
 import { sessionReplay } from "@faststats/web/replay";
 import { webVitals } from "@faststats/web/web-vitals";
 
 init({
 	siteKey: "your_site_key",
-	extensions: [outboundLinks(), errorTracking(), webVitals(), sessionReplay()],
+	extensions: [errorTracking(), webVitals(), sessionReplay()],
 });
 ```
 
