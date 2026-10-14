@@ -115,6 +115,31 @@ private final BukkitContext context = new BukkitContext.Factory(plugin, "YOUR_TO
 }
 ```
 
+## Exclusion Rules
+
+Exclusion rules let you decide in code which automatically tracked errors should
+not be reported. A rule receives the thread the error occurred on and the error
+itself. If any rule returns `true`, the error is not tracked.
+
+```java
+public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware()
+    // Exclude all errors without a stack frame from "your.package.name"
+    .addExclusionRule((thread, error) -> {
+        for (final var element : error.getStackTrace()) {
+            if (element.getClassName().startsWith("your.package.name")) {
+                return false; // track this error
+            }
+        }
+        return true; // do not track this error
+    });
+```
+
+<Callout type="info">
+	Exclusion rules only apply to errors captured automatically through an
+	attached error context, after the error has been attributed to the tracker's
+	class loader. Errors passed to `trackError()` are not affected.
+</Callout>
+
 ## Tracker Attributes
 
 Attributes stored on an error tracker are attached to reports submitted through
