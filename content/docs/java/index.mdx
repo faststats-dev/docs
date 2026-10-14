@@ -61,23 +61,27 @@ Choose the artifact for your platform:
 | Sponge                     | [`sponge`](/java/platform/sponge)         | 17+           |
 | Velocity                   | [`velocity`](/java/platform/velocity)     | 21+           |
 
-Fabric and NeoForge artifacts include the SDK version and the Minecraft version range you want to target:
+Fabric and NeoForge artifacts include the SDK version and the exact Minecraft version you want to target:
 
 ```kts
-implementation("dev.faststats.metrics:fabric:0.29.0+mc26.1-26.3")
-include("dev.faststats.metrics:fabric:0.29.0+mc26.1-26.3")
+implementation("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
+include("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
 
-implementation("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
-include("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
+implementation("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.3")
+jarJar("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.3")
 ```
 
-Use both `implementation` and `include` for modded platforms. FastStats is
+Use both `implementation` and `include`/`jarJar` for modded platforms. FastStats is
 provided as a mod through jar-in-jar, so `implementation` puts it on your compile
-classpath and `include` bundles it into your mod JAR.
+classpath and `include`/`jarJar` bundles it into your mod JAR.
 
-The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
-the FastStats SDK version and `{from}-{to}` is the supported Minecraft version
-range for that artifact.
+The version format is `{sdk-version}+mc{minecraft-version}`, where
+`{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
+exact Minecraft version you are targeting. Each artifact is built for a single
+Minecraft version, so pick the one matching your mod.
+
+`0.31.0-pre2` is a pre-release and is published to the snapshots repository
+(`https://repo.faststats.dev/snapshots`).
 
 You can find the available versions in the Maven repository:
 [Fabric](https://repo.faststats.dev/#/releases/dev/faststats/metrics/fabric/) and

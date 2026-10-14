@@ -8,7 +8,7 @@ Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21
 
 <Callout type="info">
 	NeoForge supports Minecraft versions 1.21 to 26.2. Select both the SDK version
-	and the Minecraft version range in your dependency version. You can find the
+	and the exact Minecraft version in your dependency version. You can find the
 	available Minecraft version targets in the [Maven
 	repository](https://repo.faststats.dev/#/releases/dev/faststats/metrics/neoforge/).
 </Callout>
@@ -16,17 +16,21 @@ Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21
 **Artifact:** `dev.faststats.metrics:neoforge`
 
 ```kts
-implementation("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
-include("dev.faststats.metrics:neoforge:0.29.0+mc26.1-26.2")
+implementation("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.2")
+jarJar("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.2")
 ```
 
-Use both `implementation` and `include`. FastStats is provided as a mod through
+Use both `implementation` and `jarJar`. FastStats is provided as a mod through
 jar-in-jar, so `implementation` puts it on your compile classpath and `include`
 bundles it into your mod JAR.
 
-The version format is `{sdk-version}+mc{from}-{to}`, where `{sdk-version}` is
-the FastStats SDK version and `{from}-{to}` is the supported Minecraft version
-range for that artifact.
+The version format is `{sdk-version}+mc{minecraft-version}`, where
+`{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
+exact Minecraft version you are targeting. Each artifact is built for a single
+Minecraft version, so pick the one matching your mod.
+
+`0.31.0-pre2` is a pre-release and is published to the snapshots repository
+(`https://repo.faststats.dev/snapshots`).
 
 ```java
 import dev.faststats.ErrorTracker;
@@ -46,6 +50,30 @@ public class ExampleMod {
 ```
 
 Pass your mod ID, as defined in `neoforge.mods.toml`, to `NeoForgeContext.Factory`.
+
+## Client Consent Screen
+
+<Callout type="warn">
+	The client consent screen is available starting with `0.31.0-pre2`.
+	Pre-releases are published to the snapshots repository, so add
+	`https://repo.faststats.dev/snapshots` to your repositories to use it.
+</Callout>
+
+Explicit user consent is opt-in. To require it for your mod, call
+`requireConsent()` on `NeoForgeContext.Factory`:
+
+```java
+private final NeoForgeContext context = new NeoForgeContext.Factory("example_mod", "YOUR_TOKEN")
+    .requireConsent()
+    .errorTrackerService(ERROR_TRACKER)
+    .metrics(Metrics.Factory::create)
+    .create();
+```
+
+When at least one installed mod requires explicit consent, the client shows a
+consent screen on startup. The screen is only shown once. If a mod that requires
+explicit consent is installed after mods that did not require it, the screen is
+still shown on the next startup.
 
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
 
