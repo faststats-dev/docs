@@ -54,6 +54,7 @@ Choose the artifact for your platform:
 | Bukkit/Spigot/Paper/Folia… | [`bukkit`](/java/platform/bukkit)         | 17+           |
 | BungeeCord                 | [`bungeecord`](/java/platform/bungeecord) | 17+           |
 | Fabric                     | [`fabric`](/java/platform/fabric)         | 21+           |
+| Forge                      | [`forge`](/java/platform/forge)           | 21+           |
 | Hytale                     | [`hytale`](/java/platform/hytale)         | 25+           |
 | Minestom                   | [`minestom`](/java/platform/minestom)     | 25+           |
 | NeoForge                   | [`neoforge`](/java/platform/neoforge)     | 21+           |
@@ -61,11 +62,14 @@ Choose the artifact for your platform:
 | Sponge                     | [`sponge`](/java/platform/sponge)         | 17+           |
 | Velocity                   | [`velocity`](/java/platform/velocity)     | 21+           |
 
-Fabric and NeoForge artifacts include the SDK version and the exact Minecraft version you want to target:
+Fabric, Forge and NeoForge artifacts include the SDK version and the exact Minecraft version you want to target:
 
 ```kts
 implementation("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
 include("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
+
+implementation("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
+jarJar.configurationName("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
 
 implementation("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.3")
 jarJar("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.3")
@@ -84,7 +88,8 @@ Minecraft version, so pick the one matching your mod.
 (`https://repo.faststats.dev/snapshots`).
 
 You can find the available versions in the Maven repository:
-[Fabric](https://repo.faststats.dev/#/releases/dev/faststats/metrics/fabric/) and
+[Fabric](https://repo.faststats.dev/#/releases/dev/faststats/metrics/fabric/),
+[Forge](https://repo.faststats.dev/#/snapshots/dev/faststats/metrics/forge/) and
 [NeoForge](https://repo.faststats.dev/#/releases/dev/faststats/metrics/neoforge/).
 
 All other platforms use the SDK version without a Minecraft version suffix.

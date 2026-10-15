@@ -1,0 +1,82 @@
+---
+title: Forge
+description: Integrate FastStats with Forge mods
+icon: Anvil
+---
+
+Use `dev.faststats.forge.ForgeContext` for Forge mods. Requires Java 21+.
+
+<Callout type="info">
+	Select both the SDK version and the exact Minecraft version in your dependency
+	version. You can find the available Minecraft version targets in the [Maven
+	repository](https://repo.faststats.dev/#/snapshots/dev/faststats/metrics/forge/).
+</Callout>
+
+**Artifact:** `dev.faststats.metrics:forge`
+
+```kts
+plugins {
+    id("net.minecraftforge.gradle") version "7.0.40"
+    id("net.minecraftforge.jarjar") version "0.2.3"
+}
+
+val jarJar = the<net.minecraftforge.jarjar.gradle.JarJarExtension>().register()
+
+dependencies {
+    implementation("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
+    jarJar.configurationName("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
+}
+```
+
+Use both `implementation` and `jarJar`. FastStats is provided as a mod through
+jar-in-jar, so `implementation` puts it on your compile classpath and `jarJar`
+bundles it into your mod JAR.
+
+The version format is `{sdk-version}+mc{minecraft-version}`, where
+`{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
+exact Minecraft version you are targeting. Each artifact is built for a single
+Minecraft version, so pick the one matching your mod.
+
+`0.31.0-pre3` is a pre-release and is published to the snapshots repository
+(`https://repo.faststats.dev/snapshots`).
+
+```java
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.forge.ForgeContext;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod("example_mod")
+public class ExampleMod {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final ForgeContext context = new ForgeContext.Factory("example_mod", "YOUR_TOKEN")
+        .errorTrackerService(ERROR_TRACKER)
+        .metrics(Metrics.Factory::create)
+        .create();
+}
+```
+
+Pass your mod ID, as defined in `mods.toml`, to `ForgeContext.Factory`.
+
+## Client Consent Screen
+
+Explicit user consent is opt-in. To require it for your mod, call
+`requireConsent()` on `ForgeContext.Factory`:
+
+```java
+private final ForgeContext context = new ForgeContext.Factory("example_mod", "YOUR_TOKEN")
+    .requireConsent()
+    .errorTrackerService(ERROR_TRACKER)
+    .metrics(Metrics.Factory::create)
+    .create();
+```
+
+When at least one installed mod requires explicit consent, the client shows a
+consent screen on startup. The screen is only shown once. If a mod that requires
+explicit consent is installed after mods that did not require it, the screen is
+still shown on the next startup.
+
+See [Error Tracking](/java/error-tracking) for configuring error reporting.
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java-examples/tree/main/forge)
