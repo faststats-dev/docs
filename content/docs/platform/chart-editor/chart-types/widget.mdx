@@ -1,0 +1,26 @@
+---
+title: Widget
+description: Show one or more headline numbers with a trend
+icon: TrendingUp
+---
+
+A widget shows a single number, such as the current server count or total page views, with how much it changed compared with the previous period.
+
+![Two widgets: Online Servers at 1,588 with +0.6% and Online Players at 14,342 with -27.8% vs previous 24h](/images/chart-editor/chart-types/widget.png)
+
+## Building a widget
+
+A widget shows the total of each series over the dashboard's time range.
+
+- **Easy mode:** add a series and pick a **Measure**. Leave **Show** on **Total**.
+- **Canvas mode:** connect a **Data Source** to an **Aggregate** node and an **Output** node.
+
+## Multiple values
+
+Add more series (or Output nodes) to show several values next to each other in one widget. Each value is labeled with its series name and gets its own trend.
+
+![A widget showing two series, Unique and Total, side by side](/images/chart-editor/easy-mode/widget-multi-series.png)
+
+## Trend
+
+Below the value, the widget shows the change compared with the previous period of the same length, for example "+1.5% vs previous 24h". Increases are shown in green, decreases in red.

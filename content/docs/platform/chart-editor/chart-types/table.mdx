@@ -1,0 +1,77 @@
+---
+title: Table
+description: Show grouped data as rows with one sortable column per metric
+icon: Table2
+---
+
+A table chart shows one row per group, for example one row per game version or country, and one column for each metric. Use it to compare several numbers side by side, like unique servers and total events for every version.
+
+![Table of servers by Online Mode with the Totals Row turned on](/images/chart-editor/chart-types/table-dashboard.png)
+
+## Creating a table
+
+In the chart editor, set the chart type to **Table**. Tables work in both editor modes.
+
+### In Easy mode
+
+1. Add a series for each column you want. Each [series](/platform/chart-editor/easy-mode#series) becomes one column.
+2. Under **Breakdown**, pick the field that each row stands for, such as **Game Version**.
+3. Set **Top _n_ values** to choose how many rows to show, and turn on **Group the rest as Other** to sum up everything else into one row.
+4. Give each series a name. The names become the column headers.
+
+Without a breakdown, the table shows a single row with one total per column.
+
+![Table broken down by Game Version in Easy mode](/images/chart-editor/easy-mode/table-breakdown.png)
+
+### In Canvas mode
+
+Each [Output node](/platform/chart-editor/output-nodes) becomes one column. Group every pipeline by the same field with a **Group By** node, so the values for each group line up in the same row.
+
+1. Build one pipeline per column, each ending in a named **Output** node
+2. Add a **Group By** node on the same field to every pipeline
+3. Aggregate each pipeline, for example `count` in one and `distinct` in another
+4. Place the Output nodes left to right in the order you want the columns
+
+<Callout type="info">
+	A pipeline without a **Group By** node has nothing to split into rows, so the
+	table shows a single row for it.
+</Callout>
+
+## Columns and rows
+
+| Part           | Where it comes from                                                                |
+| -------------- | ---------------------------------------------------------------------------------- |
+| First column   | The field you group by. Its header is the field name, for example "Game Version"   |
+| Metric columns | One per series or Output node. Unnamed columns are called "Value", "Value 2", etc. |
+| Rows           | One per group. Groups with no value are shown as "(empty)"                         |
+
+Row labels get twice the width of a metric column, and the table always fits the width of its card, so you never have to scroll sideways.
+
+When you group by country, each row gets a flag icon automatically. Other fields show icons if the Output node has an icon set.
+
+## Display options
+
+Under **Display** in the chart editor:
+
+| Option     | Default | Description                                                        |
+| ---------- | ------- | ------------------------------------------------------------------ |
+| Value Bars | On      | Shades each metric cell by its share of the column's largest value |
+| Totals Row | Off     | Adds a last row that sums every metric column                      |
+
+![Table with Value Bars and Totals Row turned on](/images/chart-editor/easy-mode/table-display-options.png)
+
+## Using a table on the dashboard
+
+### Sorting
+
+Click a column header to sort by it, and click it again to flip the order. Tables start sorted by the first metric column, highest value first. Metric columns sort highest first on the first click, and the row label column sorts A to Z.
+
+### Pages
+
+If there are more rows than fit in the card, the table splits them into pages. Use the arrows below the table to move between pages. Make the card taller on the dashboard to show more rows at once, or open the table in fullscreen.
+
+![Table of servers and average players by game version, showing rows 1–5 of 9 with page arrows](/images/chart-editor/chart-types/table-paging.png)
+
+### Filtering the dashboard
+
+If you can manage the project, click a row label to filter the whole dashboard to that value. For example, clicking `1.21.11` in a table grouped by Game Version filters every chart to that version. While no description is set, the table shows a hint like "Click a game version to filter the dashboard." under its name.
