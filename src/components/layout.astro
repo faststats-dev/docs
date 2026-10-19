@@ -51,10 +51,14 @@ import Analytics from "@/components/analytics.astro";
 	>
 		<Analytics />
 		<script>
+			import { enhanceImageZoom } from "@/lib/enhance-image-zoom";
 			import { enhanceStaticTabs } from "@/lib/enhance-static-tabs";
 
 			enhanceStaticTabs();
-			document.addEventListener("astro:page-load", enhanceStaticTabs);
+			document.addEventListener("astro:page-load", () => {
+				enhanceStaticTabs();
+				enhanceImageZoom();
+			});
 		</script>
 		<slot />
 	</body>
