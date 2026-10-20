@@ -1,0 +1,26 @@
+---
+title: Line
+description: Show how values change over time
+icon: ChartLine
+---
+
+A line chart plots values over time. Use it to follow trends like player counts, page views, or error rates.
+
+![Line chart of Worlds and Servers over a week, with the tooltip showing both values](/images/chart-editor/chart-types/line.png)
+
+## Building a line chart
+
+- **Easy mode:** set **Show** to an interval (**Auto**, **Minute**, **Hour**, **Day**, **Week**, or **Month**). Each series becomes a line. Pick a **Breakdown** to draw one line per group instead, for example one line per game version.
+- **Canvas mode:** add a **Time Group** node to each pipeline. Each Output node becomes a line. See [Output & Multi-Series](/platform/chart-editor/output-nodes#multi-line-charts).
+
+Turn on **Running total** in Easy mode (or **Cumulative** on the Time Group node) to make each point add up every point before it.
+
+## Display options
+
+| Option            | Default  | Description                                                     |
+| ----------------- | -------- | --------------------------------------------------------------- |
+| Logarithmic Scale | Off      | Spaces the value axis by orders of magnitude                    |
+| Line Style        | Monotone | **Monotone** (smooth), **Linear** (straight lines), or **Step** |
+| Show Dots         | Off      | Draws a dot at every data point                                 |
+
+Line charts also support [Values](/platform/chart-editor/chart-types#values) settings (unit, decimals, axis range, thresholds) and [Event markers](/platform/chart-editor/chart-types#event-markers).

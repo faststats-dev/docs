@@ -8,7 +8,7 @@ import { Callout } from "fumadocs-ui/components/callout";
 
 Easy mode lets you build a chart by filling out a short form instead of wiring nodes together. Pick what to measure, add filters and a breakdown, and pick a chart type. The preview updates while you work.
 
-It works with every chart type and also supports charts with more than one series.
+It works with every chart type and also supports charts with more than one series. See [Chart Types](/platform/chart-editor/chart-types) for what each one does.
 
 ![Chart editor in Easy mode, with the Series, Filters and Breakdown panel on the left and the live preview on the right](/images/chart-editor/easy-mode/overview.png)
 
@@ -19,6 +19,17 @@ It works with every chart type and also supports charts with more than one serie
 
 ![Easy option disabled with the message "Easy mode can't open this chart: a step combines several inputs."](/images/chart-editor/easy-mode/easy-unavailable.png)
 
+<video
+	src="/videos/chart-editor/easy-to-canvas.mp4"
+	aria-label="Switching a chart from Easy to Canvas and seeing it as nodes"
+	className="w-full rounded-lg border"
+	autoplay
+	loop
+	muted
+	playsinline
+	controls
+/>
+
 ### Making Easy the default
 
 Canvas is still the default mode for new charts. To open charts in Easy mode by default, go to your **Appearance** settings and change the chart editor mode under **Workspace**.
@@ -26,6 +37,17 @@ Canvas is still the default mode for new charts. To open charts in Easy mode by 
 ## Building a chart
 
 The left panel defines **what data** the chart shows. The right side controls **how it looks**.
+
+<video
+	src="/videos/chart-editor/easy-build-chart.mp4"
+	aria-label="Building a chart in Easy mode: picking a measure, adding a series, a filter and a breakdown, and changing the chart type"
+	className="w-full rounded-lg border"
+	autoplay
+	loop
+	muted
+	playsinline
+	controls
+/>
 
 ### Series
 
@@ -66,7 +88,14 @@ Filters in the **Filters** section apply to every series in the chart. Click **A
 
 ### Chart type and value
 
-At the top of the preview, choose the **chart type** and use **Show** to pick which value the chart displays (for example, **Total**). The preview updates right away.
+At the top of the preview, choose the **chart type** and use **Show** to pick how values are grouped over time:
+
+- **Total** shows one value per series (or per group, with a breakdown) for the whole time range.
+- **Auto**, **Minute**, **Hour**, **Day**, **Week**, or **Month** puts the chart on a time axis with one point per interval. **Auto** picks an interval that fits the time range.
+
+With an interval selected, turn on **Running total** to make each point add up every point before it.
+
+![The Show menu open with Total, Auto, Minute, Hour, Day, Week and Month](/images/chart-editor/easy-mode/easy-show-interval.png)
 
 Widgets also compare the current value with the previous period, for example "+1.9% vs previous 24h".
 

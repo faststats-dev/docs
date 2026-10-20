@@ -1,0 +1,18 @@
+{
+	"title": "Chart Types",
+	"icon": "Shapes",
+	"pages": [
+		"widget",
+		"line",
+		"area",
+		"bar",
+		"pie",
+		"list",
+		"table",
+		"map",
+		"treemap",
+		"heatmap",
+		"radar",
+		"scatter"
+	]
+}
