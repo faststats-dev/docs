@@ -1,0 +1,139 @@
+---
+title: Notebooks
+description: Write up findings next to live charts, funnels, and Sankeys in a block-based document.
+icon: NotebookText
+---
+
+Notebooks are documents that live next to your dashboards. Use them to write up an investigation, a weekly report, or a launch review, and add the charts, funnels, and Sankeys that back it up. They stay live, so the numbers update as new data comes in.
+
+## Creating a notebook
+
+1. Open the **Dashboards** page of your project
+2. Click **New** and choose **Notebook** (if you're inside a folder, the notebook is created there)
+3. Give it a name by typing in the title at the top
+
+A new notebook starts blank and offers a few ways to start:
+
+- **Investigation outline:** adds _Question_, _What we found_, _Evidence_, and _Next steps_ headings to fill in
+- **Chart**, **Funnel**, **Sankey**, or **Dashboard link:** adds one straight away
+
+Or just start typing.
+
+<Callout variant="info">
+	Notebooks save automatically about a second after you stop typing. The status
+	in the top right shows **Saving…**, **Saved**, or **Not saved · Retry** if a
+	save failed. If you try to leave the page while a save is still pending, your
+	browser asks you to confirm.
+</Callout>
+
+## Blocks
+
+A notebook is a list of blocks. Type `/` anywhere to open the block menu, then keep typing to filter it, for example `/todo` or `/sql`. Use the arrow keys and `Enter` to pick a block.
+
+| Block         | Use it for                 | Markdown shortcut |
+| ------------- | -------------------------- | ----------------- |
+| Text          | Plain writing              |                   |
+| Heading 1     | A section heading          | `# `              |
+| Heading 2     | A smaller heading          | `## `             |
+| Heading 3     | The smallest heading       | `### `            |
+| Bulleted list | A simple list              | `- `, `* `, `+ `  |
+| Numbered list | Steps in order             | `1. ` or `1) `    |
+| To-do list    | Follow-ups to check off    | `[] ` or `[x] `   |
+| Quote         | Feedback or a citation     | `> `              |
+| Callout       | Making a finding stand out |                   |
+| Code          | SQL, JSON, or other code   | ` ``` `           |
+| Divider       | Separating sections        | `---`             |
+
+Markdown shortcuts work when typed at the start of a text block. Press `Tab` to indent a block one level deeper than the block above it, and `Shift` `Tab` to outdent it.
+
+### Formatting text
+
+Select text to show the formatting toolbar, or type the Markdown directly and it is applied as you close it:
+
+| Format        | Markdown               | Shortcut          |
+| ------------- | ---------------------- | ----------------- |
+| Bold          | `**bold**`             | `Mod` `B`         |
+| Italic        | `*italic*`, `_italic_` | `Mod` `I`         |
+| Underline     |                        | `Mod` `U`         |
+| Strikethrough | `~~strike~~`           | `Mod` `Shift` `S` |
+| Inline code   | `` `code` ``           | `Mod` `E`         |
+| Link          | `[text](url)`          | `Mod` `K`         |
+
+Links can point to `http`, `https`, and `mailto` addresses, or to a path within FastStats such as `/project/my-project/dashboards`. Hold `Mod` and click a link to open it while editing.
+
+### Pasting Markdown
+
+Pasting Markdown or plain text turns each line into a block: headings, lists, to-dos, quotes, fenced code, and dividers are all recognized. Copying blocks from one notebook and pasting them into another keeps them exactly as they were, charts included.
+
+## Charts
+
+Charts, funnels, and Sankeys bring live data from your project into a notebook. Add one from the `/` menu under **From this project**:
+
+| Block          | What it shows                                 |
+| -------------- | --------------------------------------------- |
+| Chart          | A saved chart or table, kept live             |
+| Funnel         | Conversion between steps                      |
+| Sankey         | Paths between pages and events (web projects) |
+| Dashboard link | A card that opens one of your dashboards      |
+
+When you add a chart, funnel, or Sankey, a picker opens. Search for an existing chart, funnel, or Sankey by name, or choose **New chart**, **New funnel**, or **New Sankey** at the bottom of the list. Creating something new opens the builder, and when you save you're brought back to the notebook with it already added.
+
+Hover a chart to see where it lives, **Replace** it with a different one, or **Open** it in its own page.
+
+<Callout variant="info">
+	Charts, funnels, and Sankeys created from a notebook belong to that notebook.
+	They don't show up in the Dashboards library on their own, but you can find
+	them under the notebook in the sidebar. Deleting the notebook deletes them
+	too, and duplicating the notebook makes copies of them for the new notebook.
+</Callout>
+
+If a chart is deleted, or you don't have access to it, the notebook shows a placeholder where you can **Choose another** or **Remove** it.
+
+## Organizing blocks
+
+Hover a block to show its handle on the left:
+
+- **Drag** the handle to move the block
+- **Click** the handle to open its menu: **Turn into** another block type, **Duplicate**, **Move up**, **Move down**, or **Delete**
+
+Press `Esc` while typing to select the current block. With blocks selected, you can extend the selection with `Shift` `↑` / `Shift` `↓`, and then move, indent, duplicate, or delete them all at once.
+
+## Keyboard shortcuts
+
+`Mod` is `⌘` on macOS and `Ctrl` on Windows and Linux.
+
+### While typing
+
+| Hotkey                | Description                                                           |
+| --------------------- | --------------------------------------------------------------------- |
+| `/`                   | Open the block menu.                                                  |
+| `Enter`               | Start a new block. `Shift` `Enter` adds a line break instead.         |
+| `Mod` `Enter`         | Check or uncheck a to-do. In a code block, start a new line below it. |
+| `Tab` / `Shift` `Tab` | Indent or outdent the block. In a code block, `Tab` inserts spaces.   |
+| `Mod` `D`             | Duplicate the block.                                                  |
+| `Mod` `Shift` `↑`/`↓` | Move the block up or down.                                            |
+| `Mod` `A`             | Select the line; press again to select every block.                   |
+| `Mod` `Z`             | Undo.                                                                 |
+| `Mod` `Shift` `Z`     | Redo (`Mod` `Y` also works).                                          |
+| `Esc`                 | Select the current block.                                             |
+
+### With blocks selected
+
+| Hotkey                  | Description                            |
+| ----------------------- | -------------------------------------- |
+| `↑` / `↓`               | Select the previous or next block.     |
+| `Shift` `↑` / `↓`       | Extend the selection.                  |
+| `Mod` `Shift` `↑` / `↓` | Move the selected blocks.              |
+| `Tab` / `Shift` `Tab`   | Indent or outdent the selected blocks. |
+| `Mod` `D`               | Duplicate the selected blocks.         |
+| `Backspace` / `Delete`  | Delete the selected blocks.            |
+| `Enter`                 | Start editing the selected block.      |
+| `Esc`                   | Clear the selection.                   |
+
+## Sharing and exporting
+
+Open the **⋯** menu in the top right of a notebook to:
+
+- **Copy link:** share the notebook with anyone who has access to the project
+- **Copy as Markdown:** copy the whole notebook as Markdown, with charts written as links to the chart, funnel, Sankey, or dashboard
+- **Rename**, **Move to…** a folder, **Duplicate**, or **Delete** the notebook
