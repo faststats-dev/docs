@@ -1,0 +1,95 @@
+---
+title: Roles & Permissions
+description: Built-in roles, what each one can do, custom roles, and API key permissions.
+icon: ShieldCheck
+---
+
+Every member of an organization has a role. The role decides what they can see and change in the organization's projects, and whether they can manage the organization itself.
+
+Permissions apply to every project in the organization. In your personal workspace, you always have full access to your own projects.
+
+## Built-in roles
+
+| Role   | For                                                                                                                                      |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Viewer | People who only need to look at analytics. Read-only access to every project.                                                            |
+| Editor | People who build things. Create and edit projects, dashboards, charts, and more.                                                         |
+| Admin  | People who run the organization. Everything an Editor can do, plus deleting data and managing members, invitations, roles, and settings. |
+| Owner  | Everything an Admin can do, plus moving projects, transferring the organization, and deleting it.                                        |
+
+The person who creates an organization is its Owner. Built-in roles can't be edited or deleted.
+
+## Permissions
+
+Each permission is an action on a resource. This table shows what each built-in role can do.
+
+| Resource                 | Viewer | Editor             | Admin                        | Owner                              |
+| ------------------------ | ------ | ------------------ | ---------------------------- | ---------------------------------- |
+| Projects                 |        | Create, Edit       | Create, Edit, Delete, Export | Create, Edit, Delete, Export, Move |
+| Dashboards               | View   | All                | All                          | All                                |
+| Insights                 | View   | All                | All                          | All                                |
+| Session replays          | View   | View, Edit         | All                          | All                                |
+| Web vitals               | View   | View               | View                         | View                               |
+| Error tracking           | View   | View, Edit         | All                          | All                                |
+| Data sources             | View   | View, Create, Edit | All                          | All                                |
+| Download analytics       | View   | All                | All                          | All                                |
+| Network rules            | View   | View               | All                          | All                                |
+| Feature flags            | View   | All                | All                          | All                                |
+| Feature flag evaluations |        | Evaluate           | Evaluate                     | Evaluate                           |
+| Segments                 | View   | All                | All                          | All                                |
+| Source map uploads       |        | Upload             | Upload                       | Upload                             |
+| Event explorer           | View   | View               | View                         | View                               |
+| API keys                 |        | All                | All                          | All                                |
+| Organization             |        |                    | Edit                         | Edit, Delete                       |
+| Invitations              |        |                    | Create, Cancel               | Create, Cancel                     |
+| Members                  |        |                    | Edit, Remove                 | Edit, Remove                       |
+| Roles                    |        |                    | All                          | All                                |
+
+**All** means every action the resource has. Some things in FastStats are covered by another resource's permissions:
+
+- **Insights** cover charts, funnels, Sankeys, retention, paths, and event markers
+- **Dashboards** also cover [notebooks](/platform/notebooks) and folders on the Dashboards page
+
+When you don't have permission for an action, FastStats shows it with a lock icon. Hover it, or tap it on mobile, to see why it isn't available.
+
+## Custom roles
+
+If the built-in roles don't fit, Admins and Owners can create custom roles from the **Roles** tab of the organization:
+
+1. Click **Create custom role**
+2. Enter a name. Names are lowercase; spaces are turned into hyphens
+3. Tick the permissions the role should have, per resource and action
+4. Click **Create role**
+
+Custom roles show up next to the built-in ones when you [invite someone](/platform/organizations/members#inviting-people) or [change a member's role](/platform/organizations/members#changing-a-members-role). Edit or delete a custom role from its row on the **Roles** tab.
+
+<Callout variant="info">
+	There's no permission to add members directly. People only join through
+	invitations, so a custom role can grant **Create** on invitations instead.
+</Callout>
+
+## API keys
+
+API keys let scripts and services call the [FastStats API](/api) with the `x-api-key` header. There are two kinds:
+
+| Kind             | Created in                          | Prefix     | Can access                          | Rate limit         |
+| ---------------- | ----------------------------------- | ---------- | ----------------------------------- | ------------------ |
+| Organization key | The organization's **API keys** tab | `fs_org_`  | Projects in that organization       | 1,200 requests/min |
+| Personal key     | Your account settings               | `fs_user_` | Projects in your personal workspace | 600 requests/min   |
+
+When you create a key, you choose:
+
+- **Permissions:** pick them individually, or start from a preset (**Read-only**, **Editor**, **Admin**, or **Full access**) and adjust
+- **Project access:** all current and future projects, or only the projects you select
+- **Expiration:** a number of days, or never
+
+<Callout variant="info">
+	An API key can never do more than the person who creates it. You can only
+	grant a key permissions that you have yourself, and only give it access to
+	projects you can access. To create a key with broader access, ask someone
+	whose role has that access.
+</Callout>
+
+The key is shown once, right after you create it. Copy it and store it somewhere safe.
+
+The **API keys** tab is only visible to members whose role can view API keys. Editors, Admins, and Owners can create and revoke organization keys by default.
