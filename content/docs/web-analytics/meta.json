@@ -17,6 +17,7 @@
 		"error-tracking",
 		"sourcemaps",
 		"web-vitals",
-		"session-replay"
+		"session-replay",
+		"feature-flags"
 	]
 }
