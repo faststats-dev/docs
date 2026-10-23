@@ -65,14 +65,14 @@ Choose the artifact for your platform:
 Fabric, Forge and NeoForge artifacts include the SDK version and the exact Minecraft version you want to target:
 
 ```kts
-implementation("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
-include("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
+implementation("dev.faststats.metrics:fabric:0.31.0+mc26.3")
+include("dev.faststats.metrics:fabric:0.31.0+mc26.3")
 
-implementation("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
-jarJar.configurationName("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
+implementation("dev.faststats.metrics:forge:0.31.0+mc26.3")
+jarJar.configurationName("dev.faststats.metrics:forge:0.31.0+mc26.3")
 
-implementation("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.3")
-jarJar("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.3")
+implementation("dev.faststats.metrics:neoforge:0.31.0+mc26.3")
+jarJar("dev.faststats.metrics:neoforge:0.31.0+mc26.3")
 ```
 
 Use both `implementation` and `include`/`jarJar` for modded platforms. FastStats is
@@ -83,9 +83,6 @@ The version format is `{sdk-version}+mc{minecraft-version}`, where
 `{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
 exact Minecraft version you are targeting. Each artifact is built for a single
 Minecraft version, so pick the one matching your mod.
-
-`0.31.0-pre2` is a pre-release and is published to the snapshots repository
-(`https://repo.faststats.dev/snapshots`).
 
 You can find the available versions in the Maven repository:
 [Fabric](https://repo.faststats.dev/#/releases/dev/faststats/metrics/fabric/),

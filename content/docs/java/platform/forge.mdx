@@ -24,8 +24,8 @@ plugins {
 val jarJar = the<net.minecraftforge.jarjar.gradle.JarJarExtension>().register()
 
 dependencies {
-    implementation("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
-    jarJar.configurationName("dev.faststats.metrics:forge:0.31.0-pre3+mc26.3")
+    implementation("dev.faststats.metrics:forge:0.31.0+mc26.3")
+    jarJar.configurationName("dev.faststats.metrics:forge:0.31.0+mc26.3")
 }
 ```
 
@@ -37,9 +37,6 @@ The version format is `{sdk-version}+mc{minecraft-version}`, where
 `{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
 exact Minecraft version you are targeting. Each artifact is built for a single
 Minecraft version, so pick the one matching your mod.
-
-`0.31.0-pre3` is a pre-release and is published to the snapshots repository
-(`https://repo.faststats.dev/snapshots`).
 
 ```java
 import dev.faststats.ErrorTracker;

@@ -26,8 +26,8 @@ Fabric mods. Use the same artifact and setup described below for Quilt mods.
 **Artifact:** `dev.faststats.metrics:fabric`
 
 ```kts
-implementation("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
-include("dev.faststats.metrics:fabric:0.31.0-pre2+mc26.3")
+implementation("dev.faststats.metrics:fabric:0.31.0+mc26.3")
+include("dev.faststats.metrics:fabric:0.31.0+mc26.3")
 ```
 
 Use both `implementation` and `include`. FastStats is provided as a mod through
@@ -38,9 +38,6 @@ The version format is `{sdk-version}+mc{minecraft-version}`, where
 `{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
 exact Minecraft version you are targeting. Each artifact is built for a single
 Minecraft version, so pick the one matching your mod.
-
-`0.31.0-pre2` is a pre-release and is published to the snapshots repository
-(`https://repo.faststats.dev/snapshots`).
 
 ```java
 import dev.faststats.ErrorTracker;
@@ -67,12 +64,6 @@ Pass your mod ID, as defined in `fabric.mod.json` (or `quilt.mod.json` on
 Quilt), to `FabricContext.Factory`.
 
 ## Client Consent Screen
-
-<Callout type="warn">
-	The client consent screen is available starting with `0.31.0-pre2`.
-	Pre-releases are published to the snapshots repository, so add
-	`https://repo.faststats.dev/snapshots` to your repositories to use it.
-</Callout>
 
 Explicit user consent is opt-in. To require it for your mod, call
 `requireConsent()` on `FabricContext.Factory`:

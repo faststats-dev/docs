@@ -16,8 +16,8 @@ Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21
 **Artifact:** `dev.faststats.metrics:neoforge`
 
 ```kts
-implementation("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.2")
-jarJar("dev.faststats.metrics:neoforge:0.31.0-pre2+mc26.2")
+implementation("dev.faststats.metrics:neoforge:0.31.0+mc26.2")
+jarJar("dev.faststats.metrics:neoforge:0.31.0+mc26.2")
 ```
 
 Use both `implementation` and `jarJar`. FastStats is provided as a mod through
@@ -28,9 +28,6 @@ The version format is `{sdk-version}+mc{minecraft-version}`, where
 `{sdk-version}` is the FastStats SDK version and `{minecraft-version}` is the
 exact Minecraft version you are targeting. Each artifact is built for a single
 Minecraft version, so pick the one matching your mod.
-
-`0.31.0-pre2` is a pre-release and is published to the snapshots repository
-(`https://repo.faststats.dev/snapshots`).
 
 ```java
 import dev.faststats.ErrorTracker;
@@ -52,12 +49,6 @@ public class ExampleMod {
 Pass your mod ID, as defined in `neoforge.mods.toml`, to `NeoForgeContext.Factory`.
 
 ## Client Consent Screen
-
-<Callout type="warn">
-	The client consent screen is available starting with `0.31.0-pre2`.
-	Pre-releases are published to the snapshots repository, so add
-	`https://repo.faststats.dev/snapshots` to your repositories to use it.
-</Callout>
 
 Explicit user consent is opt-in. To require it for your mod, call
 `requireConsent()` on `NeoForgeContext.Factory`:
