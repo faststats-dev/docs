@@ -1,0 +1,73 @@
+---
+title: Organizations
+description: Share projects with your team in a common workspace.
+icon: BuildingComplex
+---
+
+import { Cards, Card } from "fumadocs-ui/components/card";
+
+An organization is a shared workspace. Everyone in it sees the same projects, and their [role](/platform/organizations/roles) decides what they can change.
+
+Every FastStats account also has a **personal workspace**. Projects in your personal workspace are only visible to you. To work on a project with other people, create it in an organization or [move it there](#moving-projects-between-workspaces).
+
+<Cards>
+	<Card href="/platform/organizations/members" title="Members & Invitations">
+		Invite people, change their roles, and remove them.
+	</Card>
+	<Card href="/platform/organizations/roles" title="Roles & Permissions">
+		Built-in roles, what each one can do, and custom roles.
+	</Card>
+</Cards>
+
+## Creating an organization
+
+1. Open the workspace switcher at the top of the sidebar
+2. Choose **Create organization**
+3. Enter a name and, optionally, upload a logo (an image up to 5 MB; animated images such as GIFs work too)
+
+You become the organization's **Owner**. Invite your team from the [Invitations](/platform/organizations/members#inviting-people) tab.
+
+## Switching workspaces
+
+Use the workspace switcher at the top of the sidebar to move between your personal workspace and the organizations you belong to. New projects are created in the workspace that's active when you create them.
+
+## Moving projects between workspaces
+
+To move a project, open its **Settings**, scroll to the danger zone, and click **Transfer** under **Transfer ownership**. You can move it to your personal workspace or to any organization you're a member of.
+
+Moving a project requires the **Move** permission on projects, which only Owners have by default, and permission to create projects in the workspace you're moving it to.
+
+## Organization settings
+
+Open an organization from the **Organizations** page to manage it. The **Settings** tab has:
+
+| Setting                     | Description                                                                  |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| Organization name           | The display name shown across FastStats.                                     |
+| Logo                        | Shown in the workspace switcher. Animated images such as GIFs are supported. |
+| Workspace URL               | The slug used in links to the organization. Contact support to change it.    |
+| Organization ID             | Use it when contacting support or calling the API.                           |
+| Require 2FA for all members | Members without two-factor authentication lose access until they turn it on. |
+
+Changing settings requires the **Edit** permission on the organization (Admins and Owners).
+
+### Requiring two-factor authentication
+
+When **Require 2FA for all members** is on, members who haven't set up two-factor authentication on their account can't open the organization's projects, and can't invite, remove, or change the roles of other members. They get access back as soon as they turn on 2FA in their account settings.
+
+<Callout variant="info">
+	Turn on 2FA for your own account before you require it, so you don't lock
+	yourself out of member management.
+</Callout>
+
+## Transferring ownership
+
+Only an Owner can transfer an organization. In the **Danger zone** tab, choose **Transfer organization**, pick an existing member to become the new Owner, and type the organization's name to confirm. You become an Admin.
+
+The person you transfer to must already be a member. If you're the only member, [invite someone](/platform/organizations/members#inviting-people) first.
+
+## Deleting an organization
+
+Deleting an organization permanently removes it and everything in it, and can't be undone. Before you can delete it, **delete or move every project** in the organization.
+
+Only Owners can delete an organization, from the **Danger zone** tab.
