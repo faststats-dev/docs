@@ -132,16 +132,23 @@ Replay events are buffered in the browser and uploaded in gzip-compressed
 batches. The recorder also flushes when the page is hidden, when the session
 rotates, and when a batch reaches its event or byte limit.
 
-| Option              | Type      | Default   | Description                                                 |
-| ------------------- | --------- | --------- | ----------------------------------------------------------- |
-| `flushInterval`     | `number`  | `15000`   | Milliseconds between uploads                                |
-| `maxEvents`         | `number`  | `1000`    | Events per batch before an early flush                      |
-| `maxBatchSizeBytes` | `number`  | `921600`  | Batch size before an early flush                            |
-| `maxPendingBatches` | `number`  | `30`      | Batches that may wait for upload                            |
-| `maxQueueSizeBytes` | `number`  | `2097152` | Memory limit for buffered replay data                       |
-| `minReplayLengthMs` | `number`  | `3000`    | Recordings shorter than this are discarded                  |
-| `checkoutEveryNms`  | `number`  | `300000`  | Milliseconds between full DOM snapshots                     |
-| `compress`          | `boolean` | `true`    | Gzips batches when the browser supports `CompressionStream` |
+| Option                        | Type      | Default   | Description                                                 |
+| ----------------------------- | --------- | --------- | ----------------------------------------------------------- |
+| `flushInterval`               | `number`  | `5000`    | Milliseconds between uploads                                |
+| `maxEvents`                   | `number`  | `1000`    | Events per batch before an early flush                      |
+| `maxBatchSizeBytes`           | `number`  | `921600`  | Batch size before an early flush                            |
+| `maxLowLatencyBatchSizeBytes` | `number`  | `57344`   | Batch size for the final upload when a recording ends       |
+| `maxPendingBatches`           | `number`  | `30`      | Batches that may wait for upload                            |
+| `maxQueueSizeBytes`           | `number`  | `2097152` | Memory limit for buffered replay data                       |
+| `minReplayLengthMs`           | `number`  | `3000`    | Recordings shorter than this are discarded                  |
+| `checkoutEveryNms`            | `number`  | `300000`  | Milliseconds between full DOM snapshots                     |
+| `checkoutEveryNth`            | `number`  | none      | Events between full DOM snapshots                           |
+| `compress`                    | `boolean` | `true`    | Gzips batches when the browser supports `CompressionStream` |
+
+When a recording ends, for example because the page is closed, the remaining
+events are sent uncompressed in batches of at most
+`maxLowLatencyBatchSizeBytes` so they fit in a request that outlives the page.
+This option can only be lowered from its default.
 
 If the queue limits are reached, capture stops for that recording instead of
 leaving a gap.

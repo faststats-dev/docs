@@ -139,13 +139,14 @@ export function diagnostics(): AnalyticsExtension {
 The context exposes `siteKey`, `baseUrl`, `debug`, `trackHash`,
 `isCookieless()`, and `on(hook, handler)`.
 
-| Hook            | Payload                   | When it fires                                      |
-| --------------- | ------------------------- | -------------------------------------------------- |
-| `pageChange`    | `{ url }`                 | After a client-side navigation to a new page       |
-| `pageHide`      | `{ persisted, terminal }` | When the page is hidden or unloaded                |
-| `pageShow`      | `{ persisted }`           | When the page is shown, including from the bfcache |
-| `consentChange` | `{ cookieless }`          | When consent changes while tracking stays enabled  |
-| `error`         | `{ error }`               | When `reportError` is called                       |
+| Hook             | Payload                   | When it fires                                      |
+| ---------------- | ------------------------- | -------------------------------------------------- |
+| `pageChange`     | `{ url }`                 | After a client-side navigation to a new page       |
+| `pageHide`       | `{ persisted, terminal }` | When the page is hidden or unloaded                |
+| `pageShow`       | `{ persisted }`           | When the page is shown, including from the bfcache |
+| `consentChange`  | `{ cookieless }`          | When consent changes while tracking stays enabled  |
+| `identityChange` | `{ userId }`              | When `identify` sets a user or `logout` clears it  |
+| `error`          | `{ error }`               | When `reportError` is called                       |
 
 Extensions start when tracking starts and stop when the client is destroyed or
 consent is denied. Cleanup receives `discard: true` when consent was revoked.
