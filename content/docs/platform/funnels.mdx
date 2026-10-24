@@ -1,0 +1,161 @@
+---
+title: Funnels
+description: Measure how many people move through a sequence of steps, where they drop off, and what sets them apart.
+icon: Funnel
+---
+
+A funnel is a list of steps people go through in order, such as _visit pricing_, _sign up_, _upgrade_. FastStats counts how many people reach each step, how long it takes them, and where they leave.
+
+## Creating a funnel
+
+You can create a funnel from three places:
+
+- **Dashboards page:** click **New** and choose **Funnel**. The funnel is standalone and filed in the current folder.
+- **A dashboard:** choose **Funnel** from the dashboard's create menu. The funnel is added to that dashboard as a card.
+- **A notebook:** add a **Funnel** block and choose **New funnel**. See [Notebooks](/platform/notebooks#charts).
+
+The builder opens with two empty steps. Give the funnel a name, add steps, and save. A live preview on the right updates as you edit.
+
+<Callout variant="info">
+	Not sure where to start? Describe the funnel in the AI field at the top, for
+	example _"Visit pricing, sign up, then upgrade"_ or _"Add to cart, then
+	checkout within a day"_. On an existing funnel, describe a change instead. You
+	can undo an AI change until you edit something else.
+</Callout>
+
+## Steps
+
+Each step matches events by one or more conditions. A new step starts with an **Event is** condition, so in most cases you only need to type the event name. Recently seen values are suggested as you type.
+
+- Click **Add condition** to narrow the step further, for example _Event is `signup`_ **and** _Country is Germany_
+- Click **and** between conditions to switch it to **or**, so that any condition can match
+- Name a step to give it a readable label. Unnamed steps use their event name.
+- Drag the handle on the left of a step to reorder it, or focus the handle and use the arrow keys
+
+While you edit, each step shows how many people reached it in the default date range, and the gap between steps shows the share that continued.
+
+### Operators
+
+Which operators are offered depends on the property's type:
+
+| Type    | Operators                                                                                              |
+| ------- | ------------------------------------------------------------------------------------------------------ |
+| Text    | is, is not, contains, does not contain, starts with, does not start with, ends with, does not end with |
+| Number  | is, is not, is greater than, is less than                                                              |
+| Boolean | is, is not                                                                                             |
+| JSON    | is, is not, contains, does not contain                                                                 |
+
+### Event streams
+
+A funnel reads one event stream: **web events**, **server events**, **errors**, or **web vitals**. The stream is picked automatically from the properties your steps use and is shown next to the **Steps** heading.
+
+## Settings
+
+### Complete within
+
+The conversion window: how long people have, starting from step 1, to reach the last step. Choose **1 hour**, **24 hours**, **7 days** (the default), **30 days**, or a custom duration between one minute and one year.
+
+### Order
+
+- **In order** (default): steps must happen in order, but other events can happen between them
+- **Back to back:** any other event between two steps ends the attempt
+
+### Link steps by
+
+Only connect steps that share the same value of a property, such as an order ID. Each value then counts as its own attempt, and you can count the funnel in **Attempts** (see [Counting](#counting)).
+
+### Exclusions
+
+An exclusion is an event that ends an attempt when it happens before the last step, such as a refund before checkout. Exclusions use the same conditions as steps and need at least one.
+
+### Defaults
+
+- **Date range:** the range the funnel opens with and the preview uses. Defaults to the last 30 days.
+- **Card shows:** for funnels on a dashboard, how the card draws the funnel: **Funnel** (bars per step), **Conversion over time**, or **Conversion rate** (a single number)
+
+## Analyzing a funnel
+
+Open a funnel to see its full analysis. The toolbar at the top controls what all panels below show:
+
+- **Date range:** one of the presets (24 hours, 7, 30 or 90 days, one year) or a custom range
+- **Segment:** only count people in, or not in, a [segment](#saving-a-segment)
+- **Count:** what one unit is (only shown when there is a choice, see [Counting](#counting))
+- **Break down by:** split the funnel by a property
+
+The overview shows the conversion rate from step 1 to the last step, its change against the previous period of the same length, the median time to convert, and the step with the biggest drop.
+
+<Callout variant="info">
+	A funnel with a single step shows completions instead, as a share of everyone
+	active in the range.
+</Callout>
+
+### Funnel chart
+
+Each step is a bar measured against everyone who entered. The hatched part shows who dropped off since the previous step, and each bar lists the share that continued from the previous step and the median time it took.
+
+- **Click a bar** to list who reached that step
+- **Click the hatched part** to list who dropped off before it
+
+### Counting
+
+What a unit is depends on the event stream and settings:
+
+| Count    | Meaning                                    | Available for                      |
+| -------- | ------------------------------------------ | ---------------------------------- |
+| People   | Each person once, across sessions          | Web events                         |
+| Servers  | Each server once                           | Server events                      |
+| Sessions | Steps must happen in one session           | Web events, errors, web vitals     |
+| Attempts | Each value of **Link steps by** separately | Funnels with **Link steps by** set |
+
+### Breakdown
+
+Pick a property in **Break down by** to see the funnel for each of its values in a table. Each value is its own funnel, attributed to the value on the event where the unit entered. The top values are listed, and the rest are grouped in one row.
+
+- Tick up to two values to compare them on the main chart. With one value ticked, it's compared against everyone.
+- Click a count to list the people behind it
+
+### What sets converters apart
+
+For web and server event funnels with two or more steps, FastStats compares people who converted with people who didn't and lists the signals that stand out:
+
+- **Events** they triggered and **pages** they visited along the way
+- **Properties** set on the event where they entered
+
+Bars to the right mean people with the signal were more likely to convert, bars to the left less likely. Use the picker to compare the whole funnel or a single pair of steps. Click a property signal to break the funnel down by it.
+
+A signal is only listed if at least five people had it and the difference is statistically significant. These are associations, not causes.
+
+### Time to convert
+
+A histogram of how long it took people to convert, with the median and 90th percentile marked. Pick **Whole funnel** or a single pair of steps to measure.
+
+### Conversion over time
+
+The share of each period's entrants that reached each later step, by the hour, day, or week they entered. Recent periods can still convert within the conversion window, so their rates may still go up.
+
+## People in a funnel
+
+Clicking a bar or a count opens a panel listing who is behind it. Use the picker at the top to switch to another step, or between people who **reached** a step and people who **dropped after** it. Up to 100 people are listed, latest entries first.
+
+For each person you can:
+
+- Open their profile
+- Open the session replay at the last step they reached, if [session replay](/web-analytics/session-replay) is enabled
+
+You can also download the list as CSV.
+
+### Where they went next
+
+For people who dropped off a web event funnel, the panel shows what they did instead: the first page or event after their last completed step within the conversion window, or that they left without another event.
+
+### Saving a segment
+
+Click **Save as segment** to save everyone in the selected group, not only the people listed, as a static segment. Use it to filter other charts, or to target a [feature flag](/java/feature-flags).
+
+## Dashboards and filters
+
+A funnel on a dashboard follows the dashboard's date range, segment, and filters. Filters only apply when the funnel's event stream records that property, and every event the funnel counts must match them. Open a funnel card fullscreen to get the full analysis.
+
+## Managing funnels
+
+Standalone funnels are listed on the **Dashboards** page with your other items, where you can file them in folders. From a funnel's page, click **Edit funnel** to change it, or open the **⋯** menu to **Duplicate** or **Delete** it. Deleting a funnel only removes its definition. Collected events are not affected.
