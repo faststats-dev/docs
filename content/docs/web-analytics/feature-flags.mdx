@@ -1,0 +1,137 @@
+---
+title: Feature Flags
+description: Evaluate FastStats feature flags in the browser
+icon: Flag
+---
+
+<Callout type="warning">
+	Feature Flags are still in **Private Preview** please contact staff if you
+	would like to try them out.
+</Callout>
+
+The feature flags extension loads flags for the visitor the analytics client
+tracks. After they load, flags are read synchronously from memory.
+
+## Enable Feature Flags
+
+Create the extension, keep a reference to it, and add it to `extensions`.
+
+```ts title="flags.ts"
+import { init } from "@faststats/web";
+import { featureFlags } from "@faststats/web/flags";
+
+export const flags = featureFlags({
+	flags: ["new_checkout", "theme", "max_items"],
+});
+
+init({
+	siteKey: "your_site_key",
+	extensions: [flags],
+});
+```
+
+Flags load as soon as tracking starts. They load again when the visitor is
+identified or logs out, and when consent switches between `"anonymous"` and
+`"granted"`. With consent `"denied"`, no flags are loaded and every flag returns
+its default.
+
+## Options
+
+| Option       | Type                      | Default                       | Description                                       |
+| ------------ | ------------------------- | ----------------------------- | ------------------------------------------------- |
+| `flags`      | `string[]`                | all flags                     | Flag keys this app reads                          |
+| `userId`     | `string`                  | none                          | Your own ID for a signed-in user                  |
+| `attributes` | `Record<string, unknown>` | `{}`                          | Values that targeting rules can match on          |
+| `endpoint`   | `string`                  | `https://flags.faststats.dev` | Base URL of the feature flags service             |
+| `timeoutMs`  | `number`                  | `3000`                        | Aborts a slow load so flags serve their defaults  |
+| `fetch`      | `typeof fetch`            | global `fetch`                | Custom fetch implementation, for example in tests |
+
+Every loaded flag is recorded as an exposure. List the keys your app reads in
+`flags` so flags the app never shows stay out of your analytics.
+
+## Read Flags
+
+`get` returns the flag's value, or `defaultValue` while flags are loading, when
+the flag does not exist or is archived, or when its type differs from the
+default's type.
+
+```ts
+import { flags } from "./flags";
+
+if (flags.isEnabled("new_checkout")) {
+	// Show the new checkout.
+}
+
+const theme = flags.get("theme", "light");
+const maxItems = flags.get("max_items", 10);
+```
+
+`isEnabled(key)` is the same as `get(key, false)`. Use `details(key)` to see
+why a flag has its value. It returns `undefined` for a flag that is not loaded.
+
+```ts
+const result = flags.details("new_checkout");
+// { value: true, variant: "on", reason: "rule_match" }
+```
+
+| Reason                | Meaning                                        |
+| --------------------- | ---------------------------------------------- |
+| `disabled`            | The flag is turned off                         |
+| `prerequisite_failed` | A prerequisite flag did not match              |
+| `target_match`        | The visitor is targeted directly               |
+| `rule_match`          | A targeting rule matched                       |
+| `fallthrough`         | No target or rule matched, so the default rule |
+
+## Wait for Flags
+
+Flags start out empty, so reads return their defaults until the first load
+finishes. Wait for `ready()` when a value must be correct before you render.
+
+```ts
+await flags.ready();
+renderCheckout(flags.isEnabled("new_checkout"));
+```
+
+`ready()` never rejects. Check `status` to tell a successful load from a failed
+one.
+
+| Status    | Meaning                                            |
+| --------- | -------------------------------------------------- |
+| `idle`    | The client has not started tracking yet            |
+| `loading` | The first load for the current visitor             |
+| `ready`   | Flags are loaded                                   |
+| `error`   | The load failed, so every flag returns its default |
+
+A failed load is logged when `debug` is on. Call `reload()` to try again.
+`reload()` never rejects either.
+
+## React to Changes
+
+`subscribe` calls a listener whenever the flags or `status` change, and returns a
+function that removes it.
+
+```ts
+const unsubscribe = flags.subscribe(() => {
+	updateCheckout(flags.isEnabled("new_checkout"));
+});
+```
+
+## Users and Attributes
+
+Rollouts follow the visitor's anonymous identifier. Once you call
+[`identify`](/web-analytics/identify), flags reload with the external ID as
+`userId`, so rollouts follow a signed-in user across devices. `logout` clears it
+again.
+
+Use `setContext` to change the user or attributes yourself. It loads the flags
+again and returns a promise that resolves when the load settles.
+
+```ts
+await flags.setContext({
+	userId: "user_123",
+	attributes: { plan: "pro", country: "DE" },
+});
+```
+
+`attributes` replaces the attributes set before. Pass `userId: null` to go back
+to the anonymous visitor.
