@@ -1,0 +1,143 @@
+---
+title: Dashboards
+description: Arrange charts, funnels, and Sankeys on a grid, and organize everything in your project into folders.
+icon: LayoutGrid
+---
+
+A dashboard is a grid of cards: charts, tables, funnels, and Sankeys that share one date range, segment, and set of filters. A project can have as many dashboards as you like, and the **Dashboards** page keeps them organized in folders next to your notebooks and standalone charts.
+
+## The Dashboards page
+
+Open **Dashboards** in the sidebar to see everything in the project:
+
+| Type      | What it is                                                      |
+| --------- | --------------------------------------------------------------- |
+| Folder    | Groups other items. Folders can hold other folders.             |
+| Dashboard | A grid of cards. The built-in dashboard has a lock icon.        |
+| Notebook  | A [notebook](/platform/notebooks) with writing and live charts. |
+| Chart     | A chart or table that isn't on a dashboard or in a notebook.    |
+| Funnel    | A [funnel](/platform/funnels) that isn't on a dashboard.        |
+| Sankey    | A Sankey that isn't on a dashboard (web projects only).         |
+
+Charts, funnels, and Sankeys that live on a dashboard or in a notebook aren't listed on their own. Find them inside their dashboard or notebook in the [file tree](/platform/file-tree).
+
+Each row shows the item's name, a short summary (a dashboard's description, a funnel's steps, or what a folder holds), its type, and when it was last modified.
+
+### Creating items
+
+Click **Create** (or press `C`) and choose what to make. The new item is created in the folder you're looking at.
+
+- **Dashboard** and **Folder** ask for a name
+- **Notebook** opens a blank notebook straight away
+- **Chart**, **Funnel**, and **Sankey** open their builder. Once saved, they're standalone items in the current folder.
+
+### Folders
+
+Click a folder to open it. The breadcrumb at the top shows where you are; click any part of it, or the **..** row, to go back up. The address bar keeps the open folder, so you can share or bookmark a link to it.
+
+To file an item in a folder:
+
+- **Drag** it onto a folder, onto the **..** row, or onto a folder in the breadcrumb
+- Or open its **⋯** menu, choose **Move to…**, pick a folder, and click **Move here**
+
+A folder can't be moved into itself or one of its own subfolders.
+
+<Callout variant="info">
+	Deleting a folder never deletes what's inside. Its contents move up to the
+	folder that held it.
+</Callout>
+
+### Searching and sorting
+
+Type in **Search everything** to search names and summaries across all folders. Each result shows the folder it lives in. Items can't be dragged while a search is active.
+
+Click the **Name**, **Type**, or **Modified** column header to sort by it, and click it again to flip the order. The sort menu next to the search box offers more:
+
+| Sort by       | Orders                                 |
+| ------------- | -------------------------------------- |
+| Name          | A to Z, Z to A                         |
+| Type          | Folders to Sankeys, Sankeys to folders |
+| Last modified | Newest first, oldest first             |
+| Date created  | Newest first, oldest first             |
+
+**Folders first** (on by default) keeps folders above everything else whatever the sort. Your choice is remembered in your browser and shared with the [file tree](/platform/file-tree).
+
+### Item actions
+
+Open an item's **⋯** menu to:
+
+- **Pin to sidebar** or **Unpin from sidebar** (dashboards). You can also click the pin icon on the row.
+- **Edit** (funnels and Sankeys): open the builder
+- **Rename** or **Move to…** another folder
+- **Duplicate** (not available for folders)
+- **Delete**
+
+Deleting a dashboard also deletes the charts on it. Deleting a notebook deletes the charts, funnels, and Sankeys made in it, but not ones it only embeds. Deleting a chart, funnel, or Sankey removes its definition; collected events are not affected. The built-in dashboard can't be deleted, and neither can a project's last dashboard.
+
+## Pinned dashboards
+
+Pinned dashboards are listed in the sidebar under **Dashboards**, so you can switch between them in one click. Switching keeps the selected date range.
+
+- Pin or unpin a dashboard from its row on the Dashboards page or from the [file tree](/platform/file-tree)
+- Drag the handle on the right of a pinned dashboard to reorder the list
+- Right-click a pinned dashboard to **Edit** its name and description, **Duplicate** it, **Unpin from Sidebar**, **Copy to Other Project**, or **Delete** it
+
+Dashboards created with the **+** next to **Project** in the sidebar are pinned by default (untick **Show in sidebar** to skip that). Dashboards created on the Dashboards page are not.
+
+## The built-in dashboard
+
+Every project starts with a built-in dashboard filled with charts for its template. It's marked with a lock icon and can't be edited or deleted, though you can rename it. To customize it, click **Duplicate dashboard** in the banner at the top and edit the copy, or start from scratch with **New dashboard**.
+
+## Adding cards
+
+Click **Create** at the top of a dashboard (or press `C`) and choose **Create Chart**, **Create Funnel**, or **Create Sankey** (web projects only). The builder opens, and when you save, the new card is added to the dashboard. An empty dashboard shows the same options in the middle of the page.
+
+See the [Chart Editor](/platform/chart-editor) and [Funnels](/platform/funnels) for how to build each one.
+
+## Editing the layout
+
+Click **Edit Layout** (or press `E`) to rearrange cards:
+
+- **Drag** a card to move it. Other cards make room.
+- **Drag a corner** to resize it
+- With a card focused, use the **arrow keys** to move it one cell, or `Shift` + **arrow keys** to resize it
+
+When you've made changes, a bar at the bottom shows **Unsaved Layout Changes**. Click **Save changes** to keep them, or **Cancel** to discard them. Leaving edit mode with unsaved changes asks you to confirm first.
+
+<Callout variant="info">
+	Layouts can only be edited in a desktop-sized window. On smaller screens,
+	cards stack to fit.
+</Callout>
+
+## Date range, segments, and filters
+
+The toolbar under the dashboard's title applies to every card on it:
+
+- **Date range:** a preset or a custom range. It stays selected when you switch to another dashboard.
+- **Segment:** only count people in a saved segment
+- **Filters:** narrow every card to events matching a property, for example _Country is Germany_. Suggested values come from your recent data.
+
+Some cards set filters for you: clicking a row in a [table](/platform/chart-editor/chart-types/table#filtering-the-dashboard) or [list](/platform/chart-editor/chart-types/list) filters the whole dashboard to that value. The selected range and filters are part of the page address, so a copied link opens the dashboard exactly as you see it.
+
+## Card actions
+
+Open a card's **⋯** menu to:
+
+- **Edit** it in its builder
+- **Duplicate** it on the same dashboard
+- **Copy to** or **Move to** another dashboard
+- **Copy link** to the card. The link opens the dashboard and scrolls to it.
+- **Copy ID** of the chart, funnel, or Sankey
+- **Embed URL** (charts on [public dashboards](/platform/guide/embed))
+- **Export CSV** of the data it shows
+- **Delete** it
+
+### Fullscreen
+
+Click the expand icon on a card to open it fullscreen. Charts show a summary of their data (total, average, peak, and low), a sortable data table, a breakdown by series, and any event markers in range. Funnels open their full analysis. Press `Esc` or click the back arrow to return to the dashboard.
+
+## Public dashboards
+
+When a project is public, you choose which of its dashboards are visible to everyone in **Project Settings**. Charts on a public dashboard can be [embedded](/platform/guide/embed) elsewhere. Funnels and Sankeys on a public dashboard are only shown to project members.
+
+Visitors who aren't members switch between public dashboards with tabs at the top of the page instead of the sidebar.
