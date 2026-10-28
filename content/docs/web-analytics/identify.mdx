@@ -28,9 +28,13 @@ await identify("user_123", "ada@example.com", {
 ```ts
 const { $faststats } = useNuxtApp();
 
-await $faststats.identify("user_123", "ada@example.com", {
-	name: "Ada Lovelace",
-	traits: { plan: "pro" },
+// The client only exists in the browser, so call it from onMounted or an
+// event handler rather than during server rendering.
+onMounted(async () => {
+	await $faststats.identify("user_123", "ada@example.com", {
+		name: "Ada Lovelace",
+		traits: { plan: "pro" },
+	});
 });
 ```
 
@@ -53,6 +57,12 @@ await identify("user_123", "ada@example.com", {
 The external ID is required. Email and all profile fields are optional. You can
 also pass one object instead of positional arguments.
 
+<Callout type="warning">
+	Use an opaque, stable user ID such as your database ID as the external ID, not
+	an email address. The ID is stored in `localStorage` and sent with every
+	event. Pass the email address in the `email` field instead.
+</Callout>
+
 ```ts
 await identify({
 	id: "user_123",
@@ -62,23 +72,192 @@ await identify({
 });
 ```
 
+Calling `identify` on every page load is fine. If the payload is identical to
+the last one sent in this browser session for the same visitor, and no trait
+changes are queued, it resolves `true` without a request. Pass
+`force: true` to always send.
+
 ## Profile Options
 
-| Field         | Type                      | Description                                      |
-| ------------- | ------------------------- | ------------------------------------------------ |
-| `name`        | `string \| null`          | Display name; pass `null` to clear it            |
-| `phone`       | `string \| null`          | Phone number; pass `null` to clear it            |
-| `avatarUrl`   | `string \| null`          | Avatar URL; pass `null` to clear it              |
-| `traits`      | `Record<string, unknown>` | Custom profile attributes                        |
-| `traitMode`   | `"merge" \| "replace"`    | Merge traits by default or replace the trait set |
-| `unsetTraits` | `string[]`                | Trait keys to remove                             |
-| `aliases`     | `string[]`                | Additional external IDs for this user            |
+| Field         | Type                      | Description                                              |
+| ------------- | ------------------------- | -------------------------------------------------------- |
+| `name`        | `string \| null`          | Display name; pass `null` to clear it                    |
+| `phone`       | `string \| null`          | Phone number; pass `null` to clear it                    |
+| `avatarUrl`   | `string \| null`          | Avatar URL; pass `null` to clear it                      |
+| `traits`      | `Record<string, unknown>` | Custom profile attributes; overwrite existing values     |
+| `traitsOnce`  | `Record<string, unknown>` | Traits set only if the person does not have them yet     |
+| `traitMode`   | `"merge" \| "replace"`    | Merge traits by default or replace the trait set         |
+| `unsetTraits` | `string[]`                | Trait keys to remove                                     |
+| `aliases`     | `string[]`                | Additional external IDs for this user                    |
+| `force`       | `boolean`                 | Send even if this session already sent the same identify |
+
+`traits` overwrite values the person already has. `traitsOnce` only fill in
+keys the person does not have yet, which suits first-touch data that should
+never change after it is recorded.
+
+```ts
+await identify("user_123", "ada@example.com", {
+	traits: { plan: "free" },
+	traitsOnce: { signupSource: "reddit", signedUpAt: "2026-10-27" },
+});
+```
+
+<Callout type="info">
+	`traitsOnce`, `setTraits`, and `unsetTraits` need `@faststats/web` or
+	`@faststats/react` 0.14.0 or later.
+</Callout>
+
+## Update Traits
+
+Use `setTraits` to change traits on the identified user without calling
+`identify` again, for example after a plan upgrade.
+
+<Tabs items={["React", "Nuxt", "JavaScript"]}>
+	<Tab value="React">
+
+```tsx
+import { useSetTraits } from "@faststats/react";
+
+const setTraits = useSetTraits();
+
+async function onUpgrade(plan: string) {
+	await upgradeSubscription(plan);
+	await setTraits({ plan, upgradedAt: new Date().toISOString() });
+}
+```
+
+    </Tab>
+    <Tab value="Nuxt">
+
+```ts
+const { $faststats } = useNuxtApp();
+
+// Call from an event handler or onMounted, never during server rendering.
+async function onUpgrade() {
+	await $faststats.setTraits({ plan: "pro" });
+}
+```
+
+    </Tab>
+    <Tab value="JavaScript">
+
+```ts
+import { setTraits } from "@faststats/web";
+
+await setTraits({ plan: "pro" });
+```
+
+    </Tab>
+
+</Tabs>
+
+New keys are added and existing keys are overwritten. Traits you do not pass
+are left untouched.
+
+### Set Once
+
+Pass `{ mode: "setOnce" }` to only set keys the person does not have yet. Later
+calls never overwrite the first value, so you can call it on every visit to an
+onboarding step and still keep where the user originally came from.
+
+```ts
+import { setTraits } from "@faststats/web";
+
+const params = new URLSearchParams(location.search);
+
+await setTraits(
+	{
+		signupSource: params.get("utm_source") ?? "direct",
+		firstLandingPage: location.pathname,
+	},
+	{ mode: "setOnce" },
+);
+```
+
+| Option | Type                 | Description                                                     |
+| ------ | -------------------- | --------------------------------------------------------------- |
+| `mode` | `"set" \| "setOnce"` | `"set"` (default) overwrites; `"setOnce"` keeps existing values |
+
+### Remove Traits
+
+`unsetTraits` removes traits by key.
+
+```ts
+import { unsetTraits } from "@faststats/web";
+
+await unsetTraits(["trialEndsAt", "legacyPlan"]);
+```
+
+In Nuxt call `$faststats.unsetTraits()`. In React, get the instance with
+`useAnalytics()` and call `analytics?.unsetTraits()`.
+
+### Before Identify
+
+If the visitor has not been identified yet, `setTraits` and `unsetTraits` keep
+the change in memory and send it, in order, right after the next successful
+`identify` call. The queue only lives for the current page, or the current session of a single-page app: a full
+page load or reload discards it, and `logout` clears it. Use it for changes
+that happen on the same page as sign-in, such as a sign-up form that creates the
+account and identifies the user without navigating away.
+
+```ts
+import { identify, setTraits } from "@faststats/web";
+
+// In the sign-up form, before the account exists
+await setTraits({ signupSource: "newsletter" }, { mode: "setOnce" });
+
+// On the same page, once the account is created. The queued trait is sent
+// right after this call succeeds.
+await identify("user_123", "ada@example.com", { traits: { plan: "free" } });
+```
+
+Queued changes are applied after the `identify` request, so for the same key
+they win over the traits passed to `identify` itself. Once `identify` has been
+called, `setTraits` and `unsetTraits` apply to that user right away, even while
+its request is still in flight.
 
 ## Return Value
 
-`identify` resolves to `true` when the request was sent. It returns `false` if
+`identify` resolves to `true` when the request was sent, or skipped because the
+same identify was already sent in this session. It returns `false` if
 the client is not active, consent is denied, cookieless mode is active, or the
 external ID is empty.
+
+`setTraits` and `unsetTraits` resolve to `true` once the change is sent for the
+identified user. They resolve to `false` when the change was queued for the
+next `identify`, when the request fails, or when the client is not active, consent is denied, or
+cookieless mode is active.
+
+## What Is Stored and Sent
+
+When you call `identify`, the SDK stores the external ID in `localStorage` next
+to the anonymous visitor ID, scoped to your site key, and restores the previous
+value if the request fails. It is then sent as
+`externalId` with every analytics event, error, and session replay chunk. Web
+Vitals reports do not include it. Events are attributed to the person right
+away, and activity from the same user on different devices ends up on one
+profile.
+
+`logout` always removes the stored ID, whatever the consent mode, and so does
+setting consent to `"denied"`.
+
+Read the stored ID with `getExternalId()` on the client instance. It returns an
+empty string before `identify`, in cookieless mode, and when consent is denied.
+
+```ts
+import { init } from "@faststats/web";
+
+const analytics = init({ siteKey: "your_site_key" });
+const userId = analytics.getExternalId();
+```
+
+In React the instance comes from `useAnalytics()`; in Nuxt it is `$faststats`.
+
+## Cookieless Mode
+
+In cookieless mode (`cookieless: true` or consent set to `"anonymous"`), the
+external ID is never stored or sent. `identify`, `setTraits`, and `unsetTraits`
+send nothing and resolve to `false`.
 
 <Callout type="info">
 	Identification is disabled in cookieless mode because there is no stored
@@ -87,8 +266,11 @@ external ID is empty.
 
 ## Log Out
 
-Call `logout` after sign-out to rotate the session and, by default, reset the
-anonymous identifier.
+Call `logout` after sign-out. It forgets the stored external ID, drops any
+queued trait changes, rotates the session, and by default resets the anonymous
+identifier. The external ID is removed even when consent is denied or cookieless
+mode is active, so the next person on a shared device is never attributed to
+the previous user.
 
 ```ts
 import { logout } from "@faststats/web";
@@ -96,5 +278,6 @@ import { logout } from "@faststats/web";
 logout();
 ```
 
-Pass `false` to keep the anonymous identifier and only reset the session. In
-React use `useLogout`; in Nuxt call `$faststats.logout()`.
+Pass `false` to keep the anonymous identifier and only clear the external ID
+and reset the session. In React use `useLogout`; in Nuxt call
+`$faststats.logout()`.

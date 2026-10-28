@@ -10,7 +10,7 @@ set of hooks. It works with any React app and with the Next.js App Router.
 ## Install
 
 ```npm
- npm install @faststats/react
+npm install @faststats/react
 ```
 
 ## Add the Analytics Component
@@ -115,6 +115,40 @@ return (
 );
 ```
 
+## Identify Users and Update Traits
+
+`useIdentify` links the visitor to your user after sign-in. `useSetTraits`
+updates traits on that user later without a full identify, for example after a
+plan upgrade.
+
+```tsx title="components/upgrade-button.tsx"
+"use client";
+
+import { useSetTraits } from "@faststats/react";
+
+export function UpgradeButton() {
+	const setTraits = useSetTraits();
+	return (
+		<button
+			type="button"
+			onClick={async () => {
+				await upgradeToPro();
+				await setTraits({ plan: "pro" });
+			}}
+		>
+			Upgrade
+		</button>
+	);
+}
+```
+
+Pass `{ mode: "setOnce" }` to only set traits the user does not have yet, such
+as where they first came from. Called before `useIdentify`, traits are kept in
+memory for the current page and sent right after the next identify on that
+page.
+`useSetTraits` needs `@faststats/react` 0.14.0 or later. See
+[Identify](/web-analytics/identify) for details.
+
 ## Available Hooks
 
 | Hook             | Returns                                      |
@@ -123,6 +157,7 @@ return (
 | `useTrack`       | A function that sends custom events          |
 | `useEvent`       | A memoized handler for one named event       |
 | `useIdentify`    | The `identify` function                      |
+| `useSetTraits`   | The `setTraits` function                     |
 | `useLogout`      | The `logout` function                        |
 | `useConsentMode` | The `setConsentMode` function                |
 | `useOptIn`       | A shortcut that grants consent               |
