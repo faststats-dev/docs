@@ -1,0 +1,108 @@
+---
+title: Sankeys
+description: See the paths people take through your site, where they come from, and where they drop off.
+icon: Waypoints
+---
+
+A Sankey draws the journeys people take through your site as bands flowing from step to step. Each column is a step, each box is a page or event, and the width of a band shows how many sessions went that way. Use it to answer questions like _"Where do people go after the pricing page?"_ or _"How do visitors reach signup?"_
+
+<Callout variant="info">
+	Sankeys follow the pages and events of each session, so they're only available
+	in [web analytics](/web-analytics) projects.
+</Callout>
+
+## Creating a Sankey
+
+You can create a Sankey from three places:
+
+- **Dashboards page:** click **Create** and choose **Sankey**. The Sankey is standalone and filed in the current folder.
+- **A dashboard:** choose **Create Sankey** from the dashboard's create menu. The Sankey is added to the dashboard as a full-width card.
+- **A notebook:** add a **Sankey** block and choose **New Sankey**. See [Notebooks](/platform/dashboards/notebooks#charts).
+
+The builder shows a live preview with the options next to it. Give the Sankey a name and save. If you leave the name empty, it's named after what it shows, such as _After /pricing_ or _Paths to /signup_.
+
+<Callout variant="info">
+	Describe the Sankey in the AI field at the top instead, for example _"Where do
+	people go after the pricing page?"_ or _"Paths through the docs, grouped by
+	section"_. On an existing Sankey, describe a change. You can undo an AI change
+	until you edit something else.
+</Callout>
+
+## Options
+
+### Journey
+
+| Option    | What it does                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------------------ |
+| Starts at | Where paths begin. Without a start, paths begin at each session's first step.                                      |
+| Ends at   | Keeps only sessions that reach this step, and lines paths up on it, so the columns count back from the end.        |
+| Goal      | Each step shows how many of its sessions reach the goal later. Unlike an end, it keeps the sessions that never do. |
+
+Start and end points can use `*` as a wildcard, like `/checkout/*`. When a session reaches a start or end point more than once, choose whether its **first time** or **last time** counts.
+
+### Steps
+
+- **Steps are:** **Pages and events** (the default), **Pages** only, or custom **Events** only
+- **Page names:** name pages by their **Path** (`/pricing`), **Host and path** (`example.com/pricing`), or **Page title**
+- **Event names:** add a property's value to custom event names, so `click` becomes `click: Sign up`
+- **Group similar URLs** (on by default): folds IDs and trailing slashes, so `/users/42` and `/users/7/` both become `/users/:id`
+- **Merge repeats** (on by default): reloads and several events in a row on one page count as one step
+- **Only these steps:** only matching pages and events are steps. Other steps disappear and the steps around them join up. The start, end, and goal always count.
+- **Leave out:** pages or events to remove from every path
+
+### Sessions
+
+- **Follow visitors:** joins all of a visitor's sessions in the range into one journey, instead of drawing each session on its own
+- **Hide one-step journeys:** leaves out visitors who saw one page and left
+- **Split after:** ends a journey after a quiet spell of 5 minutes up to 1 day. **Never** (the default) keeps the whole session together.
+
+### Filters
+
+Only journeys that match every filter are drawn. Filter on **Step** (any page or event the session reached), **Country**, **Device**, **Browser**, **OS**, **Referrer**, **UTM source**, **UTM medium**, **UTM campaign**, or **Language**. Up to 10 filters can be added.
+
+### Rename steps
+
+Rules rewrite step names with regular expressions, applied in order. Steps that end up with the same name merge into one, and `\1` refers to a captured group. Presets cover common cases:
+
+- Drop query strings
+- Drop language prefixes like `/en/`
+- Group by first path segment
+- Group numbered pages, like `/page/2`
+
+Each rule shows a preview of a name it changes.
+
+### Detail
+
+- **Rows per step:** how many pages or events each column shows before less common ones fold into **Other** (5 to 30, 8 by default)
+- **Minimum size:** steps reached by fewer sessions join **Other**, even when there's room for them
+
+## Reading a Sankey
+
+The toolbar above the chart controls what it shows:
+
+- **Flow** draws the Sankey. **Top paths** lists the most common whole paths instead.
+- **Steps:** how many columns to draw, from 2 to 10 (5 by default)
+- **Color bands by:** split each band by a property such as country or device. Bands are colored by each session's first value, and a legend lists each value's share.
+- **Values lead with:** show the **Number** or **Share** of sessions on each step
+- **Show drop-offs:** draw sessions that stopped as their own _Dropped off_ steps
+- **Show "Other":** draw the step that collects less common pages and events
+- **Compare with the period before:** show how each step and band changed against the previous period of the same length
+
+### Step details
+
+Click a step to see where its sessions **came from** and where they **went next**, and how many stopped there. From the details you can:
+
+- **Start paths here** or **End paths here** to redraw the Sankey around that step
+- **Exclude** it from every path
+
+## Sankeys on a dashboard
+
+A Sankey card follows the dashboard's date range, segment, and filters. When the dashboard shows all time, the Sankey uses its own range from the builder. Open the card fullscreen or click through to explore it.
+
+Funnels and Sankeys on a [public dashboard](/platform/dashboards#public-dashboards) are only shown to project members.
+
+## Exploring a saved Sankey
+
+Open a Sankey to explore it. Anything you change there, such as the step count or a new start point, stays on your screen until you click **Save changes**. Click **Reset** to go back to the saved version. If you can't edit Sankeys, the changes are only seen by you and never saved.
+
+Click **Edit Sankey** to open the builder with all options. Open the **⋯** menu to **Delete Sankey**. Deleting a Sankey only removes its definition; collected events are not affected.
