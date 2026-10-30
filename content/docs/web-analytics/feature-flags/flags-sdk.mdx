@@ -1,0 +1,119 @@
+---
+title: Flags SDK
+description: Evaluate FastStats flags on the server with Vercel's Flags SDK
+icon: Server
+---
+
+The [Flags SDK](https://flags-sdk.dev) declares flags in code and evaluates them
+on the server, in Next.js or SvelteKit. `@faststats/flags-sdk` is an adapter that
+resolves those flags from FastStats.
+
+## Install
+
+```npm
+npm install flags @faststats/flags-sdk
+```
+
+Set `FASTSTATS_FLAGS_TOKEN` to the project's token, or to a FastStats API key
+scoped to the project with the `featureFlagEvaluation:evaluate` permission:
+
+```bash title=".env.local"
+FASTSTATS_FLAGS_TOKEN=your_project_token
+```
+
+The token is read on the first evaluation, so builds do not need it.
+
+## Declare Flags
+
+```ts title="flags.ts"
+import { type FastStatsEntities, fastStatsAdapter } from "@faststats/flags-sdk";
+import { dedupe, flag } from "flags/next";
+
+const identify = dedupe(async ({ cookies }): Promise<FastStatsEntities> => ({
+	identifier: cookies.get("visitor")?.value,
+	userId: cookies.get("user")?.value,
+	attributes: { plan: "pro" },
+}));
+
+export const newCheckout = flag<boolean, FastStatsEntities>({
+	key: "new-checkout",
+	adapter: fastStatsAdapter,
+	identify,
+	defaultValue: false,
+});
+
+export const maxUploads = flag<number, FastStatsEntities>({
+	key: "max-uploads",
+	adapter: fastStatsAdapter,
+	identify,
+	defaultValue: 10,
+});
+```
+
+Then call the flag where you need it:
+
+```tsx title="app/checkout/page.tsx"
+import { newCheckout } from "../../flags";
+
+export default async function Page() {
+	return (await newCheckout()) ? <NewCheckout /> : <OldCheckout />;
+}
+```
+
+Each evaluation is recorded as an exposure, so evaluate a flag where you use it.
+
+## Identify the Visitor
+
+`identify` returns who the flag is evaluated for:
+
+| Field        | Description                                                                  |
+| ------------ | ---------------------------------------------------------------------------- |
+| `identifier` | A stable device or install ID. Required unless `userId` is set               |
+| `userId`     | Your ID for a signed-in user. Rollouts bucket by it, so they follow the user |
+| `sessionId`  | Links evaluations to a session in analytics                                  |
+| `attributes` | Anything targeting rules should match on                                     |
+
+The adapter forwards the visitor's `User-Agent`, so rules can match `browser`,
+`os`, and `device`. `country` is filled from `x-vercel-ip-country` or
+`cf-ipcountry` unless `attributes` already sets it.
+
+## Evaluate Several Flags
+
+`evaluate()` resolves flags that share an adapter and `identify` in one request:
+
+```ts
+import { evaluate } from "flags/next";
+
+const [checkout, uploads] = await evaluate([newCheckout, maxUploads]);
+```
+
+## Defaults
+
+A flag falls back to its `defaultValue` when it does not exist, is archived, or
+the service cannot be reached within `timeoutMs`. A missing flag without a
+`defaultValue` throws a `FastStatsFlagsError`.
+
+## Configure the Adapter
+
+`fastStatsAdapter` reads its settings from the environment. Use
+`createFastStatsAdapter` to set them in code:
+
+```ts title="flags.ts"
+import { createFastStatsAdapter } from "@faststats/flags-sdk";
+
+export const fastStatsAdapter = createFastStatsAdapter({
+	token: process.env.MY_FLAGS_TOKEN,
+	timeoutMs: 1000,
+	origin: "https://faststats.dev/project/your-project-slug/feature-flags",
+});
+```
+
+| Option      | Environment variable       | Default                       | Description                                |
+| ----------- | -------------------------- | ----------------------------- | ------------------------------------------ |
+| `token`     | `FASTSTATS_FLAGS_TOKEN`    | required                      | Project token or API key                   |
+| `endpoint`  | `FASTSTATS_FLAGS_ENDPOINT` | `https://flags.faststats.dev` | Base URL of the flags service              |
+| `timeoutMs` |                            | `3000`                        | Aborts a slower request                    |
+| `origin`    |                            | none                          | Dashboard link shown in the Flags Explorer |
+| `fetch`     |                            | global `fetch`                | A `fetch` implementation to use instead    |
+
+`FASTSTATS_TOKEN` is also accepted when `FASTSTATS_FLAGS_TOKEN` is not set.

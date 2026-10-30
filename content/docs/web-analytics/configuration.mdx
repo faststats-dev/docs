@@ -137,7 +137,8 @@ export function diagnostics(): AnalyticsExtension {
 ```
 
 The context exposes `siteKey`, `baseUrl`, `debug`, `trackHash`,
-`isCookieless()`, and `on(hook, handler)`.
+`isCookieless()`, `getUserId()`, and `on(hook, handler)`. `getUserId()`
+returns the identified user, including one identified on an earlier page load.
 
 | Hook             | Payload                   | When it fires                                      |
 | ---------------- | ------------------------- | -------------------------------------------------- |
@@ -145,7 +146,7 @@ The context exposes `siteKey`, `baseUrl`, `debug`, `trackHash`,
 | `pageHide`       | `{ persisted, terminal }` | When the page is hidden or unloaded                |
 | `pageShow`       | `{ persisted }`           | When the page is shown, including from the bfcache |
 | `consentChange`  | `{ cookieless }`          | When consent changes while tracking stays enabled  |
-| `identityChange` | `{ userId }`              | When `identify` sets a user or `logout` clears it  |
+| `identityChange` | `{ userId }`              | When `identify` changes the user, or on `logout`   |
 | `error`          | `{ error }`               | When `reportError` is called                       |
 
 Extensions start when tracking starts and stop when the client is destroyed or

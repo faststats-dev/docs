@@ -1,0 +1,126 @@
+---
+title: OpenFeature
+description: Use FastStats as an OpenFeature provider on the server or in the browser
+icon: Puzzle
+---
+
+[OpenFeature](https://openfeature.dev) is a vendor-neutral API for feature flags.
+`@faststats/openfeature` provides FastStats providers for its server and web
+SDKs, so you can read FastStats flags through the OpenFeature client you already
+use.
+
+<Callout>
+	Already using `@faststats/web` or `@faststats/react` in the browser? The
+	[built-in SDK](/web-analytics/feature-flags) shares the visitor and session
+	with analytics and records exposures only for flags you read.
+</Callout>
+
+## Authentication
+
+Both providers take a `token`: the project's public token, or a FastStats API
+key scoped to the project with the `featureFlagEvaluation:evaluate` permission.
+Only use an API key on the server.
+
+## Server
+
+```npm
+npm install @openfeature/server-sdk @faststats/openfeature
+```
+
+```ts
+import { FastStatsProvider } from "@faststats/openfeature/server";
+import { OpenFeature } from "@openfeature/server-sdk";
+
+await OpenFeature.setProviderAndWait(
+	new FastStatsProvider({ token: process.env.FASTSTATS_FLAGS_TOKEN! }),
+);
+
+const client = OpenFeature.getClient();
+
+const newCheckout = await client.getBooleanValue("new-checkout", false, {
+	targetingKey: visitorId,
+	userId: user?.id,
+	userAgent: request.headers.get("user-agent") ?? undefined,
+	plan: "pro",
+});
+```
+
+Each evaluation is one request for that one flag, and is recorded as an
+exposure.
+
+On the server, the flags service sees your server rather than the visitor. Pass
+`userAgent` so rules can match `browser`, `os`, and `device`, and set `country`
+yourself if your rules use it.
+
+## Web
+
+```npm
+npm install @openfeature/web-sdk @faststats/openfeature
+```
+
+```ts
+import { FastStatsProvider } from "@faststats/openfeature/web";
+import { OpenFeature } from "@openfeature/web-sdk";
+
+await OpenFeature.setContext({ targetingKey: visitorId, plan: "pro" });
+await OpenFeature.setProviderAndWait(
+	new FastStatsProvider({
+		token: "your_project_token",
+		flags: ["new-checkout", "max-uploads"],
+	}),
+);
+
+const client = OpenFeature.getClient();
+const newCheckout = client.getBooleanValue("new-checkout", false);
+```
+
+Flags load once, and again whenever the context changes, then resolve from
+memory. Browser, OS, device, and country come from the visitor's own request.
+
+<Callout type="warning">
+	The web provider records every flag it loads as an exposure, whether or not
+	the app reads it. List the keys your app uses in `flags`, or every flag in the
+	project is loaded and counted.
+</Callout>
+
+## Evaluation Context
+
+| Context field  | Sent as                                                                          |
+| -------------- | -------------------------------------------------------------------------------- |
+| `targetingKey` | `identifier`: a stable device or install ID. Required unless `userId` is set     |
+| `userId`       | Your ID for a signed-in user. Rollouts bucket by it, so they follow the user     |
+| `sessionId`    | Links evaluations to a session in analytics                                      |
+| `userAgent`    | Server only: the visitor's `User-Agent`, for `browser`, `os`, and `device` rules |
+| anything else  | An attribute targeting rules can match on                                        |
+
+## Defaults and Errors
+
+A flag resolves to the default passed at the call site when it does not exist,
+is archived, has a different type, or the service cannot be reached within
+`timeoutMs`. The evaluation details carry the matching OpenFeature error code.
+
+```ts
+const details = await client.getBooleanDetails("new-checkout", false, context);
+
+details.variant; // "on"
+details.reason; // OpenFeature reason, such as "TARGETING_MATCH"
+details.flagMetadata.reason; // FastStats reason, such as "rule_match"
+```
+
+| FastStats reason      | OpenFeature reason |
+| --------------------- | ------------------ |
+| `rule_match`          | `TARGETING_MATCH`  |
+| `target_match`        | `TARGETING_MATCH`  |
+| `fallthrough`         | `DEFAULT`          |
+| `disabled`            | `DISABLED`         |
+| `prerequisite_failed` | `DISABLED`         |
+
+## Options
+
+| Option      | Type           | Default                       | Description                             |
+| ----------- | -------------- | ----------------------------- | --------------------------------------- |
+| `token`     | `string`       | required                      | Project token or API key                |
+| `endpoint`  | `string`       | `https://flags.faststats.dev` | Base URL of the flags service           |
+| `timeoutMs` | `number`       | `3000`                        | Aborts a slower request                 |
+| `flags`     | `string[]`     | all flags                     | Web only: the flag keys to load         |
+| `fetch`     | `typeof fetch` | global `fetch`                | A `fetch` implementation to use instead |

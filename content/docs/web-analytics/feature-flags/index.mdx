@@ -1,0 +1,187 @@
+---
+title: Feature Flags
+description: Read FastStats feature flags in the browser with the built-in SDK
+icon: Flag
+---
+
+<Callout type="warning">
+	Feature Flags are still in **Private Preview**. Contact staff if you would
+	like to try them out.
+</Callout>
+
+The browser SDK loads your project's flags for the visitor it already tracks and
+reads them synchronously from memory. There is nothing to list up front: add the
+extension and read any flag by key.
+
+<Cards>
+	<Card title="Typed flags" href="/web-analytics/feature-flags/typescript">
+		Generate types so keys autocomplete and typos fail to compile.
+	</Card>
+	<Card title="OpenFeature" href="/web-analytics/feature-flags/openfeature">
+		Use FastStats as an OpenFeature provider on the server or in the browser.
+	</Card>
+	<Card title="Flags SDK" href="/web-analytics/feature-flags/flags-sdk">
+		Evaluate flags on the server with Vercel's Flags SDK.
+	</Card>
+</Cards>
+
+## Enable Flags
+
+Add the `featureFlags()` extension next to your other extensions.
+
+<Tabs items={["React", "JavaScript"]}>
+	<Tab value="React">
+
+```tsx title="app/faststats.tsx"
+"use client";
+
+import { Analytics } from "@faststats/react";
+import { featureFlags } from "@faststats/react/flags";
+
+const flags = featureFlags();
+
+export function FastStats() {
+	return <Analytics siteKey="your_site_key" extensions={[flags]} />;
+}
+```
+
+    </Tab>
+    <Tab value="JavaScript">
+
+```ts
+import { init } from "@faststats/web";
+import { featureFlags } from "@faststats/web/flags";
+
+export const flags = featureFlags();
+
+init({
+	siteKey: "your_site_key",
+	extensions: [flags],
+});
+```
+
+    </Tab>
+
+</Tabs>
+
+Create the extension once, at module scope, so every part of the app reads the
+same instance.
+
+## Read Flags
+
+Every read takes the flag key and a default. The default is served until flags
+have loaded, and whenever the flag is missing, archived, or has a different type
+than the default.
+
+<Tabs items={["React", "JavaScript"]}>
+	<Tab value="React">
+
+```tsx
+import { useFlag } from "@faststats/react/flags";
+
+export function Checkout() {
+	const newCheckout = useFlag("new-checkout", false);
+	const maxUploads = useFlag("max-uploads", 10);
+
+	return newCheckout ? <NewCheckout limit={maxUploads} /> : <OldCheckout />;
+}
+```
+
+`useFlag` returns the default during server rendering and until flags have
+loaded, then re-renders with the flag's value.
+
+    </Tab>
+    <Tab value="JavaScript">
+
+```ts
+await flags.ready();
+
+if (flags.isEnabled("new-checkout")) showNewCheckout();
+const maxUploads = flags.get("max-uploads", 10);
+const banner = flags.get("banner", { text: "" });
+```
+
+`ready()` resolves once the current load settles and never rejects. Reading
+before that is safe and returns the default.
+
+    </Tab>
+
+</Tabs>
+
+| Method                | Returns                                                                 |
+| --------------------- | ----------------------------------------------------------------------- |
+| `get(key, default)`   | The flag's value, or the default                                        |
+| `isEnabled(key)`      | `true` when a boolean flag is on                                        |
+| `details(key)`        | `{ value, variant, reason, ruleId? }`, or `undefined` if not served     |
+| `status`              | `"idle"`, `"loading"`, `"ready"`, or `"error"`                          |
+| `subscribe(listener)` | Calls `listener` when values or `status` change; returns an unsubscribe |
+
+`reason` explains the result: `rule_match`, `target_match`, `fallthrough`,
+`disabled`, or `prerequisite_failed`. In React, `useFeatureFlags()` returns the
+running instance for `status`, `details()`, `setContext()`, and `reload()`.
+
+## Exposures
+
+A flag counts as **exposed** the first time your code reads a served value for
+a visitor, not when it loads. The exposure numbers on a flag's dashboard page,
+its evaluation log, and per-variant breakdowns in insights all come from these
+reads, so they show the people who actually saw a variant.
+
+- Only the first read of each flag and variant is reported per visitor.
+- Reads close together are sent in one small request, and anything left is sent
+  when the page is hidden.
+- Reading a default, while loading or for a missing flag, is not an exposure.
+
+Read a flag where you branch on it, not ahead of time, so exposures match what
+people see.
+
+## Targeting
+
+Flags are evaluated for the anonymous visitor ID, and the session ID links each
+evaluation to analytics. The service also derives `browser`, `browser_version`,
+`os`, `os_version`, `device`, and `country` from the request.
+
+Pass anything else your targeting rules match on as `attributes`:
+
+```ts
+const flags = featureFlags({
+	attributes: { plan: "pro", beta: true },
+});
+
+// Later, for example after the user upgrades. Replaces the previous attributes.
+await flags.setContext({ attributes: { plan: "enterprise" } });
+```
+
+### Signed-in Users
+
+[`identify()`](/web-analytics/identify) re-evaluates flags for that user, so
+percentage rollouts follow the user across devices. `logout()` goes back to a
+new anonymous visitor. While flags reload for a new user, reads serve their
+defaults rather than the previous user's values.
+
+When the user is already known at startup, pass `userId` to skip the anonymous
+load:
+
+```ts
+const flags = featureFlags({ userId: session.user.id });
+```
+
+### Consent and Cookieless Mode
+
+Flags are not loaded while [consent](/web-analytics/consent) is `"denied"`.
+Revoking consent clears loaded values and drops exposures that were not sent
+yet. A cookieless visitor has no lasting ID, so rollouts hold for the session
+only.
+
+## Options
+
+| Option       | Type                      | Default                       | Description                                         |
+| ------------ | ------------------------- | ----------------------------- | --------------------------------------------------- |
+| `flags`      | `string[]`                | all flags                     | Loads only these keys, for projects with many flags |
+| `userId`     | `string`                  | none                          | Your ID for a user already signed in at startup     |
+| `attributes` | `Record<string, unknown>` | `{}`                          | Anything targeting rules should match on            |
+| `endpoint`   | `string`                  | `https://flags.faststats.dev` | Base URL of the flags service                       |
+| `timeoutMs`  | `number`                  | `3000`                        | Aborts a slower load, so flags serve their defaults |
+| `fetch`      | `typeof fetch`            | global `fetch`                | A `fetch` implementation to use instead             |
+
+`flags` only limits what is loaded. Exposures are recorded for reads either way.
