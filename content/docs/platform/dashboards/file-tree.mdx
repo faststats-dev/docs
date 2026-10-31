@@ -1,0 +1,81 @@
+---
+title: File Tree
+description: Browse, create, and organize dashboards, notebooks, and saved items from a panel docked next to the sidebar.
+icon: ListTree
+---
+
+The file tree shows everything on the [Dashboards page](/platform/dashboards#the-dashboards-page) as a tree you can keep open while you work: folders, dashboards, notebooks, and standalone charts, funnels, and Sankeys. Use it to jump between items, look inside a dashboard or notebook, and file things into folders without leaving the page you're on.
+
+## Opening the file tree
+
+Hover **Dashboards** in the sidebar and click the tree icon on its right. The panel opens next to the sidebar and stays open across pages and visits until you close it with **×** in its header or click the icon again.
+
+Drag the panel's right edge to resize it, and double-click the edge to reset its width.
+
+<Callout variant="info">
+	The file tree is available on wider screens only. On mobile, use the
+	Dashboards page.
+</Callout>
+
+The header has three buttons:
+
+| Button | What it does                                                                    |
+| ------ | ------------------------------------------------------------------------------- |
+| **+**  | Create a dashboard, notebook, chart, funnel, Sankey, or folder at the top level |
+| Grid   | Open the Dashboards page                                                        |
+| **×**  | Close the panel                                                                 |
+
+## Browsing
+
+- Click a **folder** to expand or collapse it. Which folders are expanded is remembered per project.
+- Click a **dashboard, notebook, chart, funnel, or Sankey** to open it. The page you're on is highlighted.
+- Dashboards and notebooks with something inside them have an arrow on the left. Click it to list their charts, funnels, Sankeys, and retentions, and click one to open it.
+
+Switching dashboards from the tree keeps the selected date range.
+
+### Searching and sorting
+
+Type in the search box to find items by name across all folders. Folders themselves aren't listed in results, but each result shows the folder it lives in.
+
+The sort button next to the search box uses the same options as the [Dashboards page](/platform/dashboards#searching-and-sorting), and both stay in sync.
+
+## Creating items
+
+Right-click a folder to create something inside it: **New dashboard**, **New notebook**, **New chart**, **New funnel**, **New Sankey**, or **New folder**. The folder opens so you can see the new item.
+
+To create at the top level, use the **+** in the header, or right-click the empty space below the last item.
+
+## Moving items
+
+Drag an item to file it somewhere else:
+
+| Drop it on        | It moves to                |
+| ----------------- | -------------------------- |
+| A folder          | That folder                |
+| Any other item    | The folder that item is in |
+| Empty space below | The top level              |
+
+Hold an item over a collapsed folder for a moment to expand it, so you can drop it deeper. You can also right-click an item and choose **Move to…** to pick a folder from a list.
+
+Items can't be dragged while a search is active, or if you don't have permission to edit dashboards.
+
+## Renaming
+
+Right-click an item and choose **Rename**, or focus it and press `F2`. The name becomes editable in place: press `Enter` or click away to save, or `Esc` to cancel.
+
+## Item menu
+
+Right-click any item for its actions. They match the **⋯** menu on the Dashboards page:
+
+| Action          | Available for                            |
+| --------------- | ---------------------------------------- |
+| Open in new tab | Everything except folders                |
+| New …           | Folders                                  |
+| Pin to sidebar  | Dashboards                               |
+| Edit            | Funnels and Sankeys                      |
+| Rename          | Everything                               |
+| Move to…        | Everything                               |
+| Duplicate       | Everything except folders                |
+| Delete          | Everything except the built-in dashboard |
+
+Deleting a folder moves its contents up a level. See [Item actions](/platform/dashboards#item-actions) for what deleting other items removes.

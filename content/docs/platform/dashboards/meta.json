@@ -1,0 +1,4 @@
+{
+	"title": "Dashboards",
+	"pages": ["index", "file-tree", "notebooks", "funnels", "sankeys"]
+}

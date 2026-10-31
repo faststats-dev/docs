@@ -4,6 +4,8 @@ const exactRedirects: Record<string, string> = {
 	"/retention": "/platform/retention",
 	"/web-vitals": "/platform/web-vitals",
 	"/web": "/web-analytics",
+	"/platform/notebooks": "/platform/dashboards/notebooks",
+	"/platform/funnels": "/platform/dashboards/funnels",
 };
 
 const prefixRedirects = [
