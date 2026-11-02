@@ -1,11 +1,8 @@
 ---
-import Layout from "@/components/layout.astro";
-import { DocsNotFound } from "@/components/docs/docs-not-found";
+import HomeLayout from "@fumadocs/astro/components/HomeLayout.astro";
+import DocsNotFound from "@/components/docs/docs-not-found.astro";
 ---
 
-<Layout>
-	<Fragment slot="head">
-		<title>Page not found</title>
-	</Fragment>
+<HomeLayout title="Page not found">
 	<DocsNotFound />
-</Layout>
+</HomeLayout>

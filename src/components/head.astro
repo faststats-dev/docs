@@ -1,0 +1,12 @@
+---
+import Analytics from "@/components/analytics.astro";
+---
+
+<link rel="icon" href="/icon-light.svg" media="(prefers-color-scheme: light)" />
+<link rel="icon" href="/icon-dark.svg" media="(prefers-color-scheme: dark)" />
+<Analytics />
+<script>
+	import { enhanceImageZoom } from "@/lib/enhance-image-zoom";
+
+	document.addEventListener("astro:page-load", enhanceImageZoom);
+</script>

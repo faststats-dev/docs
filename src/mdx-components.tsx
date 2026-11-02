@@ -1,31 +1,18 @@
-import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import { DocsBody } from "fumadocs-ui/layouts/notebook/page";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
-import {
-	CodeBlockTab,
-	CodeBlockTabs,
-	CodeBlockTabsList,
-	CodeBlockTabsTrigger,
-} from "@/components/codeblock-tabs";
-import { Tab, Tabs } from "@/components/tabs";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
 	return {
 		...defaultMdxComponents,
-		CodeBlock,
-		CodeBlockTab,
-		CodeBlockTabs,
-		CodeBlockTabsList,
-		CodeBlockTabsTrigger,
 		DynamicCodeBlock,
-		pre: (props) => (
-			<CodeBlock {...props}>
-				<Pre>{props.children}</Pre>
-			</CodeBlock>
-		),
 		Tabs,
 		Tab,
 		...components,
 	};
 }
+
+// The content renders as one hydrated React island; `wrapper` gives it the prose styles.
+export default getMDXComponents({ wrapper: DocsBody });

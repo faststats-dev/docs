@@ -4,13 +4,6 @@ description: Measure how many users come back over time with cohort-based retent
 icon: RefreshCcw
 ---
 
-export const mockCohortRows = [
-	{ cohort: "2026-W01", users: 1240, weeks: [100, 51, 38, 31, 27] },
-	{ cohort: "2026-W02", users: 1178, weeks: [100, 49, 35, 29, 24] },
-	{ cohort: "2026-W03", users: 1321, weeks: [100, 46, 33, 26, 22] },
-	{ cohort: "2026-W04", users: 1215, weeks: [100, 44, 30, 24, 19] },
-];
-
 Retention shows how many users return after their first seen period. FastStats groups users into cohorts and then tracks what percentage of each cohort is still active in later days or weeks.
 
 ## Main Visualization (Cohort Table)
@@ -32,24 +25,122 @@ Static preview from the retention page. This example is not interactive.
 				</tr>
 			</thead>
 			<tbody>
-				{mockCohortRows.map((row) => (
-					<tr key={row.cohort} className="border-b border-border/40">
-						<td className="px-2 py-2">{row.cohort}</td>
-						<td className="px-2 py-2 text-right text-muted-foreground">
-							{row.users.toLocaleString()}
-						</td>
-						{row.weeks.map((value, index) => (
-							<td
-								key={`${row.cohort}-${index}`}
-								className="px-1 py-1 text-center"
-							>
-								<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-									{value}%
-								</div>
-							</td>
-						))}
-					</tr>
-				))}
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">2026-W01</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,240</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							100%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							51%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							38%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							31%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							27%
+						</div>
+					</td>
+				</tr>
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">2026-W02</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,178</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							100%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							49%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							35%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							29%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							24%
+						</div>
+					</td>
+				</tr>
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">2026-W03</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,321</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							100%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							46%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							33%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							26%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							22%
+						</div>
+					</td>
+				</tr>
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">2026-W04</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,215</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							100%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							44%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							30%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							24%
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+							19%
+						</div>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>

@@ -1,79 +1,44 @@
-import { navigate } from "astro:transitions/client";
-import type { AstroProviderProps } from "fumadocs-core/framework/astro";
-import type { Root } from "fumadocs-core/page-tree";
+import type { DocsPageProps } from "@fumadocs/astro/config";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import {
-	DocsBody,
 	DocsDescription,
 	DocsPage,
-	type DocsPageProps,
 	DocsTitle,
+	MarkdownCopyButton,
 } from "fumadocs-ui/layouts/notebook/page";
-import { RootProvider } from "fumadocs-ui/provider/astro";
-import { type ReactNode, useMemo } from "react";
-import { LLMCopyButton } from "@/components/ai/page-actions";
+import { useMemo } from "react";
 import {
 	DocsSidebarBanner,
 	DocsSidebarFooter,
 } from "@/components/docs/docs-sidebar";
-import SearchDialog from "@/components/search";
-import { SiteBrand } from "@/components/site-brand";
 import { getDocsTabs } from "@/lib/docs-tabs";
-import { resolveLucideIcons } from "@/lib/resolve-lucide-icons";
 
-export function Docs({
-	tree,
-	children,
-	pathname,
-	params,
-	page,
-	title,
-	description,
-	markdownUrl,
-}: {
-	tree: Root;
-	children: ReactNode;
-	pathname: string;
-	params: AstroProviderProps["params"];
-	page?: DocsPageProps;
-	title: string;
-	description?: string;
-	markdownUrl?: string;
-}) {
-	const pageTree = useMemo(() => resolveLucideIcons(tree), [tree]);
+/** The docs page; the MDX content arrives as `children`. */
+export default function Docs({ tree, page, layout, children }: DocsPageProps) {
+	const tabs = useMemo(() => getDocsTabs(tree), [tree]);
 
 	return (
-		<RootProvider
-			pathname={pathname}
-			params={params}
-			navigate={navigate}
-			search={{ SearchDialog }}
+		<DocsLayout
+			{...layout}
+			tree={tree}
+			tabMode="navbar"
+			tabs={tabs}
+			sidebar={{
+				collapsible: true,
+				banner: DocsSidebarBanner,
+				footer: DocsSidebarFooter,
+			}}
 		>
-			<DocsLayout
-				nav={{
-					title: <SiteBrand />,
-					url: "/platform",
-				}}
-				tree={pageTree}
-				tabMode="navbar"
-				tabs={getDocsTabs(pageTree)}
-				sidebar={{
-					collapsible: true,
-					banner: DocsSidebarBanner,
-					footer: DocsSidebarFooter,
-				}}
-			>
-				<DocsPage {...page}>
-					<DocsTitle>{title}</DocsTitle>
-					<DocsDescription className="mb-0">{description}</DocsDescription>
-					{markdownUrl ? (
-						<div className="flex flex-row items-center gap-2 border-b pb-6">
-							<LLMCopyButton markdownUrl={markdownUrl} />
-						</div>
-					) : null}
-					<DocsBody>{children}</DocsBody>
-				</DocsPage>
-			</DocsLayout>
-		</RootProvider>
+			<DocsPage toc={page.toc} full={page.full}>
+				<DocsTitle>{page.title}</DocsTitle>
+				<DocsDescription className="mb-0">{page.description}</DocsDescription>
+				{page.markdownUrl ? (
+					<div className="flex flex-row items-center gap-2 border-b pb-6">
+						<MarkdownCopyButton markdownUrl={page.markdownUrl} />
+					</div>
+				) : null}
+				{children}
+			</DocsPage>
+		</DocsLayout>
 	);
 }

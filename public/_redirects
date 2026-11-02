@@ -1,0 +1,7 @@
+/ /platform 302
+/retention /platform/retention 301
+/web-vitals /web-analytics/web-vitals 301
+/web /web-analytics 301
+/guide/* /platform/guide/:splat 301
+/chart-editor/* /platform/chart-editor/:splat 301
+/error-tracking/* /platform/error-tracking/:splat 301

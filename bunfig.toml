@@ -1,4 +1,4 @@
 [install]
 # Only install package versions published at least 1 day ago.
 minimumReleaseAge = 43200 # seconds
-minimumReleaseAgeExcludes = ["@faststats/web"]
+minimumReleaseAgeExcludes = ["@faststats/web", "@fumadocs/astro"]

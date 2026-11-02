@@ -1,0 +1,10 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "docs",
+	"compatibility_date": "2026-10-23",
+	// Fully static site: Cloudflare serves `dist` directly, including `_redirects`.
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "404-page",
+	},
+}

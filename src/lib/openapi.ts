@@ -1,7 +1,6 @@
 import { createOpenAPI } from "fumadocs-openapi/server";
 
-const API_ORIGIN = "https://api.faststats.dev";
-const openApiUrl = `${API_ORIGIN}/openapi.json`;
+const openApiUrl = "https://api.faststats.dev/openapi.json";
 
 const schema = await fetch(openApiUrl).then((response) => {
 	if (!response.ok) {
