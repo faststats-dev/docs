@@ -8,5 +8,24 @@ import Analytics from "@/components/analytics.astro";
 <script>
 	import { enhanceImageZoom } from "@/lib/enhance-image-zoom";
 
+	// @fumadocs/astro persists the docs layout island across navigations and
+	// re-renders it with the new page's props. Until React finishes, the old
+	// title and TOC stay on screen, which makes navigation feel slow.
+	// Swapping in the server-rendered HTML shows the new page right away and
+	// hydrates it afterwards. Capture on `window` so this runs before
+	// fumadocs' own `astro:before-swap` handler on `document`.
+	window.addEventListener(
+		"astro:before-swap",
+		(event) => {
+			const selector = "astro-island[data-astro-transition-persist]";
+			for (const doc of [document, event.newDocument]) {
+				for (const island of doc.querySelectorAll(selector)) {
+					island.removeAttribute("data-astro-transition-persist");
+				}
+			}
+		},
+		{ capture: true },
+	);
+
 	document.addEventListener("astro:page-load", enhanceImageZoom);
 </script>
