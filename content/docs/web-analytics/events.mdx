@@ -4,16 +4,19 @@ description: Automatic tracking and custom events
 icon: MousePointerClick
 ---
 
-The core SDK automatically sends `pageview`, `page_leave`, and `outbound_link`
-events. Use `track` for your own events.
+The core SDK automatically sends `$pageview`, `$page_ping`, `$page_leave`, and
+`$outbound_link` events, and the error tracker sends `$error`. Use `track` for
+your own events.
 
 ## Automatic Tracking
 
-| Event           | When it fires                                                                |
-| --------------- | ---------------------------------------------------------------------------- |
-| `pageview`      | When a page first becomes visible and on each client-side navigation         |
-| `page_leave`    | Every 15 seconds while the page is active, and when the visit pauses or ends |
-| `outbound_link` | When a visitor clicks a link to another host                                 |
+| Event            | When it fires                                                                     |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `$pageview`      | When a page first becomes visible and on each client-side navigation              |
+| `$page_ping`     | When activity pauses, and while active after 15 and 45 seconds, then every 60     |
+| `$page_leave`    | Once when the visit ends: on navigation, when the page is closed, or on `logout`  |
+| `$outbound_link` | When a visitor clicks a link to another host                                      |
+| `$error`         | When the error tracker reports an uncaught error or one you pass to `reportError` |
 
 Page views include the path, sanitized URL, referrer, page title, and UTM
 parameters. A page that is closed or replaced before it becomes visible sends
@@ -25,8 +28,9 @@ Set `trackHash: true` for hash-based routers.
 
 ## Visit Duration
 
-Each page view starts a visit. `page_leave` events are cumulative checkpoints
-for that visit and share its `visit_id` with the page view.
+Each page view starts a visit. `$page_ping` and `$page_leave` events are
+cumulative checkpoints for that visit and share its `visit_id` with the page
+view.
 
 | Property           | Description                                                       |
 | ------------------ | ----------------------------------------------------------------- |
@@ -45,7 +49,7 @@ even on the same route.
 ## Outbound Links
 
 Outbound link tracking is built in and always on. Left and middle clicks on
-`http` and `https` links to a different host send an `outbound_link` event with
+`http` and `https` links to a different host send an `$outbound_link` event with
 the destination in the `outbound_link` property. The query string and hash are
 stripped from the URL, clicks whose default action was prevented are skipped,
 and a double click is only counted once.
@@ -88,9 +92,20 @@ track("signup", { plan: "pro", source: "hero" });
 
 </Tabs>
 
-The SDK trims names and ignores empty names. It reserves `pageview`,
-`page_leave`, `error`, and `outbound_link` for built-in events, so `track`
-ignores those names.
+The SDK trims names and ignores empty names.
+
+### Reserved Names
+
+Names starting with `$` are reserved for built-in events, including ones added
+later. `track` ignores them and logs a console warning once per name. Every
+other name is yours, including `pageview` or `error`, which show up as custom
+events separate from the built-in `$pageview` and `$error`.
+
+SDK versions before the `$` prefix sent built-in events as `pageview`,
+`page_ping`, `page_leave`, `outbound_link`, and `error`. FastStats renames those
+as they arrive, so older versions keep working without an update. After
+upgrading, a `track("pageview")` call that the old SDK ignored is sent as a
+custom event.
 
 ## Good Practices
 
