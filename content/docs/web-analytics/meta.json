@@ -13,6 +13,7 @@
 		"events",
 		"identify",
 		"consent",
+		"reverse-proxy",
 		"---Features---",
 		"error-tracking",
 		"sourcemaps",
