@@ -1,0 +1,512 @@
+---
+title: MCP Server
+description: Connect ChatGPT, Claude, Grok, Gemini, JetBrains IDEs, Cursor, Antigravity, and other AI tools to your FastStats projects.
+icon: Plug
+---
+
+The FastStats MCP server lets AI tools that support the [Model Context Protocol](https://modelcontextprotocol.io) work with your projects. They can query your analytics, triage errors, read session replays, and build dashboards.
+
+It's a hosted server, so there's nothing to install or run. Add this URL to your client:
+
+```txt
+https://api.faststats.dev/v0/mcp
+```
+
+The server uses the Streamable HTTP transport. A client that only supports stdio can connect [through a bridge](#other-clients).
+
+## Connect your client
+
+Most clients sign in with OAuth, so you only need to add the URL. To connect without a browser, use an [API key](#connect-with-an-api-key) instead.
+
+<Callout type="info">
+	Menu names and plan limits in these apps change often. If a step doesn't match
+	what you see, check the app's own MCP documentation.
+</Callout>
+
+### AI assistants
+
+<Tabs items={["ChatGPT", "Claude", "Grok", "Gemini", "Mistral"]}>
+	<Tab value="ChatGPT">
+
+1. Open [ChatGPT Plugins](https://chatgpt.com/plugins) on the web
+2. Select the **Add** button, then **Add custom MCP server**
+3. Enter `FastStats` as the name, add a description, and enter `https://api.faststats.dev/v0/mcp` as the public endpoint
+4. Choose OAuth for authentication, review the warning, and select **I understand and want to continue**
+5. Select **Create as a plugin**, then sign in to FastStats
+6. Install the plugin, then type `@` in a chat to use it
+
+What you can do depends on your plan. Pro accounts are limited to tools that read data, while Business, Enterprise, and Edu workspaces get full MCP support. In Business workspaces, only admins and owners can create custom plugins. See [OpenAI's guide](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt) for your plan's current limits.
+
+    </Tab>
+    <Tab value="Claude">
+
+1. Open [**Add custom connector**](https://claude.ai/customize/connectors?modal=add-custom-connector) in Claude
+2. Enter `FastStats` as the name and `https://api.faststats.dev/v0/mcp` as the URL
+3. Select **Connect** and sign in
+
+The connector is then available in Claude on the web and in the desktop app.
+
+    </Tab>
+    <Tab value="Grok">
+
+1. Open [grok.com/connectors](https://grok.com/connectors)
+2. Select **New Connector**, then **Custom**
+3. Enter `https://api.faststats.dev/v0/mcp` as the server URL
+4. Sign in to FastStats when asked
+
+On Business and Enterprise plans, a team admin may need to set up the connector in the xAI cloud console first.
+
+    </Tab>
+    <Tab value="Gemini">
+
+1. Open [Gemini's connectors page](https://gemini.google.com/customize/connectors) in your browser
+2. Select **+ Custom**
+3. Review and accept the security and privacy risks
+4. Enter `https://api.faststats.dev/v0/mcp` as the MCP server URL and select **Next**. You don't need to enter any credentials under **Advanced features**
+5. Follow the instructions on screen to sign in to FastStats
+
+Once connected, the app also works in the Gemini mobile app. Gemini asks you to confirm any action that changes something.
+
+Google currently limits custom apps to people aged 18 or over in the US, using a personal Google Account in English with Keep Activity turned on. See [Google's guide](https://support.google.com/gemini/answer/17209137) for the latest requirements. If you can't use custom apps, try [Antigravity CLI](#coding-agents) instead.
+
+    </Tab>
+    <Tab value="Mistral">
+
+1. Open the [**Connectors** page](https://chat.mistral.ai/connections) in Mistral's chat app
+2. Select **New connector**, then **+ Add custom connector**
+3. Enter `FastStats` as the name and `https://api.faststats.dev/v0/mcp` as the server URL
+4. Select **Connect** and sign in to FastStats
+
+Only administrators can add connectors. On Free, Pro, and Student plans, the account owner is the administrator. Custom connectors don't support [resources or prompts](#prompts) yet.
+
+    </Tab>
+
+</Tabs>
+
+### Coding agents
+
+<Tabs items={["Claude Code", "Codex", "Antigravity CLI"]}>
+	<Tab value="Claude Code">
+
+Add the server:
+
+```bash
+claude mcp add --transport http faststats https://api.faststats.dev/v0/mcp
+```
+
+Then start Claude Code, run `/mcp`, select **faststats**, and sign in.
+
+To use the server in every project, add `--scope user`. To share it with your team through a `.mcp.json` file, add `--scope project`.
+
+    </Tab>
+    <Tab value="Codex">
+
+Add the server, then sign in:
+
+```bash
+codex mcp add faststats --url https://api.faststats.dev/v0/mcp
+```
+
+    </Tab>
+    <Tab value="Antigravity CLI">
+
+Add the server:
+
+```bash
+agy mcp add faststats https://api.faststats.dev/v0/mcp
+```
+
+Then start the CLI with `agy`, run `/mcp`, and sign in.
+
+The server is added to every project. To use it in only one project, add the [`serverUrl` entry](#ides) to `.agents/mcp_config.json` instead.
+
+    </Tab>
+
+</Tabs>
+
+### IDEs
+
+<Tabs items={["JetBrains IDEs", "JetBrains Air", "Antigravity", "Cursor", "VS Code", "Zed"]}>
+	<Tab value="JetBrains IDEs">
+
+IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs have three places to add a server, depending on which agent you use.
+
+**AI Assistant**
+
+1. Open **Settings** > **Tools** > **AI Assistant** > **Model Context Protocol (MCP)**
+2. Select **Add**, choose the HTTP option, and enter:
+
+   ```json
+   {
+   	"mcpServers": {
+   		"faststats": {
+   			"url": "https://api.faststats.dev/v0/mcp"
+   		}
+   	}
+   }
+   ```
+
+3. Choose a **Server level**, select **OK**, then **Apply**
+4. Check the **Status** column to see whether the server connected
+
+JetBrains doesn't document OAuth or custom headers for AI Assistant. If the server doesn't connect, use the [bridge](#other-clients) instead.
+
+**Junie**
+
+Open **Settings** > **Tools** > **Junie** > **MCP Settings**, select **Add**, and add the same `faststats` entry to the `mcp.json` file that opens. This saves it to `~/.junie/mcp/mcp.json`. To use it in only one project, put it in `.junie/mcp/mcp.json` instead.
+
+In Junie CLI, run `/mcp`, select **faststats**, and choose **Authorize** to sign in. The status changes to **Active**.
+
+**Air in your IDE**
+
+Open **Settings** > **AI** > **Air** > **MCP Servers** and select **Edit MCPs**. JetBrains only documents header authentication here, so add the server with an [API key](#connect-with-an-api-key). Then refresh the **Your servers** list, select **faststats**, and select **OK**. The server is available from your next session.
+
+    </Tab>
+    <Tab value="JetBrains Air">
+
+1. In the Air app, open **Settings** > **AI** > **MCP Servers** and turn on **Enable MCP support**
+2. Select **Add Global MCP Server**, or choose **Add Local MCP Server** from the drop-down to use it in only this project
+3. Paste this configuration and save:
+
+   ```json
+   {
+   	"mcpServers": {
+   		"faststats": {
+   			"url": "https://api.faststats.dev/v0/mcp"
+   		}
+   	}
+   }
+   ```
+
+4. Select **Connect** next to **faststats** and sign in
+
+Cloud tasks have no settings screen, so set up a connector in Air Teams. They can also read a `.mcp.json` file in your repository, but don't put an API key in it.
+
+    </Tab>
+    <Tab value="Antigravity">
+
+1. Open the **…** menu at the top of the agent panel and select **MCP Servers**
+2. Select **Manage MCP Servers**, then **View raw config**
+3. Add the server and save:
+
+   ```json title="mcp_config.json"
+   {
+   	"mcpServers": {
+   		"faststats": {
+   			"serverUrl": "https://api.faststats.dev/v0/mcp"
+   		}
+   	}
+   }
+   ```
+
+4. Select **Authenticate** next to **faststats** and sign in. If Antigravity asks for an authorization code, copy it from your browser and paste it in
+
+Antigravity registers itself with FastStats, so you don't need the `oauth` block or a client ID.
+
+    </Tab>
+    <Tab value="Cursor">
+
+Add the server to `.cursor/mcp.json` in your project, or to `~/.cursor/mcp.json` to use it everywhere:
+
+```json title=".cursor/mcp.json"
+{
+	"mcpServers": {
+		"faststats": {
+			"url": "https://api.faststats.dev/v0/mcp"
+		}
+	}
+}
+```
+
+Then open **Cursor Settings** > **MCP** and select **Connect** next to **faststats**.
+
+    </Tab>
+    <Tab value="VS Code">
+
+Add the server to `.vscode/mcp.json` in your project:
+
+```json title=".vscode/mcp.json"
+{
+	"servers": {
+		"faststats": {
+			"type": "http",
+			"url": "https://api.faststats.dev/v0/mcp"
+		}
+	}
+}
+```
+
+Select **Start** above the server entry, then sign in when VS Code asks.
+
+    </Tab>
+    <Tab value="Zed">
+
+Run **zed: open settings file** from the command palette and add the server:
+
+```json title="settings.json"
+{
+	"context_servers": {
+		"faststats": {
+			"url": "https://api.faststats.dev/v0/mcp"
+		}
+	}
+}
+```
+
+Sign in when Zed asks. To check the connection, open **Settings** > **AI** > **MCP Servers**. A green dot next to **faststats** means the server is active.
+
+    </Tab>
+
+</Tabs>
+
+### Other clients
+
+Point your client at `https://api.faststats.dev/v0/mcp` as a remote HTTP server.
+
+If it supports OAuth, it finds the sign-in page and registers itself, so you don't need a client ID or secret. If it doesn't, [use an API key](#connect-with-an-api-key).
+
+If your client only supports local stdio servers, or can't sign in, use the third-party [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge. It needs Node.js and opens your browser to sign in:
+
+```json
+{
+	"mcpServers": {
+		"faststats": {
+			"command": "npx",
+			"args": ["-y", "mcp-remote", "https://api.faststats.dev/v0/mcp"]
+		}
+	}
+}
+```
+
+## Sign in and approve access
+
+When you connect with OAuth, your browser opens a FastStats page. Sign in if you need to, then choose what the client can reach:
+
+- **Workspaces:** your personal projects, one or more organizations, or both. The client only sees the workspaces you pick, and it has your role in each of them.
+- **Access:** **Read and write** lets the client make changes. **Read only** lets it see your data but change nothing, and it won't see any tools that make changes.
+
+Select **Approve** to finish. The client stays connected, so you won't need to sign in each time.
+
+To change your choices, disconnect and sign in again from your client. Your new choices need a new approval.
+
+<Callout type="warning">
+	With **Read and write** access, changes apply as soon as a tool runs. Choose
+	**Read only** if you only need answers, and only approve clients you trust.
+</Callout>
+
+## Connect with an API key
+
+API keys suit CI jobs and other setups where nobody can sign in through a browser. The key's [permissions and project access](/platform/organizations/roles#api-keys) limit what every tool can do.
+
+1. Create a key in the **API keys** tab of your user or organization settings
+2. Choose its projects and permissions. The **Read-only** preset is a good start for anything that doesn't need to make changes
+3. Send the key as a bearer token with each request
+
+<Tabs items={["Claude Code", "Codex", "Antigravity CLI", "JetBrains", "Antigravity", "Cursor", "VS Code", "Zed"]}>
+	<Tab value="Claude Code">
+
+```bash
+claude mcp add --transport http faststats https://api.faststats.dev/v0/mcp \
+  --header "Authorization: Bearer $FASTSTATS_API_KEY"
+```
+
+    </Tab>
+    <Tab value="Codex">
+
+```bash
+codex mcp add faststats --url https://api.faststats.dev/v0/mcp \
+  --bearer-token-env-var FASTSTATS_API_KEY
+```
+
+    </Tab>
+    <Tab value="Antigravity CLI">
+
+```bash
+agy mcp add --header "Authorization: Bearer $FASTSTATS_API_KEY" \
+  faststats https://api.faststats.dev/v0/mcp
+```
+
+    </Tab>
+    <Tab value="JetBrains">
+
+Junie, Air, and Air in your IDE all use this format. Replace `<your-key>` with your key, and keep the entry in a user-level file such as `~/.junie/mcp/mcp.json` or `~/.jetbrains/mcp/mcp.json`.
+
+The Air app can also read the key from an environment variable with `${FASTSTATS_API_KEY}`.
+
+```json title="mcp.json"
+{
+	"mcpServers": {
+		"faststats": {
+			"url": "https://api.faststats.dev/v0/mcp",
+			"headers": {
+				"Authorization": "Bearer <your-key>"
+			}
+		}
+	}
+}
+```
+
+    </Tab>
+    <Tab value="Antigravity">
+
+Replace `<your-key>` with your key, and keep the entry in your global `~/.gemini/config/mcp_config.json`.
+
+```json title="mcp_config.json"
+{
+	"mcpServers": {
+		"faststats": {
+			"serverUrl": "https://api.faststats.dev/v0/mcp",
+			"headers": {
+				"Authorization": "Bearer <your-key>"
+			}
+		}
+	}
+}
+```
+
+    </Tab>
+    <Tab value="Cursor">
+
+```json title=".cursor/mcp.json"
+{
+	"mcpServers": {
+		"faststats": {
+			"url": "https://api.faststats.dev/v0/mcp",
+			"headers": {
+				"Authorization": "Bearer ${env:FASTSTATS_API_KEY}"
+			}
+		}
+	}
+}
+```
+
+    </Tab>
+    <Tab value="VS Code">
+
+```json title=".vscode/mcp.json"
+{
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "faststats-api-key",
+			"description": "FastStats API key",
+			"password": true
+		}
+	],
+	"servers": {
+		"faststats": {
+			"type": "http",
+			"url": "https://api.faststats.dev/v0/mcp",
+			"headers": {
+				"Authorization": "Bearer ${input:faststats-api-key}"
+			}
+		}
+	}
+}
+```
+
+    </Tab>
+    <Tab value="Zed">
+
+Replace `<your-key>` with your key, and keep the entry in your user settings file.
+
+```json title="settings.json"
+{
+	"context_servers": {
+		"faststats": {
+			"url": "https://api.faststats.dev/v0/mcp",
+			"headers": {
+				"Authorization": "Bearer <your-key>"
+			}
+		}
+	}
+}
+```
+
+    </Tab>
+
+</Tabs>
+
+<Callout type="warning">
+	Don't commit API keys. The Claude Code and Antigravity CLI commands save the
+	key in your local configuration, and the JetBrains, Antigravity, and Zed
+	examples store it in plain text, so keep those files out of version control.
+</Callout>
+
+## Check the connection
+
+Ask your client:
+
+> List my FastStats projects.
+
+You should see the projects you gave it access to, each with a link to the app. If you have only one project, you don't need to name it in later questions.
+
+## What you can do
+
+Here are a few things to try:
+
+- "Which pages got the most traffic last week, and where did the visitors come from?"
+- "What are the worst new errors since the last release? Find the cause in this codebase."
+- "Find session replays where someone hit the checkout error, and tell me what they did first."
+- "Build a dashboard for our signup funnel."
+- "Write a notebook summarizing how this month went."
+
+### Tools
+
+| Area                               | Tools can                                                                           |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| Projects                           | List, describe, and create projects, and get their setup details                    |
+| Data                               | Run SQL, read dashboards and insights, render charts, and detect anomalies          |
+| Library                            | Create and edit dashboards, charts, funnels, Sankeys, and retentions                |
+| [Errors](/platform/error-tracking) | Find, inspect, comment on, and update issues, and see trends and errors per release |
+| Session replays                    | Search, read, and collect replays, and read replay insights                         |
+| People                             | Look up users and their sessions, and manage segments                               |
+| [Notebooks](/platform/notebooks)   | Read, create, and update notebooks                                                  |
+| Feature flags                      | List and set flags                                                                  |
+| Event markers                      | Record deploys and other events so charts and anomaly detection can show them       |
+
+Tools check your role or the API key's permissions. If a project doesn't track something, or you don't have access to it, those tools report that it isn't available.
+
+### Prompts
+
+The server also offers ready-made workflows. Clients that support prompts usually show them as commands. In Claude Code, they look like `/mcp__faststats__triage_errors`.
+
+| Prompt                | What it does                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| `setup_tracking`      | Connects this codebase to FastStats: creates or picks a project and installs the SDK |
+| `triage_errors`       | Sorts new and regressed errors by impact and finds their causes in this codebase     |
+| `fix_error`           | Investigates one error issue, finds the root cause, and fixes it                     |
+| `record_deploy`       | Adds a deploy marker for what you just shipped                                       |
+| `weekly_report`       | Writes a notebook summarizing a period, with live charts                             |
+| `investigate_anomaly` | Finds out why a metric moved: what changed, when, and for which users                |
+| `build_dashboard`     | Designs a dashboard for a goal, checks it with a dry run, then creates it            |
+
+### Resources
+
+Clients that support resources can attach project context to a conversation, using URIs like `faststats://<project>/overview`. In Claude Code, `@`-mention them. They include the project overview, SQL tables, topic guides, notebooks, dashboard data, and error issues.
+
+## Troubleshooting
+
+### The client says it needs authentication or returns 401
+
+Finish signing in from your client, such as `/mcp` in Claude Code. If you use an API key, check that it hasn't expired or been revoked, and that you send it as `Authorization: Bearer <key>`.
+
+### The client can't finish signing in
+
+Connect with an [API key](#connect-with-an-api-key) or the [`mcp-remote` bridge](#other-clients) instead.
+
+### A tool needs the `mcp:write` scope
+
+You approved **Read only** access. Disconnect, sign in again from your client, and choose **Read and write**.
+
+### A project is missing
+
+The connection doesn't include that project's workspace, or the API key doesn't include that project. Sign in again and pick the workspace, or update the key's projects.
+
+### A tool says something isn't available
+
+Your role or the API key doesn't have the permission it needs, or the project doesn't track that data.
+
+### A result was cut off
+
+Results are limited to 100,000 characters. Ask for less, such as fewer columns, a shorter period, or a specific item.
