@@ -6,6 +6,7 @@ import Analytics from "@/components/analytics.astro";
 <link rel="icon" href="/icon-dark.svg" media="(prefers-color-scheme: dark)" />
 <Analytics />
 <script>
+	import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
 	import { enhanceImageZoom } from "@/lib/enhance-image-zoom";
 
 	// @fumadocs/astro persists the docs layout island across navigations and
@@ -17,8 +18,10 @@ import Analytics from "@/components/analytics.astro";
 	window.addEventListener(
 		"astro:before-swap",
 		(event) => {
+			// Astro only types this event for listeners on `document`.
+			const { newDocument } = event as TransitionBeforeSwapEvent;
 			const selector = "astro-island[data-astro-transition-persist]";
-			for (const doc of [document, event.newDocument]) {
+			for (const doc of [document, newDocument]) {
 				for (const island of doc.querySelectorAll(selector)) {
 					island.removeAttribute("data-astro-transition-persist");
 				}
