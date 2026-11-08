@@ -10,7 +10,7 @@
         "@faststats/web": "0.15.0",
         "@fontsource-variable/geist": "^5.3.0",
         "@fontsource-variable/geist-mono": "^5.3.0",
-        "@fumadocs/astro": "0.1.2",
+        "@fumadocs/astro": "0.2.0",
         "astro": "^7.4.7",
         "cn": "0.5.2",
         "fumadocs-core": "16.18.1",
@@ -227,7 +227,7 @@
 
     "@fuma-translate/react": ["@fuma-translate/react@1.0.2", "", { "peerDependencies": { "@types/react": "*", "react": "^19.2.0", "react-dom": "^19.2.0" }, "optionalPeers": ["@types/react"] }, "sha512-uOiOtBx3nRXR8Nu1GzBf1tApgF1FErDBTHxRIAQeyQdyOoZbrNRN6H4kDCWObY4qyGeGbHydG0DHzgeUgFDMIw=="],
 
-    "@fumadocs/astro": ["@fumadocs/astro@0.1.2", "", { "dependencies": { "@astrojs/mdx": "^8.1.1", "@fumadocs/satteri": "^0.7.1", "devalue": "^6.0.2", "satteri": "^0.10.5", "yuku-parser": "^0.19.0" }, "peerDependencies": { "@astrojs/react": "^7.0.0", "@fumadocs/asyncapi": "^0.5.4", "@fumadocs/graphql": "^0.4.2", "@fumadocs/notion": "^0.2.3", "@fumadocs/sanity": "^0.2.3", "@modelcontextprotocol/server": "2.x.x", "@portabletext/react": "^8.0.0", "@types/mdx": "*", "astro": "^7.4.0", "fumadocs-core": "^16.17.8", "fumadocs-openapi": "^12.5.7", "fumadocs-ui": "^16.17.8", "next-validate-link": "^1.6.7", "react": "^19.2.0", "react-dom": "^19.2.0" }, "optionalPeers": ["@fumadocs/asyncapi", "@fumadocs/graphql", "@fumadocs/notion", "@fumadocs/sanity", "@modelcontextprotocol/server", "@portabletext/react", "@types/mdx", "fumadocs-openapi", "fumadocs-ui", "next-validate-link"] }, "sha512-oVoqarI20ADe5kw45lpTSUw1VaZk8B01ApGrpVtDHya0veqkMm3U/7xx9t/h5TT4MagBCuHnipNfOIQ3IIOoOA=="],
+    "@fumadocs/astro": ["@fumadocs/astro@0.2.0", "", { "dependencies": { "@astrojs/mdx": "^8.1.1", "@fumadocs/satteri": "^0.7.1", "devalue": "^6.0.2", "satteri": "^0.10.5", "yuku-parser": "^0.19.0" }, "peerDependencies": { "@astrojs/react": "^7.0.0", "@types/mdx": "*", "astro": "^7.4.0", "fumadocs-core": "^16.17.8", "react": "^19.2.0", "react-dom": "^19.2.0" }, "optionalPeers": ["@types/mdx"] }, "sha512-fWTbBA/HxgOyvKEvLTBC7f0aNTqUxfDnr9TpvfvslYYQTuP5yfubFPBr9eLECmpBFB2Ng/pfybwVH5yQFk9OYg=="],
 
     "@fumadocs/json-schema": ["@fumadocs/json-schema@0.3.5", "", { "dependencies": { "@fuma-translate/react": "^1.0.2", "@scalar/json-magic": "^0.16.1" }, "peerDependencies": { "json-schema-typed": "*", "react": "^19.2.0" }, "optionalPeers": ["json-schema-typed", "react"] }, "sha512-BhFhYtVufkLY0cZfWuMFJm0Rq7oBaIDMzONrsHovhY6on7GiPiuTSuJv4ZlOgmyBaPL3HW+s1wkevjhvRUUlFg=="],
 
