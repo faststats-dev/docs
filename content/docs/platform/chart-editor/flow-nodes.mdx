@@ -133,6 +133,13 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
     					<code>avg</code>: average of numeric values
     				</li>
     				<li>
+    					<code>median</code>: middle numeric value
+    				</li>
+    				<li>
+    					<code>percentile</code>: the value a chosen share of numeric
+    					values are at or below (see <a href="#percentile">Percentile</a>)
+    				</li>
+    				<li>
     					<code>min</code>: smallest numeric value
     				</li>
     				<li>
@@ -142,6 +149,14 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
     					<code>distinct</code>: count of unique values
     				</li>
     			</ul>
+    			Text and boolean fields only offer <code>count</code> and{" "}
+    			<code>distinct</code>.
+    		</li>
+    		<li>
+    			<strong>Per</strong>: measure the function once per user, session, or
+    			server first, instead of over all rows (see{" "}
+    			<a href="#per-user-session-or-server">Per</a>). Only shown when the data
+    			source supports it.
     		</li>
     	</ul>
     </div>
@@ -150,6 +165,56 @@ Each node has handles on its top and/or bottom edge. Connect the bottom handle o
     </div>
 
 </div>
+
+#### Percentile
+
+A percentile tells you the value that a given share of values are at or below. For a page load time, the 95th percentile (`p95`) is the time 95% of page loads were faster than or equal to. Unlike an average, a percentile isn't pulled up by a few extreme values, and a high percentile shows what your slowest users experience.
+
+Choose `percentile` as the function, then type the level into the **p** field next to it:
+
+- The level starts at `95`
+- Any level above 0 and below 100 works, with up to two decimals, for example `75`, `99.9`, or `99.99`
+- Text that isn't a valid level is discarded when you leave the field
+
+Common levels:
+
+| Level        | Use it for                                                                                                            |
+| ------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `p50`        | The typical value. Same as `median`.                                                                                  |
+| `p75`        | What most users experience. Core Web Vitals are judged at p75, like the [Web Vitals](/web-analytics/web-vitals) page. |
+| `p90`, `p95` | The slow end that a sizable share of users still hits                                                                 |
+| `p99`        | Outliers and worst cases. Needs plenty of values to be stable.                                                        |
+
+Percentiles, like `median`, are estimated from a sample of each group's values. Small groups are exact. In large groups the result can shift slightly between refreshes.
+
+For example, to chart the p75 Largest Contentful Paint of each page:
+
+1. **Data Source:** Web Vitals, field **Value**
+2. **Filter:** **Metric** equals `LCP`
+3. **Group By:** **URL**
+4. **Aggregate:** `percentile`, `p75`
+
+In [Easy mode](/platform/chart-editor/easy-mode), the **Measure** picker offers **Median** and the **90th**, **95th**, and **99th percentile**. Switch to the canvas to use any other level.
+
+#### Per user, session, or server
+
+By default an aggregate combines every row in each group. Set **Per** to measure the function once per user, session, or server first, then add a second **Aggregate** node to combine those values.
+
+For example, to see how many events your heaviest users trigger:
+
+1. **Aggregate:** `count`, per `user`. This gives the number of events for each user.
+2. **Aggregate:** `percentile`, `p90`. This gives the event count that 90% of users stay at or below.
+
+Use `avg` in the second node for the average user instead, or a **Filter** followed by `count` for the number of users who did something at least N times.
+
+Which options are offered depends on the data source:
+
+| Data source                                   | Per           |
+| --------------------------------------------- | ------------- |
+| Web Events, Errors, LLM Traces, Feature Flags | user, session |
+| Web Vitals                                    | session       |
+| Mod Events                                    | server        |
+| Downloads                                     | Not available |
 
 ---
 
