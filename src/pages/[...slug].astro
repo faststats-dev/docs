@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { APIPage } from "@/components/api-page";
+import { Docs } from "@/components/docs";
+import Layout from "@/layouts/Layout.astro";
+import {
+	getPageImageUrl,
+	getPageMarkdownUrl,
+	getPageSlug,
+	getPageTitle,
+	isOpenAPIPage,
+	source,
+} from "@/lib/source";
+
+export const getStaticPaths = (() =>
+	source.getPages().map((page) => ({
+		params: { slug: getPageSlug(page) },
+		props: { page },
+	}))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { page } = Astro.props;
+const provider = { pathname: Astro.url.pathname, params: Astro.params };
+const title = getPageTitle(page);
+const tree = await source.serializePageTree(source.getPageTree());
+
+// API pages render the OpenAPI schema, the others their MDX content.
+const api = isOpenAPIPage(page) ? page.data : undefined;
+const mdx = isOpenAPIPage(page) ? undefined : await page.data.load();
+const Content = mdx?.body;
+---
+
+<Layout
+	title={title}
+	description={page.data.description}
+	image={getPageImageUrl(page)}
+>
+	<Docs
+		client:load
+		{...provider}
+		tree={tree}
+		title={title}
+		description={page.data.description}
+		toc={api?.toc ?? mdx?.toc ?? []}
+		full={api ? true : page.data.full}
+		markdownUrl={getPageMarkdownUrl(page)}
+	>
+		{api && <APIPage client:load {...provider} page={api.getOpenAPIPageProps()} />}
+		{Content && <Content {...provider} />}
+	</Docs>
+</Layout>

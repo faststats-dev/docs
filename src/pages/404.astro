@@ -1,8 +1,11 @@
 ---
-import HomeLayout from "@fumadocs/astro/components/HomeLayout.astro";
 import DocsNotFound from "@/components/docs/docs-not-found.astro";
+import { Home } from "@/components/home";
+import Layout from "@/layouts/Layout.astro";
 ---
 
-<HomeLayout title="Page not found">
-	<DocsNotFound />
-</HomeLayout>
+<Layout title="Page not found">
+	<Home client:load pathname={Astro.url.pathname} params={Astro.params}>
+		<DocsNotFound />
+	</Home>
+</Layout>

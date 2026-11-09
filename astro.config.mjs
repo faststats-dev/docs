@@ -7,8 +7,6 @@ export default defineConfig({
 	integrations: [
 		fumadocs({
 			components: "./src/mdx-components.tsx",
-			layout: "./src/lib/layout.shared.tsx",
-			page: "./src/components/docs.tsx",
 		}),
 	],
 	vite: {
@@ -17,7 +15,6 @@ export default defineConfig({
 		// a second copy of fumadocs-core in dev and break its React context.
 		optimizeDeps: {
 			exclude: ["fumadocs-core", "fumadocs-ui"],
-			// Reached only through @fumadocs/astro, which Vite does not scan.
 			include: ["fumadocs-openapi/ui"],
 		},
 	},

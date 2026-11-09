@@ -1,4 +1,8 @@
-import type { DocsPageProps } from "@fumadocs/astro/config";
+import {
+	type SerializedPageTree,
+	useFumadocsLoader,
+} from "fumadocs-core/source/client";
+import type { TOCItemType } from "fumadocs-core/toc";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import {
 	DocsDescription,
@@ -11,34 +15,55 @@ import {
 	DocsSidebarBanner,
 	DocsSidebarFooter,
 } from "@/components/docs/docs-sidebar";
+import { Provider, type ProviderProps } from "@/components/provider";
 import { getDocsTabs } from "@/lib/docs-tabs";
+import { baseOptions } from "@/lib/layout.shared";
 
-/** The docs page; the MDX content arrives as `children`. */
-export default function Docs({ tree, page, layout, children }: DocsPageProps) {
+export interface DocsProps extends ProviderProps {
+	tree: SerializedPageTree;
+	title: string;
+	description?: string;
+	toc: TOCItemType[];
+	full?: boolean;
+	markdownUrl: string;
+}
+
+/** The layout island of docs pages; the page content arrives as `children`. */
+export function Docs({
+	tree: serializedTree,
+	title,
+	description,
+	toc,
+	full,
+	markdownUrl,
+	children,
+	...provider
+}: DocsProps) {
+	const { tree } = useFumadocsLoader({ tree: serializedTree });
 	const tabs = useMemo(() => getDocsTabs(tree), [tree]);
 
 	return (
-		<DocsLayout
-			{...layout}
-			tree={tree}
-			tabMode="navbar"
-			tabs={tabs}
-			sidebar={{
-				collapsible: true,
-				banner: DocsSidebarBanner,
-				footer: DocsSidebarFooter,
-			}}
-		>
-			<DocsPage toc={page.toc} full={page.full}>
-				<DocsTitle>{page.title}</DocsTitle>
-				<DocsDescription className="mb-0">{page.description}</DocsDescription>
-				{page.markdownUrl ? (
+		<Provider {...provider}>
+			<DocsLayout
+				{...baseOptions()}
+				tree={tree}
+				tabMode="navbar"
+				tabs={tabs}
+				sidebar={{
+					collapsible: true,
+					banner: DocsSidebarBanner,
+					footer: DocsSidebarFooter,
+				}}
+			>
+				<DocsPage toc={toc} full={full}>
+					<DocsTitle>{title}</DocsTitle>
+					<DocsDescription className="mb-0">{description}</DocsDescription>
 					<div className="flex flex-row items-center gap-2 border-b pb-6">
-						<MarkdownCopyButton markdownUrl={page.markdownUrl} />
+						<MarkdownCopyButton markdownUrl={markdownUrl} />
 					</div>
-				) : null}
-				{children}
-			</DocsPage>
-		</DocsLayout>
+					{children}
+				</DocsPage>
+			</DocsLayout>
+		</Provider>
 	);
 }
