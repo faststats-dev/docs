@@ -42,5 +42,8 @@
 		"typescript": "6.0.3",
 		"wrangler": "^4.158.0"
 	},
-	"packageManager": "bun@1.4.4"
+	"packageManager": "bun@1.4.4",
+	"patchedDependencies": {
+		"@fumadocs/astro@0.2.2": "patches/@fumadocs%2Fastro@0.2.2.patch"
+	}
 }
