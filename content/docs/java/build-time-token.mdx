@@ -1,0 +1,233 @@
+---
+title: Build-Time Token
+description: Inject your FastStats token at build time so it stays out of your code and forks don't send data to your project
+icon: KeyRound
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+The setup examples pass `"YOUR_TOKEN"` directly to the context factory. That is
+fine for trying things out, but once your project lives in a public repository,
+a hardcoded token gets copied into every fork. Anyone who builds and runs a fork
+then sends their data to your FastStats project, mixing it with your own. The
+token also stays in the git history even after you remove it.
+
+Instead, leave the token out of your code and let your build write it into a
+resource file. Gradle reads it from an environment variable (a CI secret) or a
+local Gradle property, and the SDK picks it up when the context is created.
+Forks don't have your secret, so their builds don't send data to your project.
+
+<Callout type="info">Requires SDK version `0.32.1` or newer.</Callout>
+
+[View full example on GitHub](https://github.com/faststats-dev/faststats-java-examples/tree/main/build-token)
+
+## How It Works
+
+When you create a factory without a token, the SDK reads it from the resource
+`META-INF/faststats/<id>.token` in your jar. Surrounding whitespace is ignored.
+`<id>` depends on the platform:
+
+| Platform              | `<id>`                        | Factory without token                   |
+| --------------------- | ----------------------------- | --------------------------------------- |
+| Bukkit                | plugin name from `plugin.yml` | `new BukkitContext.Factory(plugin)`     |
+| BungeeCord            | plugin name from `plugin.yml` | `new BungeeContext.Factory(plugin)`     |
+| Hytale                | plugin name                   | `new HytaleContext.Factory(plugin)`     |
+| Nukkit                | plugin name from `plugin.yml` | `new NukkitContext.Factory(plugin)`     |
+| Velocity              | plugin id                     | don't call `.token(...)`                |
+| Sponge                | plugin id                     | don't call `.token(...)`                |
+| Fabric/Forge/NeoForge | mod id                        | `new FabricContext.Factory(modId)` etc. |
+| Minestom              | `minestom`                    | `new MinestomContext.Factory()`         |
+
+The file name includes the id because Fabric, Forge and NeoForge load every mod
+from one shared class loader, so each mod needs its own file.
+
+If the file is missing or empty, the context is created without any services:
+FastStats stays disabled, never sends data, and your plugin keeps working
+normally. With [debug logging](/java/system-properties) enabled, a warning names
+the expected resource path.
+
+## Gradle Setup
+
+Add the following to your build script. Replace `ExamplePlugin` with your
+`<id>` from the table above.
+
+<Tabs defaultIndex='0' groupId="gradle" items={['Kotlin DSL', 'Groovy DSL']}>
+  <Tab id="kotlin" value="Kotlin DSL">
+    ```kotlin title="build.gradle.kts"
+    // 1. FASTSTATS_TOKEN environment variable (e.g. a CI secret)
+    // 2. faststats.token Gradle property (-P flag)
+    // 3. faststats.token file in the project directory (git-ignored)
+    val faststatsToken = providers.environmentVariable("FASTSTATS_TOKEN")
+        .orElse(providers.gradleProperty("faststats.token"))
+        .orElse(providers.fileContents(layout.projectDirectory.file("faststats.token")).asText.map { it.trim() })
+        .orElse("")
+
+    tasks.processResources {
+        val token = faststatsToken
+        inputs.property("faststatsToken", token)
+
+        doLast {
+            val file = destinationDir.resolve("META-INF/faststats/ExamplePlugin.token")
+            file.parentFile.mkdirs()
+            file.writeText(token.get())
+        }
+    }
+    ```
+
+  </Tab>
+  <Tab id="groovy" value="Groovy DSL">
+    ```groovy title="build.gradle"
+    // 1. FASTSTATS_TOKEN environment variable (e.g. a CI secret)
+    // 2. faststats.token Gradle property (-P flag)
+    // 3. faststats.token file in the project directory (git-ignored)
+    def faststatsToken = providers.environmentVariable('FASTSTATS_TOKEN')
+        .orElse(providers.gradleProperty('faststats.token'))
+        .orElse(providers.fileContents(layout.projectDirectory.file('faststats.token')).asText.map { it.trim() })
+        .orElse('')
+
+    tasks.named('processResources') {
+        def token = faststatsToken
+        inputs.property('faststatsToken', token)
+
+        doLast {
+            def file = new File(destinationDir, 'META-INF/faststats/ExamplePlugin.token')
+            file.parentFile.mkdirs()
+            file.text = token.get()
+        }
+    }
+    ```
+
+  </Tab>
+</Tabs>
+
+The file is written to `build/`, so it is never committed. Declaring the token
+as a task input reruns `processResources` whenever the token changes. The setup
+is compatible with the Gradle configuration cache. If you relocate FastStats
+with the Shadow plugin, the resource path stays the same.
+
+<Callout type="info">
+	Gradle skips `processResources` when `src/main/resources` is empty, so no
+	token file is written. Plugins and mods always have a descriptor such as
+	`plugin.yml` there. On Minestom, add any resource file if you don't have one.
+</Callout>
+
+## Using the Token
+
+Create the factory without a token:
+
+<Tabs defaultIndex='0' groupId="jvm-language" items={['Java', 'Kotlin']}>
+  <Tab id="java" value="Java">
+    ```java
+    import dev.faststats.bukkit.BukkitContext;
+    import org.bukkit.plugin.java.JavaPlugin;
+
+    public final class ExamplePlugin extends JavaPlugin {
+        // Reads META-INF/faststats/ExamplePlugin.token
+        private final BukkitContext context = new BukkitContext.Factory(this)
+                .metrics(factory -> factory.create())
+                .create();
+
+        @Override
+        public void onEnable() {
+            context.ready();
+        }
+
+        @Override
+        public void onDisable() {
+            context.shutdown();
+        }
+    }
+    ```
+
+  </Tab>
+  <Tab id="kotlin" value="Kotlin">
+    ```kotlin
+    import dev.faststats.bukkit.BukkitContext
+    import org.bukkit.plugin.java.JavaPlugin
+
+    class ExamplePlugin : JavaPlugin() {
+        // Reads META-INF/faststats/ExamplePlugin.token
+        private val context = BukkitContext.Factory(this)
+            .metrics { factory -> factory.create() }
+            .create()
+
+        override fun onEnable() {
+            context.ready()
+        }
+
+        override fun onDisable() {
+            context.shutdown()
+        }
+    }
+    ```
+
+  </Tab>
+</Tabs>
+
+## Local Development
+
+Provide the token in one of these ways when building locally:
+
+```bash
+# Environment variable
+FASTSTATS_TOKEN=your-token ./gradlew build
+
+# Gradle property on the command line
+./gradlew build -Pfaststats.token=your-token
+```
+
+To avoid passing it on every build, put the token in a `faststats.token` file
+in your project directory and add that file to your `.gitignore`. Each project
+keeps its own file, so this also works when you manage several projects:
+
+```text title="faststats.token"
+your-token
+```
+
+```text title=".gitignore"
+faststats.token
+```
+
+<Callout type="warning">
+	Never put the token in your project's own `gradle.properties`. That file is
+	committed with the rest of the project. Avoid `~/.gradle/gradle.properties`
+	too: it is shared by all your projects, so every project would get the same
+	token.
+</Callout>
+
+Without a token the build still succeeds and writes an empty token file. The
+plugin then runs with FastStats disabled.
+
+## GitHub Actions
+
+1. In your repository, open **Settings → Secrets and variables → Actions**.
+2. Click **New repository secret**, name it `FASTSTATS_TOKEN` and paste your
+   token as the value.
+3. Pass the secret as an environment variable to the Gradle step of your
+   workflow:
+
+```yaml title=".github/workflows/build.yml"
+- name: Build with Gradle
+  run: ./gradlew build
+  env:
+    FASTSTATS_TOKEN: ${{ secrets.FASTSTATS_TOKEN }}
+```
+
+Other CI systems work the same way: store the token as a secret and expose it
+to the build as the `FASTSTATS_TOKEN` environment variable.
+
+<Callout type="info">
+	GitHub does not pass secrets to workflows triggered by pull requests from
+	forks. Those builds still compile and run, but FastStats is disabled in them,
+	so they don't send data to your project.
+</Callout>
+
+## Limitations
+
+<Callout type="warning">
+	This is not meant to hide the token. Its purpose is to keep the token out of
+	your code, so forks don't send data to your project. The token is still stored
+	in your jar as a plain text file, and anyone who has the jar can extract it.
+	Project tokens can't be rotated, so treat a token in a published jar as
+	public.
+</Callout>

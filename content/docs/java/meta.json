@@ -13,6 +13,7 @@
 		"---Platforms---",
 		"...platform",
 		"---Advanced---",
+		"build-time-token",
 		"obfuscation-mappings",
 		"system-properties"
 	]
