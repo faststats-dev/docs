@@ -17,7 +17,7 @@ resource file. Gradle reads it from an environment variable (a CI secret) or a
 local Gradle property, and the SDK picks it up when the context is created.
 Forks don't have your secret, so their builds don't send data to your project.
 
-<Callout type="info">Requires SDK version `0.32.1` or newer.</Callout>
+<Callout type="info">Requires SDK version `0.32.2` or newer.</Callout>
 
 [View full example on GitHub](https://github.com/faststats-dev/faststats-java-examples/tree/main/build-token)
 
@@ -41,15 +41,16 @@ When you create a factory without a token, the SDK reads it from the resource
 The file name includes the id because Fabric, Forge and NeoForge load every mod
 from one shared class loader, so each mod needs its own file.
 
-If the file is missing or empty, the context is created without any services:
+If the file is missing, empty or doesn't contain a valid token, the context is
+created without any services:
 FastStats stays disabled, never sends data, and your plugin keeps working
 normally. With [debug logging](/java/system-properties) enabled, a warning names
 the expected resource path.
 
 ## Gradle Setup
 
-Add the following to your build script. Replace `ExamplePlugin` with your
-`<id>` from the table above.
+Add the following to your build script. Replace `<id>` with the id for your
+platform from the [table above](#how-it-works), for example your plugin name.
 
 <Tabs defaultIndex='0' groupId="gradle" items={['Kotlin DSL', 'Groovy DSL']}>
   <Tab id="kotlin" value="Kotlin DSL">
@@ -67,7 +68,7 @@ Add the following to your build script. Replace `ExamplePlugin` with your
         inputs.property("faststatsToken", token)
 
         doLast {
-            val file = destinationDir.resolve("META-INF/faststats/ExamplePlugin.token")
+            val file = destinationDir.resolve("META-INF/faststats/<id>.token")
             file.parentFile.mkdirs()
             file.writeText(token.get())
         }
@@ -90,7 +91,7 @@ Add the following to your build script. Replace `ExamplePlugin` with your
         inputs.property('faststatsToken', token)
 
         doLast {
-            def file = new File(destinationDir, 'META-INF/faststats/ExamplePlugin.token')
+            def file = new File(destinationDir, 'META-INF/faststats/<id>.token')
             file.parentFile.mkdirs()
             file.text = token.get()
         }
@@ -111,6 +112,101 @@ with the Shadow plugin, the resource path stays the same.
 	`plugin.yml` there. On Minestom, add any resource file if you don't have one.
 </Callout>
 
+## Maven Setup
+
+[View full Maven example on GitHub](https://github.com/faststats-dev/faststats-java-examples/tree/main/build-token-maven)
+
+Maven can write the file with resource filtering. Create the token file with a
+placeholder and commit it. Replace `<id>` in the file name with the id for your
+platform from the [table above](#how-it-works):
+
+```text title="src/main/resources/META-INF/faststats/<id>.token"
+${faststats.token}
+```
+
+Then add the following to your `pom.xml`:
+
+```xml title="pom.xml"
+<properties>
+    <!-- empty by default, so builds without a token still work -->
+    <faststats.token></faststats.token>
+</properties>
+
+<profiles>
+    <!-- CI: use the FASTSTATS_TOKEN environment variable when it is set -->
+    <profile>
+        <id>faststats-env</id>
+        <activation>
+            <property>
+                <name>env.FASTSTATS_TOKEN</name>
+            </property>
+        </activation>
+        <properties>
+            <faststats.token>${env.FASTSTATS_TOKEN}</faststats.token>
+        </properties>
+    </profile>
+</profiles>
+
+<build>
+    <resources>
+        <!-- filter only the token file, so ${...} in other resources stays untouched -->
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+            <includes>
+                <include>META-INF/faststats/*.token</include>
+            </includes>
+        </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+                <exclude>META-INF/faststats/*.token</exclude>
+            </excludes>
+        </resource>
+    </resources>
+    <plugins>
+        <!-- local builds: read faststats.token from a git-ignored faststats.properties file, if present -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <executions>
+                <execution>
+                    <phase>initialize</phase>
+                    <goals>
+                        <goal>read-project-properties</goal>
+                    </goals>
+                    <configuration>
+                        <files>
+                            <file>${project.basedir}/faststats.properties</file>
+                        </files>
+                        <quiet>true</quiet>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+If you already filter all of `src/main/resources` (for example to put
+`${project.version}` into your `plugin.yml`), you don't need the two
+`<resource>` blocks. The token file is then filtered with everything else.
+
+Maven takes the token from the first of these that is set:
+
+1. `-Dfaststats.token=your-token` on the command line
+2. `faststats.token=your-token` in a `faststats.properties` file next to your
+   `pom.xml`. Add that file to your `.gitignore`.
+3. The `FASTSTATS_TOKEN` environment variable, for example a CI secret
+
+<Callout type="info">
+	If a property name has a typo, Maven leaves `${faststats.token}` in the file
+	as is. The SDK treats an invalid token in the file like a missing one and
+	disables FastStats instead of failing on startup.
+</Callout>
+
 ## Using the Token
 
 Create the factory without a token:
@@ -122,7 +218,7 @@ Create the factory without a token:
     import org.bukkit.plugin.java.JavaPlugin;
 
     public final class ExamplePlugin extends JavaPlugin {
-        // Reads META-INF/faststats/ExamplePlugin.token
+        // Reads META-INF/faststats/<id>.token, where <id> is the plugin name
         private final BukkitContext context = new BukkitContext.Factory(this)
                 .metrics(factory -> factory.create())
                 .create();
@@ -146,7 +242,7 @@ Create the factory without a token:
     import org.bukkit.plugin.java.JavaPlugin
 
     class ExamplePlugin : JavaPlugin() {
-        // Reads META-INF/faststats/ExamplePlugin.token
+        // Reads META-INF/faststats/<id>.token, where <id> is the plugin name
         private val context = BukkitContext.Factory(this)
             .metrics { factory -> factory.create() }
             .create()
@@ -166,7 +262,8 @@ Create the factory without a token:
 
 ## Local Development
 
-Provide the token in one of these ways when building locally:
+With Gradle, provide the token in one of these ways when building locally (for
+Maven, see [Maven Setup](#maven-setup)):
 
 ```bash
 # Environment variable
@@ -203,8 +300,8 @@ plugin then runs with FastStats disabled.
 1. In your repository, open **Settings → Secrets and variables → Actions**.
 2. Click **New repository secret**, name it `FASTSTATS_TOKEN` and paste your
    token as the value.
-3. Pass the secret as an environment variable to the Gradle step of your
-   workflow:
+3. Pass the secret as an environment variable to the build step of your
+   workflow. This works the same for Gradle and Maven:
 
 ```yaml title=".github/workflows/build.yml"
 - name: Build with Gradle
