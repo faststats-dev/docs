@@ -3,12 +3,14 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { DocsBody } from "fumadocs-ui/layouts/notebook/page";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import { McpInstallButtons } from "@/components/mcp-install-buttons";
 import { ContentProvider, type ProviderProps } from "@/components/provider";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
 	return {
 		...defaultMdxComponents,
 		DynamicCodeBlock,
+		McpInstallButtons,
 		Tabs,
 		Tab,
 		...components,

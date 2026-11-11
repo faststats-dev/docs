@@ -18,6 +18,10 @@ The server uses the Streamable HTTP transport. A client that only supports stdio
 
 Most clients sign in with OAuth, so you only need to add the URL. To connect without a browser, use an [API key](#connect-with-an-api-key) instead.
 
+Install in one click, then sign in when your app asks:
+
+<McpInstallButtons />
+
 <Callout type="info">
 	Menu names and plan limits in these apps change often. If a step doesn't match
 	what you see, check the app's own MCP documentation.
@@ -206,7 +210,9 @@ Antigravity registers itself with FastStats, so you don't need the `oauth` block
     </Tab>
     <Tab value="Cursor">
 
-Add the server to `.cursor/mcp.json` in your project, or to `~/.cursor/mcp.json` to use it everywhere:
+<McpInstallButtons clients={["cursor"]} />
+
+Or add the server to `.cursor/mcp.json` in your project, or to `~/.cursor/mcp.json` to use it everywhere:
 
 ```json title=".cursor/mcp.json"
 {
@@ -223,7 +229,9 @@ Then open **Cursor Settings** > **MCP** and select **Connect** next to **faststa
     </Tab>
     <Tab value="VS Code">
 
-Add the server to `.vscode/mcp.json` in your project:
+<McpInstallButtons clients={["vscode", "vscode-insiders"]} />
+
+Or add the server to `.vscode/mcp.json` in your project:
 
 ```json title=".vscode/mcp.json"
 {
