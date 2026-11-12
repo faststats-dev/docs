@@ -1,0 +1,282 @@
+---
+title: Reverse Proxy
+description: Send FastStats requests through your own domain
+icon: Route
+---
+
+Ad blockers and privacy extensions often block requests to third-party
+analytics domains. A reverse proxy serves the FastStats endpoints from your own
+domain, so the browser only talks to your site and data is not lost.
+
+Setup has two parts:
+
+1. Forward a path on your domain, such as `/fs`, to
+   `https://metrics.faststats.dev`.
+2. Point the SDK at that path with `baseUrl`.
+
+Choose a neutral path. Names like `/analytics`, `/stats`, or `/faststats` are
+more likely to be on blocklists.
+
+## Endpoints
+
+The SDK sends `POST` requests to these routes, relative to `baseUrl`:
+
+| Route          | Used by                        |
+| -------------- | ------------------------------ |
+| `/v1/web`      | Page views, events, and errors |
+| `/v1/identify` | `identify`                     |
+| `/v1/traits`   | `setTraits` and `unsetTraits`  |
+| `/v1/vitals`   | Web Vitals                     |
+| `/v1/replay`   | Session replay                 |
+
+Whatever proxy you use must:
+
+- Forward everything under the prefix, not only the routes above, so new SDK
+  routes keep working.
+- Keep the query string. Replay uploads use `?encoding=gzip`.
+- Keep the `Origin` and `Referer` headers. FastStats checks them against your
+  project's allowed hostnames.
+- Never cache responses.
+
+## Set the Base URL
+
+Once the proxy is in place, set `baseUrl` to its path. It applies to the core
+and every extension.
+
+<Tabs items={["React", "JavaScript", "Nuxt"]}>
+	<Tab value="React">
+
+```tsx
+<Analytics siteKey="your_site_key" baseUrl="/fs" />
+```
+
+    </Tab>
+    <Tab value="JavaScript">
+
+```ts
+import { init } from "@faststats/web";
+
+init({
+	siteKey: "your_site_key",
+	baseUrl: "/fs",
+});
+```
+
+    </Tab>
+    <Tab value="Nuxt">
+
+```ts title="nuxt.config.ts"
+export default defineNuxtConfig({
+	modules: ["@faststats/nuxt"],
+	faststats: {
+		siteKey: "your_site_key",
+		baseUrl: "/fs",
+	},
+});
+```
+
+    </Tab>
+
+</Tabs>
+
+A relative path resolves against the current page's origin. Use a full URL,
+such as `https://example.com/fs`, when the proxy runs on a different host.
+
+## Frameworks
+
+### Next.js
+
+Add a rewrite in your Next.js config.
+
+```ts title="next.config.ts"
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+	async rewrites() {
+		return [
+			{
+				source: "/fs/:path*",
+				destination: "https://metrics.faststats.dev/:path*",
+			},
+		];
+	},
+};
+
+export default nextConfig;
+```
+
+### Nitro
+
+Use a `proxy` route rule.
+
+```ts title="nitro.config.ts"
+export default defineNitroConfig({
+	routeRules: {
+		"/fs/**": { proxy: "https://metrics.faststats.dev/**" },
+	},
+});
+```
+
+### Nuxt
+
+Nuxt runs on Nitro, so the same route rule works in `nuxt.config`. Set the
+module's `baseUrl` next to it.
+
+```ts title="nuxt.config.ts"
+export default defineNuxtConfig({
+	modules: ["@faststats/nuxt"],
+	routeRules: {
+		"/fs/**": { proxy: "https://metrics.faststats.dev/**" },
+	},
+	faststats: {
+		siteKey: "your_site_key",
+		baseUrl: "/fs",
+	},
+});
+```
+
+### Remix
+
+Add a splat resource route that forwards `POST` requests. The same code works in
+React Router framework mode; import the types from `react-router` instead.
+
+```ts title="app/routes/fs.$.ts"
+import type { ActionFunctionArgs } from "@remix-run/node";
+
+export async function action({ request, params }: ActionFunctionArgs) {
+	const { search } = new URL(request.url);
+	const target = `https://metrics.faststats.dev/${params["*"]}${search}`;
+
+	const headers = new Headers(request.headers);
+	headers.delete("host");
+	headers.delete("cookie");
+
+	const response = await fetch(target, {
+		method: "POST",
+		headers,
+		body: await request.arrayBuffer(),
+	});
+
+	return new Response(response.body, {
+		status: response.status,
+		headers: {
+			"Content-Type":
+				response.headers.get("Content-Type") ?? "application/json",
+		},
+	});
+}
+```
+
+### SvelteKit
+
+Add a catch-all server route that forwards `POST` requests.
+
+```ts title="src/routes/fs/[...path]/+server.ts"
+import type { RequestHandler } from "./$types";
+
+export const POST: RequestHandler = async ({ request, params, url }) => {
+	const target = `https://metrics.faststats.dev/${params.path}${url.search}`;
+
+	const headers = new Headers(request.headers);
+	headers.delete("host");
+	headers.delete("cookie");
+
+	const response = await fetch(target, {
+		method: "POST",
+		headers,
+		body: await request.arrayBuffer(),
+	});
+
+	return new Response(response.body, {
+		status: response.status,
+		headers: {
+			"Content-Type":
+				response.headers.get("Content-Type") ?? "application/json",
+		},
+	});
+};
+```
+
+Use the global `fetch` here, not the one SvelteKit passes to the handler, so the
+request goes straight to FastStats.
+
+## Hosts
+
+### Cloudflare
+
+Deploy a Worker on your domain that strips the prefix and forwards the request.
+
+```ts title="src/index.ts"
+const PREFIX = "/fs";
+
+export default {
+	async fetch(request: Request): Promise<Response> {
+		const url = new URL(request.url);
+		const path = url.pathname.slice(PREFIX.length);
+		const target = new URL(path + url.search, "https://metrics.faststats.dev");
+
+		const proxied = new Request(target, request);
+		proxied.headers.delete("cookie");
+		return fetch(proxied);
+	},
+};
+```
+
+Route the prefix on your zone to the Worker.
+
+```jsonc title="wrangler.jsonc"
+{
+	"name": "faststats-proxy",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-10-01",
+	"routes": [{ "pattern": "example.com/fs/*", "zone_name": "example.com" }],
+}
+```
+
+### Vercel
+
+Vercel rewrites work for any framework. Add one to `vercel.json`.
+
+```json title="vercel.json"
+{
+	"rewrites": [
+		{
+			"source": "/fs/:path*",
+			"destination": "https://metrics.faststats.dev/:path*"
+		}
+	]
+}
+```
+
+### Netlify
+
+Add a proxy rule with status `200`. Netlify passes the query string through.
+
+<Tabs items={["netlify.toml", "_redirects"]}>
+	<Tab value="netlify.toml">
+
+```toml title="netlify.toml"
+[[redirects]]
+from = "/fs/*"
+to = "https://metrics.faststats.dev/:splat"
+status = 200
+force = true
+```
+
+    </Tab>
+    <Tab value="_redirects">
+
+```txt title="_redirects"
+/fs/*  https://metrics.faststats.dev/:splat  200!
+```
+
+    </Tab>
+
+</Tabs>
+
+## Verify the Setup
+
+Turn on `debug`, load your site, and open the browser's network tab. Requests
+should go to `/fs/v1/web` on your own domain and return `200`. A `403` with
+`Origin not allowed` means the proxy dropped the `Origin` and `Referer`
+headers, or your domain is not in the project's allowed hostnames.
