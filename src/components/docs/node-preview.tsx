@@ -311,10 +311,26 @@ export function FilterNodePreview() {
 
 export function AggregateNodePreview() {
 	return (
-		<NodeShell label="Aggregate" icon={Sigma} category="aggregate">
-			<Field label="Function">
-				<FakeSelect value="count" mono />
-			</Field>
+		<NodeShell label="Aggregate" icon={Sigma} category="aggregate" width={300}>
+			<div className="flex gap-1.5">
+				<div className="min-w-0 flex-1">
+					<Field label="Function">
+						<div className="flex gap-1.5">
+							<div className="min-w-0 flex-1">
+								<FakeSelect value="percentile" mono />
+							</div>
+							<div className="w-16 shrink-0">
+								<FakeInput value="p95" mono />
+							</div>
+						</div>
+					</Field>
+				</div>
+				<div className="w-24 shrink-0">
+					<Field label="Per">
+						<FakeSelect value="all rows" mono />
+					</Field>
+				</div>
+			</div>
 		</NodeShell>
 	);
 }
