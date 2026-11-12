@@ -4,11 +4,18 @@ description: Measure how many users come back over time with cohort-based retent
 icon: RefreshCcw
 ---
 
-Retention shows how many users return after their first seen period. FastStats groups users into cohorts and then tracks what percentage of each cohort is still active in later days or weeks.
+Retention shows how many users come back after they first show up. FastStats groups users into cohorts by the day, week, or month they started, then tracks what share of each cohort returns in each later period.
 
-## Main Visualization (Cohort Table)
+Open **Retention** in a project's sidebar to see it.
 
-Static preview from the retention page. This example is not interactive.
+## Who counts as a user
+
+- **Web analytics projects:** each person. Visitors you [identify](/web-analytics/identify) are counted once across devices and sessions, everyone else by their anonymous visitor ID.
+- **Plugin and mod projects:** each server.
+
+## Cohort table
+
+Example cohort table. Hover a cell to see the count behind it.
 
 <div className="not-prose border border-border bg-card p-4">
 	<div className="overflow-x-auto">
@@ -17,127 +24,211 @@ Static preview from the retention page. This example is not interactive.
 				<tr className="border-b border-border/60">
 					<th className="px-2 py-2 text-left font-medium">Cohort</th>
 					<th className="px-2 py-2 text-right font-medium">Users</th>
-					<th className="px-2 py-2 text-center font-medium">Week 0</th>
-					<th className="px-2 py-2 text-center font-medium">Week 1</th>
-					<th className="px-2 py-2 text-center font-medium">Week 2</th>
-					<th className="px-2 py-2 text-center font-medium">Week 3</th>
-					<th className="px-2 py-2 text-center font-medium">Week 4</th>
+					<th className="px-2 py-2 text-center font-medium">Wk 0</th>
+					<th className="px-2 py-2 text-center font-medium">Wk 1</th>
+					<th className="px-2 py-2 text-center font-medium">Wk 2</th>
+					<th className="px-2 py-2 text-center font-medium">Wk 3</th>
+					<th className="px-2 py-2 text-center font-medium">Wk 4</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr className="border-b border-border/40">
-					<td className="px-2 py-2">2026-W01</td>
-					<td className="px-2 py-2 text-right text-muted-foreground">1,240</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							100%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							51%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							38%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							31%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							27%
-						</div>
-					</td>
-				</tr>
-				<tr className="border-b border-border/40">
-					<td className="px-2 py-2">2026-W02</td>
-					<td className="px-2 py-2 text-right text-muted-foreground">1,178</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							100%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							49%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							35%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							29%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							24%
-						</div>
-					</td>
-				</tr>
-				<tr className="border-b border-border/40">
-					<td className="px-2 py-2">2026-W03</td>
-					<td className="px-2 py-2 text-right text-muted-foreground">1,321</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							100%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							46%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							33%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							26%
-						</div>
-					</td>
-					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							22%
-						</div>
-					</td>
-				</tr>
-				<tr className="border-b border-border/40">
-					<td className="px-2 py-2">2026-W04</td>
+					<td className="px-2 py-2">Wk of Jan 26</td>
 					<td className="px-2 py-2 text-right text-muted-foreground">1,215</td>
 					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-600 text-white"
+						>
 							100%
+							<span className="pointer-events-none absolute top-full left-1/2 z-10 mt-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								1,215 of 1,215 users
+							</span>
 						</div>
 					</td>
 					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-500 text-white"
+						>
 							44%
+							<span className="pointer-events-none absolute top-full left-1/2 z-10 mt-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								535 of 1,215 users
+							</span>
 						</div>
 					</td>
 					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							30%
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-muted text-muted-foreground">
+							—
 						</div>
 					</td>
 					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							24%
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-muted text-muted-foreground">
+							—
 						</div>
 					</td>
 					<td className="px-1 py-1 text-center">
-						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-orange-200 text-orange-950">
-							19%
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-muted text-muted-foreground">
+							—
+						</div>
+					</td>
+				</tr>
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">Wk of Jan 19</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,321</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-600 text-white"
+						>
+							100%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								1,321 of 1,321 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-500 text-white"
+						>
+							46%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								608 of 1,321 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-400 text-orange-950"
+						>
+							33%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								436 of 1,321 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-muted text-muted-foreground">
+							—
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-muted text-muted-foreground">
+							—
+						</div>
+					</td>
+				</tr>
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">Wk of Jan 12</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,178</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-600 text-white"
+						>
+							100%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								1,178 of 1,178 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-500 text-white"
+						>
+							49%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								577 of 1,178 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-400 text-orange-950"
+						>
+							35%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								412 of 1,178 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-400 text-orange-950"
+						>
+							29%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								342 of 1,178 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div className="mx-auto flex h-7 w-12 items-center justify-center bg-muted text-muted-foreground">
+							—
+						</div>
+					</td>
+				</tr>
+				<tr className="border-b border-border/40">
+					<td className="px-2 py-2">Wk of Jan 05</td>
+					<td className="px-2 py-2 text-right text-muted-foreground">1,240</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-600 text-white"
+						>
+							100%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								1,240 of 1,240 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-500 text-white"
+						>
+							51%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								632 of 1,240 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-400 text-orange-950"
+						>
+							38%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								471 of 1,240 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-400 text-orange-950"
+						>
+							31%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								384 of 1,240 users
+							</span>
+						</div>
+					</td>
+					<td className="px-1 py-1 text-center">
+						<div
+							tabIndex={0}
+							className="group relative cursor-default outline-none focus-visible:ring-2 focus-visible:ring-ring mx-auto flex h-7 w-12 items-center justify-center bg-orange-400 text-orange-950"
+						>
+							27%
+							<span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap border border-border bg-popover px-2 py-1 text-popover-foreground shadow-md group-hover:block group-focus-visible:block">
+								335 of 1,240 users
+							</span>
 						</div>
 					</td>
 				</tr>
@@ -146,15 +237,112 @@ Static preview from the retention page. This example is not interactive.
 	</div>
 </div>
 
-## How to Read the Chart
+- **Each row is a cohort**, newest first, labelled by when it started (for example `Wk of Jan 05`)
+- **Users** is the cohort's size. With [Recurring](#cohorts) cohorts the column is called **Active**.
+- **Each period column** shows the share of the cohort that came back that many periods later. Period 0 is the period the cohort started in.
+- **Hover a cell** to see the count behind it, for example _612 of 1,240 users_
+- **Darker cells** mean higher retention. A dash means the period hasn't finished yet.
 
-- **Cohort table rows** are groups of users by first-visit period (for example, `2026-W01`)
-- **Week columns** (`Week 0`, `Week 1`, ...) show the share of that cohort active in each later week
-- **Faster color fading** across columns usually means users drop off earlier
-- **Use comparisons across rows** to spot whether newer cohorts are retaining better than older ones
+Read down a column to compare cohorts at the same age. If newer cohorts retain better at Week 1, a change you shipped may be helping.
 
-Use it to answer:
+## Options
 
-- Are new users sticking longer than older cohorts?
-- At what week does retention drop the fastest?
-- Are changes in onboarding or product quality improving Week 1 and Week 2 retention?
+Click the options button at the top left to change what is counted. Its label summarizes the current choice, for example _Weekly · First-ever · Exact period_.
+
+### Cohort size
+
+The length of one period, and how many periods the table shows:
+
+| Cohort size | Periods shown       |
+| ----------- | ------------------- |
+| Daily       | Day 0 to Day 14     |
+| Weekly      | Week 0 to Week 8    |
+| Monthly     | Month 0 to Month 12 |
+
+### Cohorts
+
+- **First-ever** (default): users join the cohort of the period they first appear in. Each user belongs to one cohort.
+- **Recurring:** users join a cohort for every period they are active in, so one user can be in several cohorts. Use it to see whether active users stay active, not only new ones.
+
+### Returns
+
+- **Exact period** (default): a return only counts in the period it happened. A user who skips Week 1 and comes back in Week 2 counts in Week 2 only.
+- **On or after:** a return also counts for every earlier period. Rates never rise from one period to the next, and recent periods keep growing as users come back.
+
+### Events
+
+Web analytics projects can narrow what places a user in a cohort and what counts as coming back. Both default to **Any activity**.
+
+- **Started with:** the [event](/web-analytics/events) that places a user in a cohort, such as `signup`
+- **Returned to:** the event that counts as a return, such as `purchase`
+
+For example, _Started with_ `signup` and _Returned to_ `purchase` shows how many people who signed up came back to buy something.
+
+<Callout variant="info">
+	Cohort size, cohorts, and returns are remembered in your browser. Events,
+	filters, and the segment reset when you leave the page.
+</Callout>
+
+## Segments and filters
+
+Next to the options you can pick a [segment](/platform/funnels#saving-a-segment) to only count users in it, or not in it, and add filters. Filters match each user's first known value, so a user who first visited from Germany stays in a _Country is Germany_ filter even if they travel later.
+
+| Project type     | Filters                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web analytics    | Is authenticated, Browser, Device, Operating system, Country, Referrer, UTM source, UTM campaign, First page, First event                   |
+| Plugins and mods | Plugin version, Minecraft version, Server type, Java version, Java vendor, Operating system, Architecture, Country, Online mode, Core count |
+
+## Overview
+
+Above the cohort table, three numbers summarize retention:
+
+- **Period 1 retention:** the share of users who came back one period after they started, for example _Week 1 retention_, across all cohorts
+- **Recent vs. older cohorts:** the difference in period 1 retention between the newer half of cohorts and the older half, in percentage points. Needs at least four cohorts.
+- **Best cohort:** the cohort with the highest period 1 retention
+
+The retention curve below shows the return rate for each period:
+
+- **Latest cohort** as a solid line
+- **Previous cohort** as a dashed line
+- **Average** of all cohorts, filled, as the line to compare against
+
+## Detailed insights
+
+Expand **Explore detailed insights & correlations** below the cohort table for a deeper look.
+
+### Retention correlations
+
+Groups of users, such as a browser, country, or plugin version, that return noticeably more or less often than average. It compares period 1 retention (Day 7 for daily cohorts) over the last year.
+
+- **Lower return rates** lists up to five groups below average, **Higher return rates** up to three above
+- **Rate** is the group's return rate, **vs avg** its difference from the average in percentage points
+- A group is only listed if it has at least 20 users and differs by at least 2 percentage points
+
+These are associations, not causes.
+
+### Cohorts and periods
+
+- **Top performing cohorts** and **Needs attention:** the five cohorts with the highest and lowest period 1 retention
+- **Average by period:** the return rate for each period across all cohorts
+- **Churn hotspots:** the three steps between periods where the most users drop off, such as _Week 1 → 2_
+
+## History
+
+The page shows cohorts that started in the last year. Click **Load one more year** below the table to reach further back.
+
+## How retention is calculated
+
+Click the info icon next to the page title to see these rules for the current options.
+
+- **Periods follow calendar boundaries** in your timezone, not 24-hour or 7-day windows since a user started. Weeks start on Monday.
+- **Incomplete periods are hidden**, so the newest cohorts show fewer periods
+- **Averages are weighted by cohort size**, so a large cohort counts more than a small one
+- **Summary numbers skip small cohorts:** the overview, curve average, and detailed insights only use cohorts with at least 5 users. The cohort table still lists every cohort.
+
+### Accuracy
+
+Retention depends on recognizing the same user when they come back:
+
+- In [cookieless mode](/web-analytics/consent), visitor IDs rotate daily, so returning visitors look like new ones. The page shows a warning when it's enabled.
+- Changing user IDs, or users disabling FastStats, can make returning users look inactive or count them as new
+- [Identify](/web-analytics/identify) signed-in users to count them across devices
