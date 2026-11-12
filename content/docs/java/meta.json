@@ -5,7 +5,7 @@
 	"pages": [
 		"---Configuration---",
 		"index",
-		"migration",
+		"migrations",
 		"configuration",
 		"custom-metrics",
 		"error-tracking",
