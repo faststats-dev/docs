@@ -190,7 +190,9 @@ sourcemapsPlugin({
 ## Options
 
 `authToken` is the bearer token used to upload sourcemaps. You should almost
-always set it from an environment variable.
+always set it from an environment variable. If it is missing, the plugin warns
+and skips the upload instead of failing the build. Set `enabled: false` to turn
+off the warning.
 
 `endpoint` changes where sourcemaps are uploaded. Use this only if you are using
 a self hosted sourcemap service.
@@ -201,7 +203,8 @@ current git commit hash when it can.
 `deleteAfterUpload` removes `.map` files after a successful upload.
 
 `failOnError` controls whether a failed upload fails the build. It is `true` by
-default.
+default. With `false`, the error is logged as a warning and the build
+continues.
 
 `enabled` can turn the plugin on or off. It accepts a boolean or a function that
 receives the bundler name.
@@ -214,6 +217,12 @@ MB. Larger sourcemap sets are split into multiple upload requests.
 
 `onUploadSuccess` and `onUploadError` let you run custom code after an upload
 succeeds or fails.
+
+After each upload, the plugin logs a summary to the build output:
+
+```txt
+[faststats sourcemaps] Uploaded 12 sourcemaps (1.4 MB) for build 3f2c9e1.
+```
 
 ## What the plugin uploads
 

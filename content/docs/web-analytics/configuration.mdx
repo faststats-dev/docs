@@ -20,7 +20,8 @@ React and JavaScript use the same core options. Pass them as props to React's
 | `consent`    | `"anonymous" \| "granted" \| "denied"` | `"granted"`                     | Initial consent mode                                    |
 | `extensions` | `readonly AnalyticsExtension[]`        | `[]`                            | Optional trackers to start with the client              |
 
-The `siteKey` is public and safe to include in browser code. `baseUrl` applies
+The `siteKey` is public and safe to include in browser code. If it is missing
+or empty, the client logs a warning and tracks nothing. `baseUrl` applies
 to the core and all built-in extensions.
 
 ## Extensions

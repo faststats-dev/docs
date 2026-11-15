@@ -149,6 +149,20 @@ page.
 `useSetTraits` needs `@faststats/react` 0.14.0 or later. See
 [Identify](/web-analytics/identify) for details.
 
+There is no hook for removing traits. Use `unsetTraits` with the client from
+`useAnalytics()`:
+
+```tsx
+import { useAnalytics } from "@faststats/react";
+import { unsetTraits } from "@faststats/web/identity";
+
+const analytics = useAnalytics();
+
+async function onTrialEnded() {
+	if (analytics) await unsetTraits(analytics, ["trialEndsAt"]);
+}
+```
+
 ## Available Hooks
 
 | Hook             | Returns                                      |

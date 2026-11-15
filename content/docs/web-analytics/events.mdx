@@ -5,8 +5,8 @@ icon: MousePointerClick
 ---
 
 The core SDK automatically sends `$pageview`, `$page_ping`, `$page_leave`, and
-`$outbound_link` events, and the error tracker sends `$error`. Use `track` for
-your own events.
+`$outbound_link` events. Errors from the error tracker show up as `$exception`
+events. Use `track` for your own events.
 
 ## Automatic Tracking
 
@@ -15,16 +15,35 @@ your own events.
 | `$pageview`      | When a page first becomes visible and on each client-side navigation              |
 | `$page_ping`     | When activity pauses, and while active after 15 and 45 seconds, then every 60     |
 | `$page_leave`    | Once when the visit ends: on navigation, when the page is closed, or on `logout`  |
-| `$outbound_link` | When a visitor clicks a link to another host                                      |
-| `$error`         | When the error tracker reports an uncaught error or one you pass to `reportError` |
+| `$outbound_link` | When a visitor clicks a link to another host, or a `mailto:` or `tel:` link       |
+| `$exception`     | When the error tracker reports an uncaught error or one you pass to `reportError` |
 
-Page views include the path, sanitized URL, referrer, page title, and UTM
-parameters. A page that is closed or replaced before it becomes visible sends
-nothing.
+Page views include the path, sanitized URL, referrer, page title, UTM
+parameters, and [navigation type](#navigation-type). A page that is closed or
+replaced before it becomes visible sends nothing.
 
 Single-page navigation is detected through the History API, so `pushState`,
 `replaceState`, and back/forward navigation create page views automatically.
 Set `trackHash: true` for hash-based routers.
+
+On client-side navigations, the `$pageview` is sent once the new page and its
+title have rendered. Events tracked in the meantime are sent after it, so they
+belong to the new page. Changing only the query string, such as a filter or
+page number, does not count as a new page view.
+
+### Navigation Type
+
+The `navigation` property on `$pageview` says how the visitor reached the page.
+
+| Value          | Meaning                                                        |
+| -------------- | -------------------------------------------------------------- |
+| `navigate`     | A normal page load                                             |
+| `reload`       | The page was reloaded                                          |
+| `back_forward` | Back or forward to a page that loaded again                    |
+| `restore`      | Back or forward to a page restored from the back-forward cache |
+| `push`         | Client-side navigation with `pushState`                        |
+| `replace`      | Client-side navigation with `replaceState`                     |
+| `pop`          | Back or forward within a single-page app                       |
 
 ## Visit Duration
 
@@ -37,10 +56,13 @@ view.
 | `visit_id`         | Links the checkpoint to its page view                             |
 | `time_on_page`     | Milliseconds the page was visible and focused during this visit   |
 | `session_duration` | Milliseconds since the session started, including time spent away |
+| `scroll_depth`     | How far down the page the visitor scrolled, as a percentage       |
 
 `time_on_page` pauses while the tab is hidden, the window is unfocused, or the
 page sits in the back-forward cache. Because checkpoints are cumulative, use the
 highest `time_on_page` per visit instead of summing them.
+
+`scroll_depth` also only grows during a visit, so use its highest value too.
 
 A session ends after 30 minutes of inactivity or 24 hours. A new session, a
 `logout`, or a switch between anonymous and granted consent starts a new visit,
@@ -49,10 +71,11 @@ even on the same route.
 ## Outbound Links
 
 Outbound link tracking is built in and always on. Left and middle clicks on
-`http` and `https` links to a different host send an `$outbound_link` event with
-the destination in the `outbound_link` property. The query string and hash are
-stripped from the URL, clicks whose default action was prevented are skipped,
-and a double click is only counted once.
+links to a different host, and on `mailto:` and `tel:` links, send an
+`$outbound_link` event with the destination in the `outbound_link` property.
+The query string and hash are removed, so a prefilled email subject or body is
+never sent. Clicks whose default action was prevented are skipped, and a double
+click is only counted once.
 
 ## Custom Events
 
@@ -99,7 +122,7 @@ The SDK trims names and ignores empty names.
 Names starting with `$` are reserved for built-in events, including ones added
 later. `track` ignores them and logs a console warning once per name. Every
 other name is yours, including `pageview` or `error`, which show up as custom
-events separate from the built-in `$pageview` and `$error`.
+events separate from the built-in `$pageview` and `$exception`.
 
 SDK versions before the `$` prefix sent built-in events as `pageview`,
 `page_ping`, `page_leave`, `outbound_link`, and `error`. FastStats renames those

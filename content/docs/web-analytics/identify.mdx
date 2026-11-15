@@ -7,6 +7,10 @@ icon: UserCheck
 Call `identify` after sign-in to link the anonymous visitor to a stable external
 user ID and optional profile data.
 
+Import `identify`, `setTraits`, and `unsetTraits` from
+`@faststats/web/identity`. You only need them where users sign in: events on
+other pages are still linked to the user.
+
 ## Identify a User
 
 <Tabs items={["React", "Nuxt", "JavaScript"]}>
@@ -26,12 +30,14 @@ await identify("user_123", "ada@example.com", {
     <Tab value="Nuxt">
 
 ```ts
+import { identify } from "@faststats/web/identity";
+
 const { $faststats } = useNuxtApp();
 
 // The client only exists in the browser, so call it from onMounted or an
 // event handler rather than during server rendering.
 onMounted(async () => {
-	await $faststats.identify("user_123", "ada@example.com", {
+	await identify($faststats, "user_123", "ada@example.com", {
 		name: "Ada Lovelace",
 		traits: { plan: "pro" },
 	});
@@ -42,7 +48,7 @@ onMounted(async () => {
     <Tab value="JavaScript">
 
 ```ts
-import { identify } from "@faststats/web";
+import { identify } from "@faststats/web/identity";
 
 await identify("user_123", "ada@example.com", {
 	name: "Ada Lovelace",
@@ -54,7 +60,19 @@ await identify("user_123", "ada@example.com", {
 
 </Tabs>
 
-The external ID is required. Email and all profile fields are optional. You can
+By default they use the client from `init()`. To use another client, such as
+one from `createClient()` or Nuxt's `$faststats`, pass it first:
+`identify(client, "user_123")`.
+
+<Callout type="warning" title="Changed in 0.16.0">
+	These functions used to be exported from `@faststats/web` and available as
+	client methods. Import them from `@faststats/web/identity` and replace
+	`client.identify(...)` with `identify(client, ...)`. The React hooks are
+	unchanged.
+</Callout>
+
+The external ID is required and can be a string or a number. Email and all
+profile fields are optional. You can
 also pass one object instead of positional arguments.
 
 <Callout type="warning">
@@ -130,11 +148,13 @@ async function onUpgrade(plan: string) {
     <Tab value="Nuxt">
 
 ```ts
+import { setTraits } from "@faststats/web/identity";
+
 const { $faststats } = useNuxtApp();
 
 // Call from an event handler or onMounted, never during server rendering.
 async function onUpgrade() {
-	await $faststats.setTraits({ plan: "pro" });
+	await setTraits($faststats, { plan: "pro" });
 }
 ```
 
@@ -142,7 +162,7 @@ async function onUpgrade() {
     <Tab value="JavaScript">
 
 ```ts
-import { setTraits } from "@faststats/web";
+import { setTraits } from "@faststats/web/identity";
 
 await setTraits({ plan: "pro" });
 ```
@@ -161,7 +181,7 @@ calls never overwrite the first value, so you can call it on every visit to an
 onboarding step and still keep where the user originally came from.
 
 ```ts
-import { setTraits } from "@faststats/web";
+import { setTraits } from "@faststats/web/identity";
 
 const params = new URLSearchParams(location.search);
 
@@ -183,13 +203,13 @@ await setTraits(
 `unsetTraits` removes traits by key.
 
 ```ts
-import { unsetTraits } from "@faststats/web";
+import { unsetTraits } from "@faststats/web/identity";
 
 await unsetTraits(["trialEndsAt", "legacyPlan"]);
 ```
 
-In Nuxt call `$faststats.unsetTraits()`. In React, get the instance with
-`useAnalytics()` and call `analytics?.unsetTraits()`.
+In Nuxt, pass `$faststats` first. In React, pass the client from
+`useAnalytics()`.
 
 ### Before Identify
 
@@ -201,7 +221,7 @@ that happen on the same page as sign-in, such as a sign-up form that creates the
 account and identifies the user without navigating away.
 
 ```ts
-import { identify, setTraits } from "@faststats/web";
+import { identify, setTraits } from "@faststats/web/identity";
 
 // In the sign-up form, before the account exists
 await setTraits({ signupSource: "newsletter" }, { mode: "setOnce" });
@@ -220,8 +240,8 @@ its request is still in flight.
 
 `identify` resolves to `true` when the request was sent, or skipped because the
 same identify was already sent in this session. It returns `false` if
-the client is not active, consent is denied, cookieless mode is active, or the
-external ID is empty.
+the client is not running, consent is denied, cookieless mode is active, or
+the external ID is empty.
 
 `setTraits` and `unsetTraits` resolve to `true` once the change is sent for the
 identified user. They resolve to `false` when the change was queued for the

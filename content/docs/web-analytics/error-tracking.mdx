@@ -66,6 +66,9 @@ errorTracking({ flushInterval: 10_000, maxQueueSize: 100 });
 
 In Nuxt, pass the same object as `extensions.errorTracking`.
 
+The first error on a page is sent right away, so errors from short visits are
+not lost. Errors that follow are batched.
+
 Batches are also flushed when the page is hidden. If the collector is
 unreachable the queue is capped at `maxQueueSize` and the oldest errors are
 dropped. A batch the collector rejects is not retried.

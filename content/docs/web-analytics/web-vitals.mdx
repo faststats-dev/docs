@@ -61,8 +61,14 @@ The tracker reports the following metrics.
 
 Each metric is sent with its value, an id, a rating, the navigation type, and
 the delta since the last successfully sent value. Metrics are flushed when the
-page is hidden and when the client stops, and are attributed to the URL the
-document was loaded on.
+page is hidden and when the client stops, and are sent with the URL of the page
+they measured.
+
+## Single-Page Apps
+
+In Chromium 151 and later, each single-page app route gets its own metrics,
+with the navigation type `soft-navigation`. Other browsers report one set of
+metrics for the whole page load.
 
 ## Attribution
 

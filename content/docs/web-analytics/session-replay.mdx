@@ -50,6 +50,9 @@ init({
 In Nuxt, pass an options object instead of `true` to configure the recorder.
 Every option below works in all three packages.
 
+Replay does not record in automated browsers such as Playwright or Puppeteer,
+since they leave short, incomplete recordings.
+
 ## Privacy and Masking
 
 Input values are masked by default. Mask or block more of the page with
