@@ -7,7 +7,7 @@
       "dependencies": {
         "@astrojs/react": "7.1.8",
         "@base-ui/react": "1.9.0",
-        "@faststats/web": "0.15.1",
+        "@faststats/web": "0.16.0",
         "@fontsource-variable/geist": "^5.3.0",
         "@fontsource-variable/geist-mono": "^5.3.0",
         "@fumadocs/astro": "0.3.0",
@@ -217,7 +217,7 @@
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.28.2", "", { "os": "win32", "cpu": "x64" }, "sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g=="],
 
-    "@faststats/web": ["@faststats/web@0.15.1", "", { "dependencies": { "@rrweb/record": "^2.2.1", "@rrweb/rrweb-plugin-console-record": "^2.2.1", "@rrweb/rrweb-plugin-network-record": "^2.2.1", "web-vitals": "^6.2.3" } }, "sha512-ycTpjcz7Mhfeoz7o+25kZ0rF7KXPCgUBJIzA5aXf+/3TETgMw/Ch1Jne3EHj6qbAmE22xBAndq/cbGdE3WkeLQ=="],
+    "@faststats/web": ["@faststats/web@0.16.0", "", { "dependencies": { "@rrweb/record": "^2.2.2", "@rrweb/rrweb-plugin-console-record": "^2.2.2", "@rrweb/rrweb-plugin-network-record": "^2.2.2", "web-vitals": "^6.2.3" } }, "sha512-kGSu6NHiTLIa1YTRurO1uVrCkPUkcGlr8Vu9+xyuPI4RM5etl+XMF6nv0OYP1V2twqrtP1fubrGl67YN3jy2xg=="],
 
     "@floating-ui/core": ["@floating-ui/core@1.8.0", "", { "dependencies": { "@floating-ui/utils": "^0.2.12" } }, "sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ=="],
 
