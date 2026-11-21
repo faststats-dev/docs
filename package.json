@@ -24,7 +24,7 @@
 		"fumadocs-core": "16.19.0",
 		"fumadocs-openapi": "12.6.1",
 		"fumadocs-ui": "16.19.0",
-		"lucide-react": "1.72.0",
+		"lucide-react": "1.75.0",
 		"react": "19.3.1",
 		"react-dom": "19.3.1",
 		"takumi-js": "^2.20.0"
