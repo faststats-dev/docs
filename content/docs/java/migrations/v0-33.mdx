@@ -1,0 +1,226 @@
+---
+title: 0.32 to 0.33
+description: Upgrade the FastStats Java SDK from 0.32.x to 0.33.0
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+This guide covers the breaking Java SDK changes between `0.32.x` and `0.33.0`.
+
+Version `0.33.0` replaces the platform context classes and their factories with
+one entry point per platform. Each entry point returns a builder, and the
+builder creates a plain `FastStatsContext`.
+
+## Context Setup
+
+Replace `new <Platform>Context.Factory(...)` with `FastStats<Platform>.builder(...)`,
+move the token to `.token(...)` and replace `.create()` with `.build()`. The
+field type changes from the platform context to `FastStatsContext`.
+
+**Old Code**
+
+```java
+// 0.32.0
+import dev.faststats.bukkit.BukkitContext;
+
+private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    .errorTrackerService(ERROR_TRACKER)
+    .metrics(Metrics.Factory::create)
+    .create();
+```
+
+**Updated Code**
+
+```java
+// 0.33.0
+import dev.faststats.FastStatsContext;
+import dev.faststats.bukkit.FastStatsBukkit;
+
+private final FastStatsContext context = FastStatsBukkit.builder(this)
+    .token("YOUR_TOKEN")
+    .errorTrackerService(ERROR_TRACKER)
+    .metrics(Metrics.Factory::create)
+    .build();
+```
+
+The service methods `.metrics(...)`, `.errorTrackerService(...)` and
+`.featureFlagService(...)` are unchanged, as are `context.ready()`,
+`context.shutdown()` and the context accessors.
+
+## Token
+
+The token is no longer a constructor argument. For a 1:1 migration, call
+`.token("YOUR_TOKEN")` on the builder with the token you passed before.
+
+`.token(...)` is optional. Without it, the builder reads the token injected at
+build time, the same as the factory constructors without a token did in
+`0.32.x`. If you already use that, leave out `.token(...)`. See
+[Build-Time Token](/java/build-time-token) to set it up. You don't need it to
+migrate, though.
+
+```java
+// 0.32.0, build-time token
+new BukkitContext.Factory(this)
+
+// 0.33.0, build-time token
+FastStatsBukkit.builder(this)
+```
+
+`build()` throws an `IllegalArgumentException` if the token passed to
+`.token(...)` is invalid.
+
+## Platform Entry Points
+
+| Platform   | 0.32.0                                      | 0.33.0                                          |
+| ---------- | ------------------------------------------- | ----------------------------------------------- |
+| Bukkit     | `new BukkitContext.Factory(plugin, token)`  | `FastStatsBukkit.builder(plugin)`               |
+| BungeeCord | `new BungeeContext.Factory(plugin, token)`  | `FastStatsBungee.builder(plugin)`               |
+| Fabric     | `new FabricContext.Factory(modId, token)`   | `FastStatsFabric.builder(modId)`                |
+| Forge      | `new ForgeContext.Factory(modId, token)`    | `FastStatsForge.builder(modId)`                 |
+| NeoForge   | `new NeoForgeContext.Factory(modId, token)` | `FastStatsNeoForge.builder(modId)`              |
+| Hytale     | `new HytaleContext.Factory(plugin, token)`  | `FastStatsHytale.builder(plugin)`               |
+| Minestom   | `new MinestomContext.Factory(token)`        | `FastStatsMinestom.builder()`                   |
+| Nukkit     | `new NukkitContext.Factory(plugin, token)`  | `FastStatsNukkit.builder(plugin)`               |
+| Sponge     | injected `SpongeContext.Builder`            | injected `FastStatsSponge`, then `.builder()`   |
+| Velocity   | injected `VelocityContext.Builder`          | injected `FastStatsVelocity`, then `.builder()` |
+
+Each entry point lives in the same package as the old context, for example
+`dev.faststats.bukkit.FastStatsBukkit` and `dev.faststats.bungee.FastStatsBungee`.
+Add `.token("YOUR_TOKEN")` to every builder in this table if you passed a token
+before.
+
+The following classes were removed:
+
+- `BukkitContext`, `BungeeContext`, `FabricContext`, `ForgeContext`,
+  `NeoForgeContext`, `HytaleContext`, `MinestomContext`, `NukkitContext`,
+  `SpongeContext` and `VelocityContext`, including their `Factory` and
+  `Builder` classes. Use `FastStatsContext` as the type instead.
+- `BukkitMetrics` and `MinestomMetrics`. Use `Metrics` instead.
+- The platform metrics implementations, such as `FabricMetrics` and
+  `NeoForgeMetrics`.
+
+`Metrics` and `Metrics.Factory` are now sealed, so they can't be implemented
+outside the SDK.
+
+## Sponge and Velocity
+
+Inject `FastStatsSponge` or `FastStatsVelocity` instead of the context builder,
+and call `.builder()` on it:
+
+```java
+// Sponge, 0.32.0
+private @Inject SpongeContext.Builder contextBuilder;
+private @Nullable SpongeContext context = null;
+
+@Listener
+public void onServerStart(final StartedEngineEvent<Server> event) {
+    this.context = contextBuilder
+        .token("YOUR_TOKEN")
+        .metrics(Metrics.Factory::create)
+        .create();
+    context.ready();
+}
+```
+
+```java
+// Sponge, 0.33.0
+private @Inject FastStatsSponge fastStats;
+private @Nullable FastStatsContext context = null;
+
+@Listener
+public void onServerStart(final StartedEngineEvent<Server> event) {
+    this.context = fastStats.builder()
+        .token("YOUR_TOKEN")
+        .metrics(Metrics.Factory::create)
+        .build();
+    context.ready();
+}
+```
+
+```java
+// Velocity, 0.32.0
+@Inject
+public ExamplePlugin(final VelocityContext.Builder contextBuilder) {
+    this.context = contextBuilder
+        .token("YOUR_TOKEN")
+        .metrics(Metrics.Factory::create)
+        .create();
+}
+```
+
+```java
+// Velocity, 0.33.0
+@Inject
+public ExamplePlugin(final FastStatsVelocity fastStats) {
+    this.context = fastStats.builder()
+        .token("YOUR_TOKEN")
+        .metrics(Metrics.Factory::create)
+        .build();
+}
+```
+
+Without dependency injection, use the static
+`FastStatsSponge.builder(plugin, configDirectory)` or
+`FastStatsVelocity.builder(plugin, server, logger, dataDirectory)`.
+
+## Mods and Client Consent
+
+On Fabric, Forge and NeoForge, `requireConsent()` moved from the factory to the
+builder. The lifecycle is still managed for you, so don't call `ready()` or
+`shutdown()`.
+
+```java
+// 0.32.0
+private final FabricContext context = new FabricContext.Factory("example-mod", "YOUR_TOKEN")
+    .requireConsent()
+    .metrics(Metrics.Factory::create)
+    .create();
+
+// 0.33.0
+private final FastStatsContext context = FastStatsFabric.builder("example-mod")
+    .token("YOUR_TOKEN")
+    .requireConsent()
+    .metrics(Metrics.Factory::create)
+    .build();
+```
+
+## Ready Calls
+
+`ready()` now checks when it is called:
+
+- On Bukkit and Nukkit, call `context.ready()` in or after `onEnable`. Calling
+  it earlier, for example from the plugin constructor or `onLoad`, logs an
+  error and leaves the context not ready.
+- Calling `ready()` a second time logs a warning and does nothing. Remove
+  duplicate calls, for example a call in both the constructor and `setup()` on
+  Hytale. Call it once, in `start()`.
+
+<Callout type="info">
+	If `ready()` fails, the context stays not ready and you can call it again
+	later.
+</Callout>
+
+## Feature Flags
+
+While submission is not active, for example before the user gave consent or on
+the first run of a server, feature flags no longer send requests:
+
+- `fetch()` completes with the flag's default value and does not update the
+  cached value.
+- `optIn()` and `optOut()` complete exceptionally with an
+  `IllegalStateException`.
+
+## Checklist
+
+- Replace `new <Platform>Context.Factory(...)` with
+  `FastStats<Platform>.builder(...)`.
+- Replace `.create()` on the context factory with `.build()`.
+- Add `.token("YOUR_TOKEN")` to the builder if you passed a token before.
+  Leave it out only if you [inject the token at build time](/java/build-time-token).
+- Change the type of your context fields from `<Platform>Context` to
+  `FastStatsContext`.
+- Replace `BukkitMetrics` and `MinestomMetrics` with `Metrics`.
+- On Sponge and Velocity, inject `FastStatsSponge` or `FastStatsVelocity` and
+  call `.builder()`.
+- On Bukkit and Nukkit, make sure `context.ready()` runs in or after `onEnable`.
+- Call `context.ready()` only once.
