@@ -1,0 +1,185 @@
+---
+title: Session Replays
+description: Find, watch, and discuss recorded sessions, and group them into collections.
+icon: Video
+---
+
+Session replays let you watch how people used your site: every page, click, scroll, and input, played back as it happened. Open **Replays** in a web analytics project's sidebar to see them.
+
+Replays are recorded by the web SDK. See [Session Replay](/web-analytics/session-replay) to turn recording on and choose what is masked.
+
+## Finding replays
+
+The replay list shows each recorded session with the person or visitor, their browser, operating system, and country, when it ended, and how long it lasted. A dot marks replays nobody has watched yet. A replay is marked as watched as soon as someone opens it.
+
+### Search
+
+Type in the search field to find replays by session ID, person ID, email, name, browser, operating system, or country.
+
+### Filters
+
+Click **Filter** to narrow the list:
+
+| Filter            | Matches                                                                         |
+| ----------------- | ------------------------------------------------------------------------------- |
+| AI summary        | Replays that have, or don't have, an [AI summary](#summary)                     |
+| AI pain points    | Summarized replays with, or without, pain points                                |
+| Watched           | Replays someone has, or hasn't, watched                                         |
+| Identified        | Sessions of [identified](/web-analytics/identify) people, or anonymous visitors |
+| Errors            | Replays with, or without, an error                                              |
+| Poor web vitals   | Replays with, or without, a poor [web vital](/web-analytics/web-vitals)         |
+| Browser           | One or more browsers                                                            |
+| Operating system  | One or more operating systems                                                   |
+| Country           | One or more countries                                                           |
+| Route visited     | Replays that visited a page, such as `/checkout`, or a pattern like `/docs/*`   |
+| Poor vital        | Replays with a poor value for one metric: LCP, CLS, INP, FCP, or TTFB           |
+| Click count       | Number of clicks, as a range or exact value                                     |
+| Rage-click bursts | Number of rapid repeated clicks in one place                                    |
+| Event count       | Number of recorded events                                                       |
+| Duration (sec)    | Length of the replay in seconds                                                 |
+
+Browsers, operating systems, and countries list the values of the loaded replays, and you can type in any other value. Picking several values matches replays with any of them.
+
+#### Project fields
+
+Below the built-in filters, the picker lists your project's fields and event properties. How they compare depends on their type:
+
+| Type    | Operators                                                                     |
+| ------- | ----------------------------------------------------------------------------- |
+| Text    | is, is not. Pick _&lt;field&gt; contains_ to match part of the value instead. |
+| Number  | is, is not, greater than, less than                                           |
+| Boolean | is                                                                            |
+
+<Callout variant="info">
+	You can also describe what you're looking for, for example _"rage clicks on
+	Safari in Germany"_, and FastStats turns it into filters. If part of the
+	request doesn't match a filter, you're told what was left out.
+</Callout>
+
+Next to the filters you can pick a [segment](/platform/funnels#saving-a-segment) to only show replays of people in it, or not in it. Click **Reset** to clear the filters and leave the open collection.
+
+### Sorting
+
+Sort by **Newest** (the default), **Oldest**, **Longest**, **Shortest**, **Most events**, **Fewest events**, or by ID.
+
+## Collections
+
+Collections group replays so you can come back to them. The collections pane lists them with the number of replays in each. On small screens, switch to the **Collections** tab. Click a collection to browse only its replays.
+
+### Built-in collections
+
+Every project starts with automatic collections you can't edit or delete:
+
+| Collection                                        | Contains                                                   |
+| ------------------------------------------------- | ---------------------------------------------------------- |
+| Watched, Not Watched                              | Replays someone has, or hasn't, watched                    |
+| Error                                             | Replays with an error                                      |
+| Poor Vitals                                       | Replays with a poor [web vital](/web-analytics/web-vitals) |
+| Poor LCP, Poor CLS, Poor INP, Poor FCP, Poor TTFB | Replays with a poor value for that vital                   |
+
+Replays opened from **Error** and the vitals collections start at the moment the error or poor vital happened.
+
+### Creating a collection
+
+Click **New collection**, give it a name, and choose a type:
+
+- **Automatic:** replays that match its filters appear in it on their own, including new ones as they're recorded
+- **Manual:** a watchlist you add replays to by hand
+
+The type can't be changed after the collection is created.
+
+#### Automatic collections
+
+An automatic collection uses the same [filters](#filters) as the replay list, including [project fields](#project-fields). Replays that match all of them appear in it.
+
+Under **Playback**, turn on **Start replay at matching moment** to open each replay at the moment its **Route visited**, **Errors**, or **Poor web vitals** filter matched, instead of at the beginning.
+
+While browsing an automatic collection, its filters appear in the filter bar with a dashed border. Remove one to look at the collection more broadly without changing the saved collection.
+
+#### Manual collections
+
+Open a replay and click **Add to collection** in its header, then tick the collections it belongs in. You can also create a new manual collection from there, and the open replay is added to it.
+
+### Editing and deleting
+
+Open the **⋯** menu next to a collection to **Edit** or **Delete** it. Deleting a collection doesn't delete its replays.
+
+## Watching a replay
+
+Click a replay to open it. The header shows the page being played, and has buttons to:
+
+- **Copy link to this moment:** a link that opens the replay at the current time
+- **Add to collection** (see [Manual collections](#manual-collections))
+- **Download as JSON:** save the recording. Drop an exported file onto the replay list later to watch it without uploading it. Opened files have no summary or comments.
+- **Delete replay**
+
+If someone used several tabs in one session, each tab is its own recording. Use the tab picker in the header to switch between them.
+
+### Player controls
+
+| Control            | What it does                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| Play / pause       | Starts or stops playback. Press `Space`.                                                   |
+| Back / forward 10s | Jumps 10 seconds. Press `←` or `→`. Hold the button to rewind, or to play at double speed. |
+| Previous / next    | Opens the previous or next replay in the list. Press `Shift` `P` or `Shift` `N`.           |
+| Inspect            | Inspect the page's elements at the current moment. Press `I`.                              |
+| Skip idle          | Skips stretches over 5 seconds where nothing happens                                       |
+| Speed              | Plays at `0.5×`, `1×`, `2×`, `4×`, or `8×`                                                 |
+| Fullscreen         | Press `F` or double-click the replay                                                       |
+
+Hold down on the replay itself to play at double speed while you hold. The keyboard icon lists every shortcut.
+
+Your speed and skip idle settings are remembered in your browser.
+
+### Timeline
+
+Drag along the timeline or click anywhere on it to jump. Hover it to see the time at that point. Markers show where something happened:
+
+- **Red:** an error
+- **Green:** a web vital
+- **Primary color:** a [comment](#comments)
+
+Click a marker to jump to it.
+
+### Up next
+
+When a replay ends, an end screen offers the previous and next replays from the list you opened it from. Turn on **Autoplay** to start the next one after 5 seconds. Close the end screen to see the last frame.
+
+## Details
+
+On the right of the player, tabs show what happened during the replay. Click any entry to jump to that moment.
+
+### Summary
+
+Click **Generate summary** to have AI watch the replay and write a short recap, with the pain points where the visitor ran into trouble. Each pain point is marked as a **Bug** (the product failed) or **Friction** (it worked as designed but still stopped the visitor). Click a pain point to jump to it.
+
+AI summaries are still rolling out, so the tab may not be shown in every project yet. Replays need a full snapshot and at least two seconds of activity to be summarized. Summaries of recordings that are still in progress or incomplete only use what was recorded.
+
+### Activity
+
+Every page view, click, rage-click burst, input, and console message, in order. Search it, or filter it to one kind.
+
+### Console
+
+Console output from the session, filterable by **Errors**, **Warnings**, **Info**, and **Logs**, and searchable. Only shown when the replay has console output, which needs [console recording](/web-analytics/session-replay#console-recording).
+
+### Network
+
+Requests made during the session, filterable by **All**, **Fetch / XHR**, and **Errors**, and searchable by URL, method, or status. Only shown when the replay has requests, which needs [network recording](/web-analytics/session-replay#network-recording).
+
+## Comments
+
+Use the **Comments** tab to discuss a replay with your team.
+
+- **Pinned to a moment:** a new comment is tied to the moment you're watching, shown as a chip in the comment box. Click the chip to post the comment without a time. Comments with a time appear as markers on the timeline, and clicking a comment's time jumps there.
+- **Mentions:** type `@` to mention a teammate. They get a notification, and an email if they haven't read it within 15 minutes.
+- **References:** type `#` to link a dashboard, chart, error, funnel, or data source
+- **Replies:** click **Reply** on a comment to answer it. Everyone who has commented on the replay is notified of new comments.
+- **Pin:** pin a comment to keep it at the top of the thread
+- **Edit and delete:** you can edit your own comments. Click **edited** on a comment to see its earlier versions.
+
+Press `Enter` to post and `Shift` `Enter` for a new line. Comments posted by an AI assistant through the FastStats MCP server are marked as such.
+
+## Permissions
+
+Viewing, editing, and deleting replays, collections, and comments follow your [organization role](/platform/organizations/roles). Buttons you don't have permission for are disabled and say why.
