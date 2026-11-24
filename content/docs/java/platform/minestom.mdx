@@ -4,14 +4,15 @@ description: Integrate FastStats with Minestom servers
 icon: Server
 ---
 
-Use `dev.faststats.minestom.MinestomContext` for Minestom servers. Requires Java 25+.
+Use `dev.faststats.minestom.FastStatsMinestom` for Minestom servers. Requires Java 25+.
 
 **Artifact:** `dev.faststats.metrics:minestom`
 
 ```java
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.minestom.MinestomContext;
+import dev.faststats.minestom.FastStatsMinestom;
 import net.minestom.server.MinecraftServer;
 
 public final class ExampleServer {
@@ -20,10 +21,11 @@ public final class ExampleServer {
     public static void main(String[] args) {
         MinecraftServer server = MinecraftServer.init();
 
-        MinestomContext context = new MinestomContext.Factory("YOUR_TOKEN")
+        FastStatsContext context = FastStatsMinestom.builder()
+            .token("YOUR_TOKEN")
             .errorTrackerService(ERROR_TRACKER)
             .metrics(Metrics.Factory::create)
-            .create();
+            .build();
 
         server.start("0.0.0.0", 25565);
         context.ready();

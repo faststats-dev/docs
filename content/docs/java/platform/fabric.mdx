@@ -4,7 +4,7 @@ description: Integrate FastStats with Fabric and Quilt mods
 icon: Layers
 ---
 
-Use `dev.faststats.fabric.FabricContext` for Fabric mods. Requires Java 17+ on both Fabric and Quilt.
+Use `dev.faststats.fabric.FastStatsFabric` for Fabric mods. Requires Java 17+ on both Fabric and Quilt.
 
 The Fabric SDK also works on [Quilt](https://quiltmc.org), since Quilt can load
 Fabric mods. Use the same artifact and setup described below for Quilt mods.
@@ -26,8 +26,8 @@ Fabric mods. Use the same artifact and setup described below for Quilt mods.
 **Artifact:** `dev.faststats.metrics:fabric`
 
 ```kts
-implementation("dev.faststats.metrics:fabric:0.31.0+mc26.3")
-include("dev.faststats.metrics:fabric:0.31.0+mc26.3")
+implementation("dev.faststats.metrics:fabric:0.33.0+mc26.3")
+include("dev.faststats.metrics:fabric:0.33.0+mc26.3")
 ```
 
 Use both `implementation` and `include`. FastStats is provided as a mod through
@@ -41,17 +41,19 @@ Minecraft version, so pick the one matching your mod.
 
 ```java
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.fabric.FabricContext;
+import dev.faststats.fabric.FastStatsFabric;
 import net.fabricmc.api.ModInitializer;
 
 public class ExampleMod implements ModInitializer {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final FabricContext context = new FabricContext.Factory("example-mod", "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsFabric.builder("example-mod")
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(Metrics.Factory::create)
-        .create();
+        .build();
 
     @Override
     public void onInitialize() {
@@ -61,19 +63,20 @@ public class ExampleMod implements ModInitializer {
 ```
 
 Pass your mod ID, as defined in `fabric.mod.json` (or `quilt.mod.json` on
-Quilt), to `FabricContext.Factory`.
+Quilt), to `FastStatsFabric.builder(...)`.
 
 ## Client Consent Screen
 
 Explicit user consent is opt-in. To require it for your mod, call
-`requireConsent()` on `FabricContext.Factory`:
+`requireConsent()` on the builder:
 
 ```java
-private final FabricContext context = new FabricContext.Factory("example-mod", "YOUR_TOKEN")
+private final FastStatsContext context = FastStatsFabric.builder("example-mod")
+    .token("YOUR_TOKEN")
     .requireConsent()
     .errorTrackerService(ERROR_TRACKER)
     .metrics(Metrics.Factory::create)
-    .create();
+    .build();
 ```
 
 When at least one installed mod requires explicit consent, the client shows a

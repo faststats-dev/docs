@@ -4,7 +4,7 @@ description: Integrate FastStats with NeoForge mods
 icon: Hammer
 ---
 
-Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21+.
+Use `dev.faststats.neoforge.FastStatsNeoForge` for NeoForge mods. Requires Java 21+.
 
 <Callout type="info">
 	NeoForge supports Minecraft 1.20.6 and all newer versions. Select both the SDK
@@ -16,12 +16,12 @@ Use `dev.faststats.neoforge.NeoForgeContext` for NeoForge mods. Requires Java 21
 **Artifact:** `dev.faststats.metrics:neoforge`
 
 ```kts
-implementation("dev.faststats.metrics:neoforge:0.31.0+mc26.2")
-jarJar("dev.faststats.metrics:neoforge:0.31.0+mc26.2")
+implementation("dev.faststats.metrics:neoforge:0.33.0+mc26.3")
+jarJar("dev.faststats.metrics:neoforge:0.33.0+mc26.3")
 ```
 
 Use both `implementation` and `jarJar`. FastStats is provided as a mod through
-jar-in-jar, so `implementation` puts it on your compile classpath and `include`
+jar-in-jar, so `implementation` puts it on your compile classpath and `jarJar`
 bundles it into your mod JAR.
 
 The version format is `{sdk-version}+mc{minecraft-version}`, where
@@ -31,34 +31,37 @@ Minecraft version, so pick the one matching your mod.
 
 ```java
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.neoforge.NeoForgeContext;
+import dev.faststats.neoforge.FastStatsNeoForge;
 import net.neoforged.fml.common.Mod;
 
 @Mod("example_mod")
 public class ExampleMod {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final NeoForgeContext context = new NeoForgeContext.Factory("example_mod", "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsNeoForge.builder("example_mod")
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(Metrics.Factory::create)
-        .create();
+        .build();
 }
 ```
 
-Pass your mod ID, as defined in `neoforge.mods.toml`, to `NeoForgeContext.Factory`.
+Pass your mod ID, as defined in `neoforge.mods.toml`, to `FastStatsNeoForge.builder(...)`.
 
 ## Client Consent Screen
 
 Explicit user consent is opt-in. To require it for your mod, call
-`requireConsent()` on `NeoForgeContext.Factory`:
+`requireConsent()` on the builder:
 
 ```java
-private final NeoForgeContext context = new NeoForgeContext.Factory("example_mod", "YOUR_TOKEN")
+private final FastStatsContext context = FastStatsNeoForge.builder("example_mod")
+    .token("YOUR_TOKEN")
     .requireConsent()
     .errorTrackerService(ERROR_TRACKER)
     .metrics(Metrics.Factory::create)
-    .create();
+    .build();
 ```
 
 When at least one installed mod requires explicit consent, the client shows a

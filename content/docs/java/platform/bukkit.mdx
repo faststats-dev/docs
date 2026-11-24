@@ -4,7 +4,7 @@ description: Integrate FastStats with any Bukkit-based plugins
 icon: Box
 ---
 
-Use `dev.faststats.bukkit.BukkitContext` for Bukkit-based server plugins. Requires Java 17+.
+Use `dev.faststats.bukkit.FastStatsBukkit` for Bukkit-based server plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:bukkit`
 
@@ -14,17 +14,19 @@ standard artifact above for new projects.
 
 ```java
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.bukkit.FastStatsBukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ExamplePlugin extends JavaPlugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsBukkit.builder(this)
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(Metrics.Factory::create)
-        .create();
+        .build();
 
     @Override
     public void onEnable() {
@@ -38,7 +40,7 @@ public final class ExamplePlugin extends JavaPlugin {
 }
 ```
 
-Call `context.ready()` in `onEnable()` before using metrics or error tracking. On Paper-based servers, this also registers additional exception handlers. See [Error Tracking](/java/error-tracking) for configuring error reporting.
+Call `context.ready()` once, in or after `onEnable()`, before using metrics or error tracking. Calling it earlier, for example from the constructor or `onLoad()`, logs an error and leaves the context not ready. On Paper-based servers, this also registers additional exception handlers. See [Error Tracking](/java/error-tracking) for configuring error reporting.
 
 Replace `YOUR_TOKEN` with your project token. To keep it out of your git
 repository, [inject it at build time](/java/build-time-token) instead of

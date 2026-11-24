@@ -18,18 +18,19 @@ metrics, error tracking, feature flags, or any combination of those services.
 import dev.faststats.Attributes;
 import dev.faststats.FastStatsContext;
 import dev.faststats.FeatureFlagService;
-import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.bukkit.FastStatsBukkit;
 
 import java.time.Duration;
 
-BukkitContext context = new BukkitContext.Factory(plugin, "YOUR_TOKEN")
+FastStatsContext context = FastStatsBukkit.builder(plugin)
+    .token("YOUR_TOKEN")
     .featureFlagService(factory -> factory
         .attributes(Attributes.empty()
             .put("version", "1.2.3")
             .put("java_version", System.getProperty("java.version")))
         .ttl(Duration.ofMinutes(10))
         .create())
-    .create();
+    .build();
 
 FeatureFlagService flags = context.featureFlagService().orElseThrow();
 ```

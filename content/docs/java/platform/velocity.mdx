@@ -4,7 +4,7 @@ description: Integrate FastStats with Velocity proxy plugins
 icon: Zap
 ---
 
-Use `dev.faststats.velocity.VelocityContext` for Velocity proxy plugins. Requires Java 21+.
+Use `dev.faststats.velocity.FastStatsVelocity` for Velocity proxy plugins. Requires Java 21+.
 
 **Artifact:** `dev.faststats.metrics:velocity`
 
@@ -15,22 +15,23 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.velocity.VelocityContext;
+import dev.faststats.velocity.FastStatsVelocity;
 
 @Plugin(id = "example", name = "Example Plugin", version = "1.0.0")
 public class ExamplePlugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final VelocityContext context;
+    private final FastStatsContext context;
 
     @Inject
-    public ExamplePlugin(final VelocityContext.Builder contextBuilder) {
-        this.context = contextBuilder
+    public ExamplePlugin(final FastStatsVelocity fastStats) {
+        this.context = fastStats.builder()
             .token("YOUR_TOKEN")
             .errorTrackerService(ERROR_TRACKER)
             .metrics(Metrics.Factory::create)
-            .create();
+            .build();
     }
 
     @Subscribe
@@ -44,6 +45,9 @@ public class ExamplePlugin {
     }
 }
 ```
+
+Without dependency injection, use the static
+`FastStatsVelocity.builder(plugin, server, logger, dataDirectory)` instead.
 
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
 

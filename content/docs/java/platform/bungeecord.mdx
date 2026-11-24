@@ -4,7 +4,7 @@ description: Integrate FastStats with BungeeCord proxy plugins
 icon: Network
 ---
 
-Use `dev.faststats.bungee.BungeeContext` for BungeeCord proxy plugins. Requires Java 17+.
+Use `dev.faststats.bungee.FastStatsBungee` for BungeeCord proxy plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:bungeecord`
 
@@ -14,17 +14,19 @@ standard artifact above for new projects.
 
 ```java
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.bungee.BungeeContext;
+import dev.faststats.bungee.FastStatsBungee;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class ExamplePlugin extends Plugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final BungeeContext context = new BungeeContext.Factory(this, "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsBungee.builder(this)
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(Metrics.Factory::create)
-        .create();
+        .build();
 
     @Override
     public void onEnable() {

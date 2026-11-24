@@ -6,11 +6,12 @@ icon: KeyRound
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-The setup examples pass `"YOUR_TOKEN"` directly to the context factory. That is
-fine for trying things out, but once your project lives in a public repository,
-a hardcoded token gets copied into every fork. Anyone who builds and runs a fork
-then sends their data to your FastStats project, mixing it with your own. The
-token also stays in the git history even after you remove it.
+The setup examples pass `"YOUR_TOKEN"` directly to `.token(...)` on the context
+builder. That is fine for trying things out, but once your project lives in a
+public repository, a hardcoded token gets copied into every fork. Anyone who
+builds and runs a fork then sends their data to your FastStats project, mixing
+it with your own. The token also stays in the git history even after you remove
+it.
 
 Instead, leave the token out of your code and let your build write it into a
 resource file. Gradle reads it from an environment variable (a CI secret) or a
@@ -23,20 +24,20 @@ Forks don't have your secret, so their builds don't send data to your project.
 
 ## How It Works
 
-When you create a factory without a token, the SDK reads it from the resource
-`META-INF/faststats/<id>.token` in your jar. Surrounding whitespace is ignored.
-`<id>` depends on the platform:
+When you build a context without calling `.token(...)`, the SDK reads the token
+from the resource `META-INF/faststats/<id>.token` in your jar. Surrounding
+whitespace is ignored. `<id>` depends on the platform:
 
-| Platform              | `<id>`                        | Factory without token                   |
-| --------------------- | ----------------------------- | --------------------------------------- |
-| Bukkit                | plugin name from `plugin.yml` | `new BukkitContext.Factory(plugin)`     |
-| BungeeCord            | plugin name from `plugin.yml` | `new BungeeContext.Factory(plugin)`     |
-| Hytale                | plugin name                   | `new HytaleContext.Factory(plugin)`     |
-| Nukkit                | plugin name from `plugin.yml` | `new NukkitContext.Factory(plugin)`     |
-| Velocity              | plugin id                     | don't call `.token(...)`                |
-| Sponge                | plugin id                     | don't call `.token(...)`                |
-| Fabric/Forge/NeoForge | mod id                        | `new FabricContext.Factory(modId)` etc. |
-| Minestom              | `minestom`                    | `new MinestomContext.Factory()`         |
+| Platform              | `<id>`                        | Builder                                         |
+| --------------------- | ----------------------------- | ----------------------------------------------- |
+| Bukkit                | plugin name from `plugin.yml` | `FastStatsBukkit.builder(plugin)`               |
+| BungeeCord            | plugin name from `plugin.yml` | `FastStatsBungee.builder(plugin)`               |
+| Hytale                | plugin name                   | `FastStatsHytale.builder(plugin)`               |
+| Nukkit                | plugin name from `plugin.yml` | `FastStatsNukkit.builder(plugin)`               |
+| Velocity              | plugin id                     | injected `FastStatsVelocity`, then `.builder()` |
+| Sponge                | plugin id                     | injected `FastStatsSponge`, then `.builder()`   |
+| Fabric/Forge/NeoForge | mod id                        | `FastStatsFabric.builder(modId)` etc.           |
+| Minestom              | `minestom`                    | `FastStatsMinestom.builder()`                   |
 
 The file name includes the id because Fabric, Forge and NeoForge load every mod
 from one shared class loader, so each mod needs its own file.
@@ -209,19 +210,20 @@ Maven takes the token from the first of these that is set:
 
 ## Using the Token
 
-Create the factory without a token:
+Create the builder without calling `.token(...)`:
 
 <Tabs defaultIndex='0' groupId="jvm-language" items={['Java', 'Kotlin']}>
   <Tab id="java" value="Java">
     ```java
-    import dev.faststats.bukkit.BukkitContext;
+    import dev.faststats.FastStatsContext;
+    import dev.faststats.bukkit.FastStatsBukkit;
     import org.bukkit.plugin.java.JavaPlugin;
 
     public final class ExamplePlugin extends JavaPlugin {
         // Reads META-INF/faststats/<id>.token, where <id> is the plugin name
-        private final BukkitContext context = new BukkitContext.Factory(this)
+        private final FastStatsContext context = FastStatsBukkit.builder(this)
                 .metrics(factory -> factory.create())
-                .create();
+                .build();
 
         @Override
         public void onEnable() {
@@ -238,14 +240,14 @@ Create the factory without a token:
   </Tab>
   <Tab id="kotlin" value="Kotlin">
     ```kotlin
-    import dev.faststats.bukkit.BukkitContext
+    import dev.faststats.bukkit.FastStatsBukkit
     import org.bukkit.plugin.java.JavaPlugin
 
     class ExamplePlugin : JavaPlugin() {
         // Reads META-INF/faststats/<id>.token, where <id> is the plugin name
-        private val context = BukkitContext.Factory(this)
+        private val context = FastStatsBukkit.builder(this)
             .metrics { factory -> factory.create() }
-            .create()
+            .build()
 
         override fun onEnable() {
             context.ready()

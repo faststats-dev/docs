@@ -4,13 +4,13 @@ description: Integrate FastStats with Forge mods
 icon: Anvil
 ---
 
-Use `dev.faststats.forge.ForgeContext` for Forge mods. Requires Java 21+.
+Use `dev.faststats.forge.FastStatsForge` for Forge mods. Requires Java 21+.
 
 <Callout type="info">
 	Forge supports Minecraft 1.20.6 and all newer versions. Select both the SDK
 	version and the exact Minecraft version in your dependency version. You can
 	find the available Minecraft version targets in the [Maven
-	repository](https://repo.faststats.dev/#/snapshots/dev/faststats/metrics/forge/).
+	repository](https://repo.faststats.dev/#/releases/dev/faststats/metrics/forge/).
 </Callout>
 
 **Artifact:** `dev.faststats.metrics:forge`
@@ -24,8 +24,8 @@ plugins {
 val jarJar = the<net.minecraftforge.jarjar.gradle.JarJarExtension>().register()
 
 dependencies {
-    implementation("dev.faststats.metrics:forge:0.31.0+mc26.3")
-    jarJar.configurationName("dev.faststats.metrics:forge:0.31.0+mc26.3")
+    implementation("dev.faststats.metrics:forge:0.33.0+mc26.3")
+    jarJar.configurationName("dev.faststats.metrics:forge:0.33.0+mc26.3")
 }
 ```
 
@@ -40,34 +40,37 @@ Minecraft version, so pick the one matching your mod.
 
 ```java
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.forge.ForgeContext;
+import dev.faststats.forge.FastStatsForge;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("example_mod")
 public class ExampleMod {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final ForgeContext context = new ForgeContext.Factory("example_mod", "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsForge.builder("example_mod")
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(Metrics.Factory::create)
-        .create();
+        .build();
 }
 ```
 
-Pass your mod ID, as defined in `mods.toml`, to `ForgeContext.Factory`.
+Pass your mod ID, as defined in `mods.toml`, to `FastStatsForge.builder(...)`.
 
 ## Client Consent Screen
 
 Explicit user consent is opt-in. To require it for your mod, call
-`requireConsent()` on `ForgeContext.Factory`:
+`requireConsent()` on the builder:
 
 ```java
-private final ForgeContext context = new ForgeContext.Factory("example_mod", "YOUR_TOKEN")
+private final FastStatsContext context = FastStatsForge.builder("example_mod")
+    .token("YOUR_TOKEN")
     .requireConsent()
     .errorTrackerService(ERROR_TRACKER)
     .metrics(Metrics.Factory::create)
-    .create();
+    .build();
 ```
 
 When at least one installed mod requires explicit consent, the client shows a

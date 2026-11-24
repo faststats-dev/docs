@@ -4,7 +4,7 @@ description: Integrate FastStats with Sponge plugins
 icon: Circle
 ---
 
-Use `dev.faststats.sponge.SpongeContext` for Sponge plugins. Requires Java 17+.
+Use `dev.faststats.sponge.FastStatsSponge` for Sponge plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:sponge`
 
@@ -15,8 +15,9 @@ standard artifact above for new projects.
 ```java
 import com.google.inject.Inject;
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.sponge.SpongeContext;
+import dev.faststats.sponge.FastStatsSponge;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.event.Listener;
@@ -27,17 +28,17 @@ import org.spongepowered.plugin.builtin.jvm.Plugin;
 @Plugin("example")
 public class ExamplePlugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
-    private @Inject SpongeContext.Builder contextBuilder;
+    private @Inject FastStatsSponge fastStats;
 
-    private @Nullable SpongeContext context = null;
+    private @Nullable FastStatsContext context = null;
 
     @Listener
     public void onServerStart(final StartedEngineEvent<Server> event) {
-        this.context = contextBuilder
+        this.context = fastStats.builder()
             .token("YOUR_TOKEN")
             .errorTrackerService(ERROR_TRACKER)
             .metrics(Metrics.Factory::create)
-            .create();
+            .build();
         context.ready();
     }
 
@@ -47,6 +48,9 @@ public class ExamplePlugin {
     }
 }
 ```
+
+Without dependency injection, use the static
+`FastStatsSponge.builder(plugin, configDirectory)` instead.
 
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
 

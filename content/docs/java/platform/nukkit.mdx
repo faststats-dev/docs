@@ -4,7 +4,7 @@ description: Integrate FastStats with Nukkit plugins
 icon: Plug
 ---
 
-Use `dev.faststats.nukkit.NukkitContext` for Nukkit plugins. Requires Java 17+.
+Use `dev.faststats.nukkit.FastStatsNukkit` for Nukkit plugins. Requires Java 17+.
 
 **Artifact:** `dev.faststats.metrics:nukkit`
 
@@ -15,20 +15,22 @@ standard artifact above for new projects.
 ```java
 import cn.nukkit.plugin.PluginBase;
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.nukkit.NukkitContext;
+import dev.faststats.nukkit.FastStatsNukkit;
 
 public final class ExamplePlugin extends PluginBase {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private NukkitContext context;
+    private FastStatsContext context;
 
     @Override
     public void onLoad() {
-        context = new NukkitContext.Factory(this, "YOUR_TOKEN")
+        context = FastStatsNukkit.builder(this)
+                .token("YOUR_TOKEN")
                 .errorTrackerService(ERROR_TRACKER)
                 .metrics(Metrics.Factory::create)
-                .create();
+                .build();
     }
 
     @Override
@@ -42,6 +44,8 @@ public final class ExamplePlugin extends PluginBase {
     }
 }
 ```
+
+Call `context.ready()` once, in or after `onEnable()`. Calling it earlier, for example from `onLoad()`, logs an error and leaves the context not ready.
 
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
 

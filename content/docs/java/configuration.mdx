@@ -12,12 +12,14 @@ your project uses.
 The minimal metrics configuration requires only a token:
 
 ```java
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.bukkit.FastStatsBukkit;
 
-private final BukkitContext context = new BukkitContext.Factory(plugin, "YOUR_TOKEN")
+private final FastStatsContext context = FastStatsBukkit.builder(plugin)
+    .token("YOUR_TOKEN")
     .metrics(Metrics.Factory::create)
-    .create();
+    .build();
 
 public void onEnable() {
     context.ready();
@@ -34,7 +36,8 @@ flush callback:
 
 ```java
 import dev.faststats.ErrorTracker;
-import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.FastStatsContext;
+import dev.faststats.bukkit.FastStatsBukkit;
 import dev.faststats.data.Metric;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,7 +47,8 @@ public final class MyBukkitPlugin extends JavaPlugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
     private final AtomicInteger arenaMatches = new AtomicInteger();
 
-    private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsBukkit.builder(this)
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(factory -> factory
             .addMetric(Metric.number("arena_matches", arenaMatches::get))
@@ -53,7 +57,7 @@ public final class MyBukkitPlugin extends JavaPlugin {
             .addMetric(Metric.stringArray("used_hooks", () -> new String[]{"Vault", "PlaceholderAPI"}))
             .onFlush(() -> arenaMatches.set(0))
             .create())
-        .create();
+        .build();
 
     @Override
     public void onEnable() {

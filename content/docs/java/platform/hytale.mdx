@@ -4,7 +4,7 @@ description: Integrate FastStats with Hytale server plugins
 icon: Gamepad2
 ---
 
-Use `dev.faststats.hytale.HytaleContext` for Hytale server plugins. Requires Java 25+.
+Use `dev.faststats.hytale.FastStatsHytale` for Hytale server plugins. Requires Java 25+.
 
 **Artifact:** `dev.faststats.metrics:hytale`
 
@@ -12,24 +12,25 @@ Use `dev.faststats.hytale.HytaleContext` for Hytale server plugins. Requires Jav
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import dev.faststats.ErrorTracker;
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
-import dev.faststats.hytale.HytaleContext;
+import dev.faststats.hytale.FastStatsHytale;
 
 public class ExamplePlugin extends JavaPlugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 
-    private final HytaleContext context = new HytaleContext.Factory(this, "YOUR_TOKEN")
+    private final FastStatsContext context = FastStatsHytale.builder(this)
+        .token("YOUR_TOKEN")
         .errorTrackerService(ERROR_TRACKER)
         .metrics(Metrics.Factory::create)
-        .create();
+        .build();
 
     public ExamplePlugin(final JavaPluginInit init) {
         super(init);
-        context.ready();
     }
 
     @Override
-    protected void setup() {
+    protected void start() {
         context.ready();
     }
 
@@ -39,6 +40,8 @@ public class ExamplePlugin extends JavaPlugin {
     }
 }
 ```
+
+Call `context.ready()` once, in `start()`. Calling it a second time logs a warning and does nothing.
 
 See [Error Tracking](/java/error-tracking) for configuring error reporting.
 

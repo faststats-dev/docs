@@ -13,20 +13,22 @@ FastStats project settings.
 Attach custom metrics when you create the platform context:
 
 ```java
-import dev.faststats.bukkit.BukkitContext;
+import dev.faststats.FastStatsContext;
+import dev.faststats.bukkit.FastStatsBukkit;
 import dev.faststats.data.Metric;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 private final AtomicInteger arenaMatches = new AtomicInteger();
 
-private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+private final FastStatsContext context = FastStatsBukkit.builder(this)
+    .token("YOUR_TOKEN")
     .metrics(factory -> factory
         .addMetric(Metric.number("arena_matches", arenaMatches::get))
         .addMetric(Metric.stringArray("used_hooks", () -> new String[]{"Vault", "PlaceholderAPI"}))
         .onFlush(() -> arenaMatches.set(0))
         .create())
-    .create();
+    .build();
 
 public void onEnable() {
     context.ready();
@@ -135,11 +137,14 @@ If you do not need custom metrics, create the metrics service without adding any
 metrics:
 
 ```java
+import dev.faststats.FastStatsContext;
 import dev.faststats.Metrics;
+import dev.faststats.bukkit.FastStatsBukkit;
 
-private final BukkitContext context = new BukkitContext.Factory(this, "YOUR_TOKEN")
+private final FastStatsContext context = FastStatsBukkit.builder(this)
+    .token("YOUR_TOKEN")
     .metrics(Metrics.Factory::create)
-    .create();
+    .build();
 
 public void onEnable() {
     context.ready();
